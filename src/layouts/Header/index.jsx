@@ -2,8 +2,10 @@ import { Link, NavLink } from 'react-router-dom';
 import SearchIcon from '~/assets/icons/search.svg';
 import HeartIcon from '~/assets/icons/heart.svg';
 import CartIcon from '~/assets/icons/cart.svg';
-import { useState } from 'react';
+import UserIcon from '~/assets/icons/user.svg';
+import { useEffect, useRef, useState } from 'react';
 import Tooltip from '~/components/Tooltip';
+import AccountDropdown from './AccountDropdown';
 
 const NavList = [
   {
@@ -30,6 +32,22 @@ const NavList = [
 
 export default function Header() {
   const [search, setSearch] = useState('');
+  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
+  const isAuthenticated = true;
+
+  const accountDropdownRef = useRef(null);
+
+  useEffect(() => {
+    let handler = (e) => {
+      if (!accountDropdownRef.current.contains(e.target)) {
+        setShowAccountDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+    };
+  }, []);
 
   const handleSearch = () => {
     if (!search) return;
@@ -120,12 +138,29 @@ export default function Header() {
                   alt="icon"
                   className="max-w-full object-cover"
                   src={CartIcon}
+                  ref={accountDropdownRef}
                 />
                 <span className="absolute -right-2 -top-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500 text-xs text-white">
                   1
                 </span>
               </div>
             </Tooltip>
+            {isAuthenticated && (
+              <div
+                className="relative flex h-7 w-7 cursor-pointer items-center justify-center rounded-full"
+                ref={accountDropdownRef}
+                onClick={() =>
+                  setShowAccountDropdown((prevStatus) => !prevStatus)
+                }
+              >
+                <img alt="icon" src={UserIcon} />
+                {showAccountDropdown && (
+                  <div className="bg-[rgba(0, 0, 0, 0.04)] absolute right-0 top-[calc(100%+10px)] flex flex-col rounded bg-gradient-to-r from-[#9c7b9e] to-[#312c31] px-5 py-4 text-white">
+                    <AccountDropdown />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
