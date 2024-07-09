@@ -1,24 +1,20 @@
-import { useState } from "react";
-
-import "~/assets/css/App.css";
+import { Route, Routes } from "react-router-dom";
+import Footer from "./layouts/Footer";
+import Header from "./layouts/Header";
+import HomePage from "./pages/Home";
+import AboutPage from "./pages/About";
+import { ToastContainer } from "react-toastify";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Header />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+      </Routes>
+      <ToastContainer />
+      <Footer />
     </>
   );
 }
