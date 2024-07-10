@@ -75,7 +75,7 @@ export default function Header() {
               </span>
             </p>
           </div>
-          <div className="mx-auto flex max-w-[1300px] items-center px-6 py-4 lg:justify-between lg:px-0 lg:py-7">
+          <div className="mx-auto flex max-w-[1300px] items-center px-6 py-4 lg:justify-between lg:py-5 2xl:px-0 2xl:py-6">
             <div className="mr-12 flex items-center justify-center lg:mr-0">
               <Link
                 className="font-inter text-xl font-bold leading-none -tracking-[0.72px] text-black lg:text-2xl"
@@ -85,12 +85,12 @@ export default function Header() {
               </Link>
             </div>
             <nav className="hidden font-poppins lg:block">
-              <ul className="block w-56 items-center gap-12 px-5 py-4 lg:flex">
+              <ul className="flex items-center gap-12">
                 {NavList.map((navItem) => (
                   <li key={navItem.id}>
                     <NavLink
                       className={({ isActive }) =>
-                        `${isActive ? 'border-[#D9DBE9]' : 'border-transparent'} block border-b-2 border-solid py-1 text-center text-sm font-normal leading-normal transition-colors hover:border-[#909090] lg:text-base`
+                        `${isActive ? 'border-[#D9DBE9]' : 'border-transparent'} block border-b-2 border-solid py-1 text-center text-sm font-normal leading-normal transition-colors hover:border-[#D9DBE9] lg:text-base`
                       }
                       to={navItem.path}
                     >
