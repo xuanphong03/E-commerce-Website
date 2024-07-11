@@ -65,7 +65,7 @@ export default function Header() {
   return (
     <>
       <Headroom>
-        <header className="border-b border-solid border-[#D9D9D9]">
+        <header className="border-b border-solid border-[#D9D9D9] bg-white">
           <div className="flex items-center justify-center bg-black py-3 font-poppins">
             <p className="text-xs font-normal leading-normal text-[#FAFAFA] lg:text-sm">
               Mùa hè giảm giá cho tất cả đồ bơi và miễn phí giao hàng nhanh -
