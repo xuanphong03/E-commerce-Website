@@ -35,7 +35,7 @@ const NavList = [
 export default function Header() {
   const [search, setSearch] = useState('');
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
-  const [isShowedMobileNavigation, setShowMobileNavigation] = useState(true);
+  const [isShowedMobileNavigation, setShowMobileNavigation] = useState(false);
   const isAuthenticated = true;
 
   const accountDropdownRef = useRef(null);
