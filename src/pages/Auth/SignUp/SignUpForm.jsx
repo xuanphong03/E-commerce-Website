@@ -15,7 +15,7 @@ SignUpForm.propTypes = {
 
 export default function SignUpForm({ onSubmit }) {
   const schema = yup.object().shape({
-    fullName: yup
+    name: yup
       .string()
       .required('Vui lòng nhập tên của bạn.')
       .test(
@@ -65,8 +65,8 @@ export default function SignUpForm({ onSubmit }) {
           id="signup-name"
           label="Họ và tên"
           autofocus={true}
-          register={{ ...register('fullName') }}
-          errorMessage={errors.fullName?.message}
+          register={{ ...register('name') }}
+          errorMessage={errors.name?.message}
         />
         <InputField
           id="signup-email"
