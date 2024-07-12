@@ -1,0 +1,7 @@
+form input:not(:placeholder-shown) + label,
+form input:focus-within + label {
+  left: 0;
+  top: -8px;
+  font-size: 14px;
+  color: #315cea;
+}
