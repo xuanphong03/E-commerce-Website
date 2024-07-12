@@ -7,6 +7,7 @@ import { ToastContainer } from 'react-toastify';
 import SignUpPage from './pages/Auth/SignUp';
 import ContactPage from './pages/Contact';
 import SignInPage from './pages/Auth/SignIn';
+import ErrorPage from './pages/Error';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/sign-in" element={<SignInPage />} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
       <ToastContainer />
       <Footer />
