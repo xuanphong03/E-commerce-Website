@@ -45,7 +45,7 @@ export default function FlashSalesSection() {
   }, []);
 
   return (
-    <section>
+    <section className="border-b border-solid border-[#b2b2b2]">
       <div className="mb-6">
         <SectionTag content="Trong hôm nay" />
       </div>
@@ -83,14 +83,14 @@ export default function FlashSalesSection() {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-12 gap-[30px]">
+      <div className="grid grid-cols-12 gap-16">
         {[...Array(4)].map((_, index) => {
           return (
             <div className="col-span-3" key={index}>
               <ProductItem
                 productImage={ProductImage}
                 productSalePercent={40}
-                productName="HAVIT HV-G92 Gamepad"
+                productName="HAVIT HV-G92 GamepadHAVIT HV-G92 Gamepad"
                 productSalePrice={120}
                 productPrice={160}
                 productReviewRate={4.5}

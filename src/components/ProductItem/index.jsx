@@ -22,13 +22,9 @@ export default function ProductItem(props) {
       <div
         onMouseEnter={() => setShowAddToCart(true)}
         onMouseLeave={() => setShowAddToCart(false)}
-        className="relative flex h-[250px] w-[270px] items-center justify-center rounded bg-[#F5F5F5]"
+        className="relative flex h-[250px] items-center justify-center rounded bg-[#F5F5F5]"
       >
-        <img
-          alt="product image"
-          src={productImage}
-          className="max-h[80%] max-w-[80%]"
-        />
+        <img alt="product image" src={productImage} className="max-h[80%]" />
         <div className="absolute left-3 top-3">
           <SaleTag salePercent={productSalePercent} />
         </div>
@@ -54,7 +50,9 @@ export default function ProductItem(props) {
         </div>
       </div>
       <div>
-        <h3 className="mb-2 font-medium text-black">{productName}</h3>
+        <h3 className="mb-2 line-clamp-1 font-medium text-black">
+          {productName}
+        </h3>
         <p className="mb-2 font-poppins font-medium text-[#DB4444]">
           ${productSalePercent > 0 ? productSalePrice : productPrice}
           <span
