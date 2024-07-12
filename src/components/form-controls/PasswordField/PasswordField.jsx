@@ -1,5 +1,8 @@
-import '../form-controls.css';
 import PropTypes from 'prop-types';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+
+import '../form-controls.css';
+import { useState } from 'react';
 
 PasswordField.propTypes = {
   id: PropTypes.string.isRequired,
@@ -17,13 +20,19 @@ function PasswordField({
   register,
   autofocus = false,
 }) {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleShowPassword = () => {
+    setShowPassword((prevStatus) => !prevStatus);
+  };
+
   return (
     <div className="relative h-10 w-full border-b-2 border-solid border-[#C0C0C0] font-poppins focus-within:border-[#315CEA]">
       <input
         {...register}
         className="h-full w-full px-1 outline-none"
         id={id}
-        type="password"
+        type={`${!showPassword ? 'password' : 'text'}`}
         placeholder=""
         autoFocus={autofocus}
       />
@@ -33,6 +42,12 @@ function PasswordField({
       >
         {label}
       </label>
+      <span
+        onClick={handleShowPassword}
+        className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-lg"
+      >
+        {!showPassword ? <FaEye /> : <FaEyeSlash />}
+      </span>
       {errorMessage && (
         <span className="absolute left-0 top-[calc(100%+4px)] px-1 text-xs text-red-500">
           {errorMessage}
