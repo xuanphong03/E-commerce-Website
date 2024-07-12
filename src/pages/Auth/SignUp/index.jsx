@@ -1,21 +1,30 @@
-import signupBackground from '~/assets/images/signup-bg.png';
-import SignUpForm from './SignUpForm';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { useSnackbar } from 'notistack';
 import { useDispatch } from 'react-redux';
-import { toast } from 'react-toastify';
+import signupBackground from '~/assets/images/signup-bg.png';
+import { register } from '../userSlice';
+import SignUpForm from './SignUpForm';
 
 export default function SignUpPage() {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-  const handleSubmitFormSignUp = async (data) => {
+  const { enqueueSnackbar } = useSnackbar();
+
+  const handleSubmitSignUpForm = async (data) => {
     try {
-      // // auto set username = email
-      // values.username = values.email;
-      // const action = register(values);
-      // const resultAction = await dispatch(action);
-      // const user = unwrapResult(resultAction);
-      // console.log("New user: ", user);
+      // auto set user = email
+      data.username = data.email;
+
+      const action = register(data);
+      const resultAction = await dispatch(action);
+      const user = unwrapResult(resultAction);
+
+      // do something here when register successfully
+      enqueueSnackbar('Register successfully!!! 🥳🥳🥳', {
+        variant: 'success',
+      });
     } catch (error) {
-      toast.error('Error!!!');
+      enqueueSnackbar(error.message, { variant: 'error' });
     }
   };
 
@@ -25,7 +34,7 @@ export default function SignUpPage() {
         <img alt="background" className="max-h-full" src={signupBackground} />
       </div>
       <section className="col-span-5 flex items-center">
-        <SignUpForm onSubmit={handleSubmitFormSignUp} />
+        <SignUpForm onSubmit={handleSubmitSignUpForm} />
       </section>
     </main>
   );
