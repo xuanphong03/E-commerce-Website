@@ -1,4 +1,3 @@
-import { useParams } from 'react-router-dom';
 import Breadcrumbs from '~/components/Breadcrumbs/Breadcrumbs';
 
 export default function ErrorPage() {
