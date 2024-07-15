@@ -3,6 +3,7 @@ import SaleTag from '../SaleTag';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { FiEye } from 'react-icons/fi';
 import StarRating from '../StarRating';
+import NewTag from '../NewTag/NewTag';
 
 export default function ProductItem(props) {
   const {
@@ -14,6 +15,7 @@ export default function ProductItem(props) {
     productReviewNumber,
     productReviewRate,
     favorite = false,
+    isNewProduct = false,
   } = props;
   const [showAddToCart, setShowAddToCart] = useState(false);
   const [isFavorite, setIsFavorite] = useState(favorite);
@@ -27,6 +29,11 @@ export default function ProductItem(props) {
         <img alt="product image" src={productImage} className="max-h[80%]" />
         <div className="absolute left-3 top-3">
           <SaleTag salePercent={productSalePercent} />
+          {isNewProduct && (
+            <div className="mt-1">
+              <NewTag />
+            </div>
+          )}
         </div>
         <div
           className={`absolute bottom-0 left-0 right-0 flex cursor-pointer items-center justify-center rounded-b bg-black text-white ${showAddToCart ? 'h-10' : 'h-0'} transition-all`}

@@ -103,25 +103,25 @@ function BestSellingSection() {
           <div className="mb-10 flex items-center gap-6">
             <div className="flex h-14 w-14 flex-col items-center justify-center rounded-full bg-white">
               <p className="font-poppins font-semibold leading-tight text-black">
-                {timer.days}
+                {timer.days < 10 ? '0' + timer.days : timer.days}
               </p>
               <p className="font-poppins text-xs font-normal">Ngày</p>
             </div>
             <div className="flex h-14 w-14 flex-col items-center justify-center rounded-full bg-white">
               <p className="font-poppins font-semibold leading-tight text-black">
-                {timer.hours}
+                {timer.hours < 10 ? '0' + timer.hours : timer.hours}
               </p>
               <p className="font-poppins text-xs font-normal">Giờ</p>
             </div>
             <div className="flex h-14 w-14 flex-col items-center justify-center rounded-full bg-white">
               <p className="font-poppins font-semibold leading-tight text-black">
-                {timer.minutes}
+                {timer.minutes < 10 ? '0' + timer.minutes : timer.minutes}
               </p>
               <p className="font-poppins text-xs font-normal">Phút</p>
             </div>
             <div className="flex h-14 w-14 flex-col items-center justify-center rounded-full bg-white">
               <p className="font-poppins font-semibold leading-tight text-black">
-                {timer.seconds}
+                {timer.seconds < 10 ? '0' + timer.seconds : timer.seconds}
               </p>
               <p className="font-poppins text-xs font-normal">Giây</p>
             </div>
