@@ -1,3 +1,4 @@
+import BestSellingSection from './components/BestSellingSection';
 import BrowseByCategorySection from './components/BrowseByCategorySection';
 import FlashSalesSection from './components/FlashSalesSection';
 import IntroduceSection from './components/IntroduceSection';
@@ -9,6 +10,7 @@ export default function HomePage() {
         <IntroduceSection />
         <FlashSalesSection />
         <BrowseByCategorySection />
+        <BestSellingSection />
       </div>
     </main>
   );
