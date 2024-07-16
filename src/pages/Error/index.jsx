@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Breadcrumbs from '~/components/Breadcrumbs/Breadcrumbs';
 
 export default function ErrorPage() {
@@ -27,9 +28,11 @@ export default function ErrorPage() {
           <p className="mb-20 font-poppins">
             Không tìm thấy trang bạn đã truy cập. Bạn có thể vào trang chủ
           </p>
-          <button className="flex items-center justify-center rounded bg-[#DB4444] px-12 py-4 text-[#FAFAFA]">
-            Quay về trang chủ
-          </button>
+          <Link to="/">
+            <button className="flex items-center justify-center rounded bg-[#DB4444] px-12 py-4 text-[#FAFAFA]">
+              Quay về trang chủ
+            </button>
+          </Link>
         </div>
       </div>
     </main>

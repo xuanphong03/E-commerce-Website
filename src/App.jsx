@@ -9,6 +9,7 @@ import ContactPage from './pages/Contact';
 import SignInPage from './pages/Auth/SignIn';
 import ErrorPage from './pages/Error';
 import WishListPage from './pages/WishList';
+import CartPage from './pages/Cart';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/cart" element={<CartPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/sign-in" element={<SignInPage />} />
