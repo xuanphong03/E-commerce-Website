@@ -139,19 +139,21 @@ export default function Header() {
                     </div>
                   </Tooltip>
                 </Link>
-                <Tooltip infoText="Giỏ hàng">
-                  <div className="relative flex h-5 w-5 cursor-pointer items-center lg:h-7 lg:w-7">
-                    <img
-                      alt="icon"
-                      className="max-w-full object-cover"
-                      src={CartIcon}
-                      ref={accountDropdownRef}
-                    />
-                    <span className="absolute -right-2 -top-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                      1
-                    </span>
-                  </div>
-                </Tooltip>
+                <Link to="/cart">
+                  <Tooltip infoText="Giỏ hàng">
+                    <div className="relative flex h-5 w-5 cursor-pointer items-center lg:h-7 lg:w-7">
+                      <img
+                        alt="icon"
+                        className="max-w-full object-cover"
+                        src={CartIcon}
+                        ref={accountDropdownRef}
+                      />
+                      <span className="absolute -right-2 -top-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                        1
+                      </span>
+                    </div>
+                  </Tooltip>
+                </Link>
                 <div
                   onClick={() => setShowMobileNavigation(true)}
                   className="h-5 w-5 cursor-pointer lg:hidden"
