@@ -2,10 +2,22 @@ import ProductItem from '~/components/ProductItem';
 import SectionTag from '~/components/SectionTag';
 
 import ProductImage from '~/assets/images/product01.png';
+import { useEffect, useState } from 'react';
+import productApi from '~/apis/productApi';
 
 ExploreProductSection.propTypes = {};
 
 function ExploreProductSection() {
+  const [productsList, setProductsList] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      const res = await productApi.getAll();
+      const { products } = res;
+      setProductsList(products);
+    })();
+  }, []);
+
   return (
     <section>
       <div className="mb-6">
@@ -16,18 +28,18 @@ function ExploreProductSection() {
       </h2>
       <div className="my-[60px]">
         <div className="grid grid-cols-12 gap-16">
-          {[...Array(8)].map((_, index) => {
+          {productsList.slice(0, 8).map((product, index) => {
             return (
               <div className="col-span-3" key={index}>
                 <ProductItem
-                  productImage={ProductImage}
+                  productImage={product.image}
                   productSalePercent={40}
-                  productName="HAVIT HV-G92 GamepadHAVIT HV-G92 Gamepad"
-                  productSalePrice={120}
-                  productPrice={160}
-                  productReviewRate={4.5}
-                  productReviewNumber={88}
-                  isNewProduct={true}
+                  productName={product.name}
+                  productSalePrice={product.salePrice}
+                  productPrice={product.price}
+                  productReviewRate={product.rating}
+                  productReviewNumber={product.nRating}
+                  isNewProduct={product.newStatus}
                 />
               </div>
             );

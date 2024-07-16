@@ -29,7 +29,7 @@ export default function ProductItem(props) {
         onMouseLeave={() => setShowAddToCart(false)}
         className="relative flex h-[250px] items-center justify-center rounded bg-[#F5F5F5]"
       >
-        <img alt="product image" src={productImage} className="max-h[80%]" />
+        <img alt="product image" src={productImage} className="max-h-[80%]" />
         <div className="absolute left-3 top-3">
           <SaleTag salePercent={productSalePercent} />
           {isNewProduct && (
@@ -41,7 +41,9 @@ export default function ProductItem(props) {
         <div
           className={`absolute bottom-0 left-0 right-0 flex cursor-pointer items-center justify-center rounded-b bg-black text-white hover:bg-[#DB4444] ${showAddToCart ? 'h-10' : 'h-0'} transition-all`}
         >
-          <p className="py-2">Thêm vào giỏ hàng</p>
+          <p className={`${showAddToCart ? 'block' : 'hidden'} py-2`}>
+            Thêm vào giỏ hàng
+          </p>
         </div>
         <div className="absolute right-3 top-3">
           {!isInWishList ? (
