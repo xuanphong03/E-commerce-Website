@@ -5,6 +5,8 @@ import { FiEye } from 'react-icons/fi';
 import StarRating from '../StarRating';
 import NewTag from '../NewTag/NewTag';
 
+import { BsTrash3 } from 'react-icons/bs';
+
 export default function ProductItem(props) {
   const {
     productImage,
@@ -16,6 +18,7 @@ export default function ProductItem(props) {
     productReviewRate,
     favorite = false,
     isNewProduct = false,
+    isInWishList = false,
   } = props;
   const [showAddToCart, setShowAddToCart] = useState(false);
   const [isFavorite, setIsFavorite] = useState(favorite);
@@ -36,24 +39,32 @@ export default function ProductItem(props) {
           )}
         </div>
         <div
-          className={`absolute bottom-0 left-0 right-0 flex cursor-pointer items-center justify-center rounded-b bg-black text-white ${showAddToCart ? 'h-10' : 'h-0'} transition-all`}
+          className={`absolute bottom-0 left-0 right-0 flex cursor-pointer items-center justify-center rounded-b bg-black text-white hover:bg-[#DB4444] ${showAddToCart ? 'h-10' : 'h-0'} transition-all`}
         >
           <p className="py-2">Thêm vào giỏ hàng</p>
         </div>
         <div className="absolute right-3 top-3">
-          <button
-            className="mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-white"
-            onClick={() => setIsFavorite(true)}
-          >
-            {!isFavorite ? (
-              <FaRegHeart />
-            ) : (
-              <FaHeart className="text-[#DB4444]" />
-            )}
-          </button>
-          <button className="flex h-8 w-8 items-center justify-center rounded-full bg-white">
-            <FiEye />
-          </button>
+          {!isInWishList ? (
+            <>
+              <button
+                className={`mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-white transition-colors ${!isFavorite ? 'hover:bg-[#DB4444] hover:text-[#FAFAFA]' : 'hover:border-[#DB4444]'} border-2 border-solid border-transparent`}
+                onClick={() => setIsFavorite((prevStatus) => !prevStatus)}
+              >
+                {!isFavorite ? (
+                  <FaRegHeart />
+                ) : (
+                  <FaHeart className="text-[#DB4444]" />
+                )}
+              </button>
+              <button className="flex h-8 w-8 items-center justify-center rounded-full bg-white transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]">
+                <FiEye />
+              </button>
+            </>
+          ) : (
+            <button className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-xl transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]">
+              <BsTrash3 />
+            </button>
+          )}
         </div>
       </div>
       <div>
