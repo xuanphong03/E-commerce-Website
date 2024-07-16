@@ -128,15 +128,17 @@ export default function Header() {
                 </label>
               </div>
               <div className="flex items-center gap-6 text-xl">
-                <Tooltip infoText="Danh sách yêu thích">
-                  <div className="flex h-6 w-6 cursor-pointer items-center lg:h-8 lg:w-8">
-                    <img
-                      alt="icon"
-                      className="max-w-full object-cover"
-                      src={HeartIcon}
-                    />
-                  </div>
-                </Tooltip>
+                <Link to="/wishlist">
+                  <Tooltip infoText="Danh sách yêu thích">
+                    <div className="flex h-6 w-6 cursor-pointer items-center lg:h-8 lg:w-8">
+                      <img
+                        alt="icon"
+                        className="max-w-full object-cover"
+                        src={HeartIcon}
+                      />
+                    </div>
+                  </Tooltip>
+                </Link>
                 <Tooltip infoText="Giỏ hàng">
                   <div className="relative flex h-5 w-5 cursor-pointer items-center lg:h-7 lg:w-7">
                     <img
