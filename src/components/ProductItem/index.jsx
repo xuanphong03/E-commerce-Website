@@ -6,9 +6,11 @@ import StarRating from '../StarRating';
 import NewTag from '../NewTag/NewTag';
 
 import { BsTrash3 } from 'react-icons/bs';
+import { Link } from 'react-router-dom';
 
 export default function ProductItem(props) {
   const {
+    productId,
     productImage,
     productName,
     productPrice,
@@ -58,9 +60,11 @@ export default function ProductItem(props) {
                   <FaHeart className="text-[#DB4444]" />
                 )}
               </button>
-              <button className="flex h-8 w-8 items-center justify-center rounded-full bg-white transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]">
-                <FiEye />
-              </button>
+              <Link to={`/products/${productId}`}>
+                <button className="flex h-8 w-8 items-center justify-center rounded-full bg-white transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]">
+                  <FiEye />
+                </button>
+              </Link>
             </>
           ) : (
             <button className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-xl transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]">

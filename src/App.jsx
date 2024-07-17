@@ -10,6 +10,8 @@ import SignInPage from './pages/Auth/SignIn';
 import ErrorPage from './pages/Error';
 import WishListPage from './pages/WishList';
 import CartPage from './pages/Cart';
+import ProductsList from './pages/Products/ProductsList';
+import ProductDetail from './pages/Products/ProductDetail';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/sign-in" element={<SignInPage />} />
         <Route path="/wishlist" element={<WishListPage />} />
+        <Route path="/products" element={<ProductsList />} />
+        <Route path="/products/:productId" element={<ProductDetail />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
       <ToastContainer />
