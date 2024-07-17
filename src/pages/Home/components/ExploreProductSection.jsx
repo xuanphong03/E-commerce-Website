@@ -6,6 +6,16 @@ import ProductImage from '~/assets/images/product01.png';
 ExploreProductSection.propTypes = {};
 
 function ExploreProductSection() {
+  // const [productsList, setProductsList] = useState([]);
+
+  // useEffect(() => {
+  //   (async () => {
+  //     const res = await productApi.getAll();
+  //     const { products } = res;
+  //     setProductsList(products);
+  //   })();
+  // }, []);
+
   return (
     <section>
       <div className="mb-6">
@@ -32,6 +42,22 @@ function ExploreProductSection() {
               </div>
             );
           })}
+          {/* {productsList.slice(0, 8).map((product, index) => {
+            return (
+              <div className="col-span-3" key={index}>
+                <ProductItem
+                  productImage={product.image}
+                  productSalePercent={40}
+                  productName={product.name}
+                  productSalePrice={product.salePrice}
+                  productPrice={product.price}
+                  productReviewRate={product.rating}
+                  productReviewNumber={product.nRating}
+                  isNewProduct={product.newStatus}
+                />
+              </div>
+            );
+          })} */}
         </div>
       </div>
       <button className="mx-auto flex items-center justify-center rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-10 py-2 font-poppins font-medium text-[#FAFAFA] transition-colors hover:bg-[#FAFAFA] hover:text-[#DB4444]">

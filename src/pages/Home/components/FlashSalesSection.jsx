@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import SectionTag from '~/components/SectionTag';
 import ProductImage from '~/assets/images/product01.png';
 import ProductItem from '~/components/ProductItem';
+import Skeleton from '~/components/Skeleton/Skeleton';
+import productApi from '~/apis/productApi';
 
 export default function FlashSalesSection() {
   const [timer, setTimer] = useState(() => {
@@ -21,6 +23,17 @@ export default function FlashSalesSection() {
       seconds,
     };
   });
+  const [productsList, setProductsList] = useState([]);
+  const [loading, setLoading] = useState(null);
+
+  useEffect(() => {
+    setLoading(true);
+    (async () => {
+      const { products } = await productApi.getAll();
+      setProductsList(products);
+    })();
+    setLoading(false);
+  }, []);
 
   const interval = useRef();
 
@@ -98,7 +111,31 @@ export default function FlashSalesSection() {
         </div>
       </div>
       <div className="grid grid-cols-12 gap-16">
-        {[...Array(4)].map((_, index) => {
+        {!loading &&
+          productsList.slice(0, 4).map((product) => (
+            <div className="col-span-3" key={product.id}>
+              <ProductItem
+                productId={product.id}
+                productImage={product.image}
+                productSalePercent={40}
+                productName={product.name}
+                productSalePrice={product.salePrice}
+                productPrice={product.price}
+                productReviewRate={product.rating}
+                productReviewNumber={product.nRating}
+              />
+            </div>
+          ))}
+        {loading &&
+          [...Array(4)].map((_, index) => {
+            return (
+              <div className="col-span-3" key={index}>
+                <Skeleton />
+              </div>
+            );
+          })}
+
+        {/* {[...Array(4)].map((_, index) => {
           return (
             <div className="col-span-3" key={index}>
               <ProductItem
@@ -112,7 +149,7 @@ export default function FlashSalesSection() {
               />
             </div>
           );
-        })}
+        })} */}
       </div>
       <button className="mx-auto my-[60px] flex items-center justify-center rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-10 py-2 font-poppins font-medium text-[#FAFAFA] transition-colors hover:bg-[#FAFAFA] hover:text-[#DB4444]">
         Xem tất cả
