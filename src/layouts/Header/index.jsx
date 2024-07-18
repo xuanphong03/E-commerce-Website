@@ -1,13 +1,14 @@
-import { Link, NavLink } from 'react-router-dom';
-import SearchIcon from '~/assets/icons/search.svg';
-import HeartIcon from '~/assets/icons/heart.svg';
-import CartIcon from '~/assets/icons/cart.svg';
-import UserIcon from '~/assets/icons/user.svg';
 import { useEffect, useRef, useState } from 'react';
-import Tooltip from '~/components/Tooltip';
-import AccountDropdown from './AccountDropdown';
 import Headroom from 'react-headroom';
 import { MdMenu } from 'react-icons/md';
+import { Link, NavLink } from 'react-router-dom';
+import CartIcon from '~/assets/icons/cart.svg';
+import HeartIcon from '~/assets/icons/heart.svg';
+import UserIcon from '~/assets/icons/user.svg';
+import Tooltip from '~/components/Tooltip';
+import AccountDropdown from './AccountDropdown';
+import Navigation from './components/Navigation/Navigation';
+import SearchBox from './components/SearchBox';
 
 const NavList = [
   {
@@ -33,7 +34,6 @@ const NavList = [
 ];
 
 export default function Header() {
-  const [search, setSearch] = useState('');
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [isShowedMobileNavigation, setShowMobileNavigation] = useState(false);
   const isAuthenticated = true;
@@ -51,16 +51,6 @@ export default function Header() {
       document.removeEventListener('mousedown', handler);
     };
   }, []);
-
-  const handleSearch = () => {
-    if (!search) return;
-    setSearch('');
-  };
-
-  const handleSearchChange = (e) => {
-    let searchValue = e.target.value;
-    setSearch(searchValue);
-  };
 
   return (
     <>
@@ -84,53 +74,14 @@ export default function Header() {
                 Exclusive
               </Link>
             </div>
-            <nav className="hidden font-poppins lg:block">
-              <ul className="flex items-center gap-12">
-                {NavList.map((navItem) => (
-                  <li key={navItem.id}>
-                    <NavLink
-                      className={({ isActive }) =>
-                        `${isActive ? 'border-[#D9DBE9]' : 'border-transparent'} block border-b-2 border-solid py-1 text-center text-sm font-normal leading-normal transition-colors hover:border-[#D9DBE9] lg:text-base`
-                      }
-                      to={navItem.path}
-                    >
-                      {navItem.name}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+            <Navigation />
             <div className="flex w-full items-center justify-between gap-8 lg:w-auto lg:justify-normal">
-              <div className="relative flex w-52 items-center rounded bg-[#f5f5f5] py-2 pl-5 pr-3 lg:w-60">
-                <input
-                  onChange={handleSearchChange}
-                  value={search}
-                  id="product-search"
-                  type="text"
-                  placeholder="Bạn đang tìm kiếm cái gì?"
-                  className="w-full bg-[#f5f5f5] text-xs outline-none lg:text-sm"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleSearch();
-                    }
-                  }}
-                />
-                <label
-                  htmlFor="product-search"
-                  className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 cursor-pointer text-xl lg:h-6 lg:w-6"
-                  onClick={handleSearch}
-                >
-                  <img
-                    alt="icon"
-                    className="max-w-full object-cover"
-                    src={SearchIcon}
-                  />
-                </label>
-              </div>
+              <SearchBox />
+
               <div className="flex items-center gap-6 text-xl">
                 <Link to="/wishlist">
                   <Tooltip infoText="Danh sách yêu thích">
-                    <div className="flex h-6 w-6 cursor-pointer items-center lg:h-8 lg:w-8">
+                    <div className="flex h-8 w-8 cursor-pointer items-center">
                       <img
                         alt="icon"
                         className="max-w-full object-cover"
@@ -141,7 +92,7 @@ export default function Header() {
                 </Link>
                 <Link to="/cart">
                   <Tooltip infoText="Giỏ hàng">
-                    <div className="relative flex h-5 w-5 cursor-pointer items-center lg:h-7 lg:w-7">
+                    <div className="relative flex h-7 w-7 cursor-pointer items-center">
                       <img
                         alt="icon"
                         className="max-w-full object-cover"
@@ -156,13 +107,13 @@ export default function Header() {
                 </Link>
                 <div
                   onClick={() => setShowMobileNavigation(true)}
-                  className="h-5 w-5 cursor-pointer lg:hidden"
+                  className="flex h-7 w-7 cursor-pointer items-center justify-center text-2xl lg:hidden"
                 >
                   <MdMenu />
                 </div>
                 {isAuthenticated && (
                   <div
-                    className="relative flex h-5 w-5 cursor-pointer items-center justify-center rounded-full lg:h-7 lg:w-7"
+                    className="relative flex h-7 w-7 cursor-pointer items-center justify-center rounded-full"
                     ref={accountDropdownRef}
                     onClick={() =>
                       setShowAccountDropdown((prevStatus) => !prevStatus)
@@ -185,7 +136,7 @@ export default function Header() {
         <nav
           className={`fixed bottom-0 left-0 top-0 z-50 h-screen lg:hidden ${isShowedMobileNavigation ? 'translate-x-0' : '-translate-x-full'} bg-[#4E4B66] font-poppins transition-transform`}
         >
-          <ul className="block w-56 items-center gap-12 px-5 py-4 lg:flex">
+          <ul className="block w-56 items-center gap-12 px-5 py-4 lg:flex lg:w-auto">
             {NavList.map((navItem) => (
               <li
                 onClick={() => setShowMobileNavigation(false)}
