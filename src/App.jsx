@@ -26,7 +26,7 @@ function App() {
         <Route path="/sign-in" element={<SignInPage />} />
         <Route path="/wishlist" element={<WishListPage />} />
         <Route path="/products" element={<ProductsList />} />
-        <Route path="/products/:productId" element={<ProductDetail />} />
+        <Route path="/products-detail/:productId" element={<ProductDetail />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
       <ToastContainer />
