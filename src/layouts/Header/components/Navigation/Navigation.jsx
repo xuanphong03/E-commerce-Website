@@ -22,7 +22,7 @@ const NavList = [
 
 function Navigation() {
   return (
-    <nav className="hidden font-poppins lg:block">
+    <nav className="hidden lg:block">
       <ul className="flex items-center gap-12">
         {NavList.map((navItem, index) => (
           <li key={index} className="relative">

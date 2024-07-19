@@ -6,9 +6,9 @@ import CartIcon from '~/assets/icons/cart.svg';
 import HeartIcon from '~/assets/icons/heart.svg';
 import UserIcon from '~/assets/icons/user.svg';
 import Tooltip from '~/components/Tooltip';
-import AccountDropdown from './AccountDropdown';
+import AccountDropdown from './components/Dropdown/AccountDropdown';
 import Navigation from './components/Navigation/Navigation';
-import SearchBox from './components/SearchBox';
+import SearchBox from './components/Search/SearchBox';
 
 const NavList = [
   {
