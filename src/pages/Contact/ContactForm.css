@@ -1,0 +1,16 @@
+form input:not(:placeholder-shown) + label,
+form input:focus-within + label,
+form textarea:not(:placeholder-shown) + label,
+form textarea:focus-within + label {
+  left: 0;
+  font-size: 16px;
+  color: #000;
+}
+form input:not(:placeholder-shown) + label,
+form input:focus-within + label {
+  top: -12px;
+}
+form textarea:not(:placeholder-shown) + label,
+form textarea:focus-within + label {
+  top: -24px;
+}
