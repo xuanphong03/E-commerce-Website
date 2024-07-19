@@ -6,6 +6,7 @@ export default {
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
         poppins: ['Poppins', 'sans-serif'],
+        roboto: ['Roboto', 'sans-serif'],
       },
       boxShadow: {
         table: '0px 1px 13px 0px rgba(0, 0, 0, 0.05)',

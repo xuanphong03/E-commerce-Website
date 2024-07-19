@@ -35,7 +35,7 @@ const DropdownMenu = [
 
 export default function AccountDropdown() {
   return (
-    <ul className="min-w-40 font-poppins lg:min-w-48">
+    <ul className="min-w-40 font-poppins lg:min-w-52">
       {DropdownMenu.map((menuItem, index) => (
         <li
           key={index}
@@ -43,7 +43,7 @@ export default function AccountDropdown() {
         >
           <Link to={menuItem.to} className="flex items-center gap-4">
             <img className="h-6" alt="icon" src={menuItem.pathIcon} />
-            <p className="black text-xs font-normal leading-normal text-[#fafafa] lg:text-sm">
+            <p className="font-roboto black text-xs font-normal leading-normal text-[#fafafa] lg:text-base">
               {menuItem.name}
             </p>
           </Link>

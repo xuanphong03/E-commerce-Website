@@ -8,7 +8,7 @@ export default function Breadcrumbs({ pathList = [] }) {
         return (
           <Link
             to={path.to}
-            className={`font-poppins text-sm ${isCurrentPath ? 'text-black' : 'text-[#808080]'}`}
+            className={`font-roboto text-sm ${isCurrentPath ? 'text-black' : 'text-[#808080]'}`}
             key={path.id}
           >
             {path.name}
