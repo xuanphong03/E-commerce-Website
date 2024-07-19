@@ -4,8 +4,8 @@ import * as yup from 'yup';
 import PropTypes from 'prop-types';
 import { FaSpinner } from 'react-icons/fa';
 
-import ContactInput from './ContactInput';
-import ContactMessage from './ContactMessage';
+import ContactInput from '../input-controls/ContactInput';
+import ContactMessage from '../input-controls/ContactMessage';
 import { useEffect } from 'react';
 import { regex } from '~/constants/regex';
 

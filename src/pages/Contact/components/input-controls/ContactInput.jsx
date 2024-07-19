@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-import './ContactForm.css';
+import './input-controls.css';
 
 ContactInput.propTypes = {
   id: PropTypes.string,
