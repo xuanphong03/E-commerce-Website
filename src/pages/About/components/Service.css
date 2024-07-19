@@ -1,0 +1,20 @@
+article.service-item:hover {
+  color: #fff;
+  background: #db4444;
+  transition: all 0.3s ease;
+}
+
+article.service-item:hover > div:first-child {
+  background: #e67c7c;
+  transition: all 0.3s ease;
+}
+
+article.service-item:hover > div:first-child > span {
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+article.service-item:hover > div:first-child > span > * {
+  color: black;
+  transition: all 0.3s ease;
+}
