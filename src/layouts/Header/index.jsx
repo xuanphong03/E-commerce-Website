@@ -121,7 +121,7 @@ export default function Header() {
                   >
                     <img alt="icon" src={UserIcon} />
                     {showAccountDropdown && (
-                      <div className="bg-[rgba(0, 0, 0, 0.04)] absolute right-0 top-[calc(100%+10px)] flex flex-col rounded bg-gradient-to-r from-[#9c7b9e] to-[#312c31] px-5 py-4 text-white">
+                      <div className="bg-[rgba(0, 0, 0, 0.04)] absolute right-0 top-[calc(100%+10px)] flex flex-col rounded bg-gradient-to-r from-[#9c7b9e] to-[#312c31] px-5 pb-2 pt-4 text-white">
                         <AccountDropdown />
                       </div>
                     )}
