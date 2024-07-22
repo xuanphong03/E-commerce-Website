@@ -64,7 +64,6 @@ export default function Header() {
 
   const handleChangeLanguage = (e) => {
     const newLanguage = e.target.value;
-    setShowMenuLanguage(false);
     i18n.changeLanguage(newLanguage);
   };
 
@@ -84,22 +83,25 @@ export default function Header() {
                 className="absolute right-0 top-1/2 z-10 -translate-y-1/2 text-sm"
                 ref={menuLanguageRef}
               >
-                <div className="flex items-center gap-2 px-2">
+                <div
+                  onClick={() =>
+                    setShowMenuLanguage((prevStatus) => !prevStatus)
+                  }
+                  className="flex cursor-pointer items-center gap-2 px-2"
+                >
                   {currentLanguage}
-                  <button
-                    onClick={() =>
-                      setShowMenuLanguage((prevStatus) => !prevStatus)
-                    }
-                    className="cursor-pointer text-lg"
-                  >
+                  <button className="cursor-pointer text-lg">
                     <IoIosArrowDown />
                   </button>
                 </div>
                 <div
-                  className={`${showMenuLanguage ? 'block' : 'hidden'} absolute top-[calc(100%+8px)] w-full bg-black px-2`}
+                  className={`${showMenuLanguage ? 'block' : 'hidden'} absolute top-[calc(100%+12px)] w-full bg-black`}
                 >
-                  <div className="py-2">
-                    <label className="cursor-pointer">
+                  <div className="px-2 py-2 hover:bg-[#DB4444]">
+                    <label
+                      className="block w-full cursor-pointer"
+                      onClick={() => setShowMenuLanguage(false)}
+                    >
                       <input
                         onChange={handleChangeLanguage}
                         type="radio"
@@ -110,8 +112,11 @@ export default function Header() {
                       Tiếng Việt
                     </label>
                   </div>
-                  <div className="py-2">
-                    <label className="cursor-pointer">
+                  <div className="px-2 py-2 hover:bg-[#DB4444]">
+                    <label
+                      className="block w-full cursor-pointer"
+                      onClick={() => setShowMenuLanguage(false)}
+                    >
                       <input
                         onChange={handleChangeLanguage}
                         type="radio"

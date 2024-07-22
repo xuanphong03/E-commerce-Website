@@ -1,13 +1,14 @@
 import { useState } from 'react';
-import SaleTag from '../SaleTag';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { FiEye } from 'react-icons/fi';
-import StarRating from '../StarRating';
 import NewTag from '../NewTag/NewTag';
+import SaleTag from '../SaleTag';
+import StarRating from '../StarRating';
 
+import { useTranslation } from 'react-i18next';
 import { BsTrash3 } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { formatPrice } from '~/utils/formatPrice';
 
 export default function ProductItem(props) {
   const { t } = useTranslation();
@@ -24,8 +25,22 @@ export default function ProductItem(props) {
     isNewProduct = false,
     isInWishList = false,
   } = props;
+  const { i18n } = useTranslation();
   const [showAddToCart, setShowAddToCart] = useState(false);
   const [isFavorite, setIsFavorite] = useState(favorite);
+
+  let formattedProductPrice;
+  if (i18n.language === 'vi') {
+    formattedProductPrice =
+      productSalePercent > 0
+        ? formatPrice(productSalePrice * 23000, 'VNĐ')
+        : formatPrice(productPrice * 23000, 'VNĐ');
+  } else {
+    formattedProductPrice =
+      productSalePercent > 0
+        ? formatPrice(productSalePrice)
+        : formatPrice(productPrice);
+  }
   return (
     <article className="flex flex-col gap-4">
       <div
@@ -79,12 +94,14 @@ export default function ProductItem(props) {
         <h3 className="mb-2 line-clamp-1 font-medium text-black">
           {productName}
         </h3>
-        <p className="mb-2 font-poppins font-medium text-[#DB4444]">
-          ${productSalePercent > 0 ? productSalePrice : productPrice}
+        <p className="mb-2 flex flex-wrap items-center font-poppins font-medium text-[#DB4444]">
+          {formattedProductPrice}
           <span
             className={`ml-3 text-[#808080] line-through ${productSalePercent <= 0 ? 'hidden' : ''}`}
           >
-            ${productPrice}
+            {i18n.language === 'vi'
+              ? formatPrice(productPrice * 23000, 'VNĐ')
+              : formatPrice(productPrice)}
           </span>
         </p>
         <div className="flex items-center gap-2">
