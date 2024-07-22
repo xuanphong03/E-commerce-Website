@@ -5,8 +5,10 @@ import { useDebounce } from '~/hooks/useDebounce';
 import SearchedProductItem from './SearchedProductItem';
 import SearchedSkeletonItem from './SearchedSkeletonItem';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function SearchBox() {
+  const { t } = useTranslation('header');
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResult, setSearchResult] = useState([]);
   const [showRecommendedSearch, setShowRecommendedSearch] = useState(false);
@@ -78,8 +80,8 @@ function SearchBox() {
         value={searchTerm}
         id="product-searchTerm"
         type="text"
-        placeholder="Bạn đang tìm kiếm cái gì?"
-        className="w-full bg-[#f5f5f5] pr-10 text-sm outline-none lg:text-base"
+        placeholder={t('Search product placeholder')}
+        className="w-full bg-[#f5f5f5] pr-10 font-poppins text-sm outline-none lg:text-sm"
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             handleSearch();

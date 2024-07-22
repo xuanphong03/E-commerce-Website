@@ -5,17 +5,20 @@ import Perfume from '~/assets/images/perfume.png';
 import PlayStation from '~/assets/images/playStation.png';
 import Speakers from '~/assets/images/speaker.png';
 import WomenCollection from '~/assets/images/women.png';
+import { useTranslation } from 'react-i18next';
 
 FeaturedSection.propTypes = {};
 
 function FeaturedSection() {
+  const { t } = useTranslation();
+
   return (
     <section className="my-[140px]">
       <div className="mb-6">
-        <SectionTag content="Đặc sắc  " />
+        <SectionTag content={t('Subtitle New Arrival')} />
       </div>
       <h2 className="font-inter text-4xl font-semibold tracking-[1.44px]">
-        Hàng mới về
+        {t('Title New Arrival')}
       </h2>
       <div className="mt-[60px] flex h-[600px] w-full gap-8">
         <div className="relative basis-1/2 bg-black">
@@ -26,10 +29,10 @@ function FeaturedSection() {
           />
           <div className="absolute bottom-8 left-8 text-[#FAFAFA]">
             <h3 className="font-inter text-2xl font-semibold leading-none tracking-[0.72px]">
-              PlayStation 5
+              {t('Heading PlayStation 5 Article')}
             </h3>
             <p className="my-4 font-poppins text-sm font-normal">
-              Phiên bản đen trắng của PS5 <br></br> sắp được bán.
+              {t('Description PlayStation 5 Article')}
             </p>
             <Link
               to="/"
@@ -48,11 +51,10 @@ function FeaturedSection() {
             />
             <div className="absolute bottom-6 left-6 text-[#FAFAFA]">
               <h3 className="font-inter text-2xl font-semibold leading-none tracking-[0.72px]">
-                Women’s Collections
+                {t('Heading Women’s Collections Article')}
               </h3>
               <p className="my-4 font-poppins text-sm font-normal">
-                Các bộ sưu tập dành cho phụ nữ nổi bật <br></br> mang đến cho
-                bạn cảm giác khác.
+                {t('Description Women’s Collections Article')}
               </p>
               <Link
                 to="/"
@@ -71,10 +73,10 @@ function FeaturedSection() {
               />
               <div className="absolute bottom-6 left-6 text-[#FAFAFA]">
                 <h3 className="font-inter text-2xl font-semibold leading-none tracking-[0.72px]">
-                  Loa
+                  {t('Heading Speakers Article')}
                 </h3>
                 <p className="my-2 font-poppins text-sm font-normal">
-                  Loa không dây Amazon
+                  {t('Heading Speakers Article')}
                 </p>
                 <Link
                   to="/"
@@ -92,10 +94,10 @@ function FeaturedSection() {
               />
               <div className="absolute bottom-6 left-6 text-[#FAFAFA]">
                 <h3 className="font-inter text-2xl font-semibold leading-none tracking-[0.72px]">
-                  Nước hoa
+                  {t('Heading Perfume Article')}
                 </h3>
                 <p className="my-2 font-poppins text-sm font-normal">
-                  GUCCI INTENSE OUD EDP
+                  {t('Heading Perfume Article')}
                 </p>
                 <Link
                   to="/"

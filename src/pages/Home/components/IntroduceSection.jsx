@@ -7,40 +7,54 @@ import Banner02 from '~/assets/images/banner02.jpg';
 import Banner03 from '~/assets/images/banner03.jpg';
 import Banner04 from '~/assets/images/banner04.jpg';
 import Banner05 from '~/assets/images/banner05.jpg';
-const MENU = [
-  {
-    id: 1,
-    path: 'phones',
-    name: 'Điện thoại',
-  },
-  {
-    id: 2,
-    path: 'computers',
-    name: 'Máy tính',
-  },
-  {
-    id: 3,
-    path: 'smartwatch',
-    name: 'Đồng hồ thông minh',
-  },
-  {
-    id: 4,
-    path: 'camera',
-    name: 'Máy ảnh',
-  },
-  {
-    id: 5,
-    path: 'headphones',
-    name: 'Tai nghe',
-  },
-  {
-    id: 6,
-    path: 'gaming',
-    name: 'Máy điện tử',
-  },
-];
+import { useTranslation } from 'react-i18next';
 
 export default function IntroduceSection() {
+  const { t } = useTranslation('home');
+  console.log(t('Aside Category Phones'));
+  const MENU = [
+    {
+      path: 'phones',
+      name: `${t('Aside Category Phones')}`,
+    },
+    {
+      path: 'computers',
+      name: `${t('Aside Category Computers')}`,
+    },
+    {
+      path: 'smartwatch',
+      name: `${t('Aside Category Smart Watch')}`,
+    },
+    {
+      path: 'camera',
+      name: `${t('Aside Category Camera')}`,
+    },
+    {
+      path: 'headphones',
+      name: `${t('Aside Category Headphones')}`,
+    },
+    {
+      path: 'gaming',
+      name: `${t('Aside Category Electronic Machine')}`,
+    },
+    {
+      path: 'men-fashion',
+      name: `${t("Aside Category Men's Fashion")}`,
+    },
+    {
+      path: 'women-fashion',
+      name: `${t("Aside Category Women's Fashion")}`,
+    },
+    {
+      path: 'perfume',
+      name: `${t('Aside Category Perfume')}`,
+    },
+    {
+      path: 'footwear',
+      name: `${t('Aside Category Footwear')}`,
+    },
+  ];
+
   const settings = {
     dots: true,
     infinite: true,
@@ -54,11 +68,8 @@ export default function IntroduceSection() {
     <section className="grid grid-cols-12 pb-[140px]">
       <aside className="col-span-2 border-r border-solid border-[#D9D9D9] pr-4 pt-10">
         <ul>
-          {MENU.map((menuItem) => (
-            <li
-              key={menuItem.id}
-              className="mb-4 font-poppins hover:text-[#DB4444]"
-            >
+          {MENU.map((menuItem, index) => (
+            <li key={index} className="mb-4 font-poppins hover:text-[#DB4444]">
               <Link to={`/products?category=${menuItem.path}`}>
                 {menuItem.name}
               </Link>

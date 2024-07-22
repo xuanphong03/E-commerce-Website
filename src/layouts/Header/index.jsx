@@ -9,6 +9,9 @@ import Tooltip from '~/components/Tooltip';
 import AccountDropdown from './components/Dropdown/AccountDropdown';
 import Navigation from './components/Navigation/Navigation';
 import SearchBox from './components/Search/SearchBox';
+import { IoIosArrowDown } from 'react-icons/io';
+import { useTranslation } from 'react-i18next';
+import { locales } from '~/i18n/i18n';
 
 const NavList = [
   {
@@ -34,16 +37,23 @@ const NavList = [
 ];
 
 export default function Header() {
+  const { t, i18n } = useTranslation('header');
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const [isShowedMobileNavigation, setShowMobileNavigation] = useState(false);
+  const [showMenuLanguage, setShowMenuLanguage] = useState(false);
+  const currentLanguage = [locales[i18n.language]];
   const isAuthenticated = true;
 
   const accountDropdownRef = useRef(null);
+  const menuLanguageRef = useRef(null);
 
   useEffect(() => {
     let handler = (e) => {
       if (!accountDropdownRef.current.contains(e.target)) {
         setShowAccountDropdown(false);
+      }
+      if (!menuLanguageRef.current.contains(e.target)) {
+        setShowMenuLanguage(false);
       }
     };
     document.addEventListener('mousedown', handler);
@@ -52,18 +62,69 @@ export default function Header() {
     };
   }, []);
 
+  const handleChangeLanguage = (e) => {
+    const newLanguage = e.target.value;
+    setShowMenuLanguage(false);
+    i18n.changeLanguage(newLanguage);
+  };
+
   return (
     <>
       <Headroom>
         <header className="border-b border-solid border-[#D9D9D9] bg-white">
-          <div className="flex items-center justify-center bg-black py-3 font-poppins">
-            <p className="text-xs font-normal leading-normal text-[#FAFAFA] lg:text-sm">
-              Mùa hè giảm giá cho tất cả đồ bơi và miễn phí giao hàng nhanh -
-              GIẢM GIÁ 50%!
-              <span className="ml-2 cursor-pointer font-semibold text-[#FAFAFA] underline">
-                ShopNow
-              </span>
-            </p>
+          <div className="bg-black py-3 font-poppins">
+            <div className="relative mx-auto flex w-full max-w-[1300px] items-center justify-center text-[#FAFAFA]">
+              <p className="text-xs font-normal leading-normal lg:text-sm">
+                {t('Promotions')}
+                <span className="ml-2 cursor-pointer font-semibold text-[#FAFAFA] underline">
+                  ShopNow
+                </span>
+              </p>
+              <div
+                className="absolute right-0 top-1/2 z-10 -translate-y-1/2 text-sm"
+                ref={menuLanguageRef}
+              >
+                <div className="flex items-center gap-2 px-2">
+                  {currentLanguage}
+                  <button
+                    onClick={() =>
+                      setShowMenuLanguage((prevStatus) => !prevStatus)
+                    }
+                    className="cursor-pointer text-lg"
+                  >
+                    <IoIosArrowDown />
+                  </button>
+                </div>
+                <div
+                  className={`${showMenuLanguage ? 'block' : 'hidden'} absolute top-[calc(100%+8px)] w-full bg-black px-2`}
+                >
+                  <div className="py-2">
+                    <label className="cursor-pointer">
+                      <input
+                        onChange={handleChangeLanguage}
+                        type="radio"
+                        name="languages"
+                        value="vi"
+                        hidden
+                      />
+                      Tiếng Việt
+                    </label>
+                  </div>
+                  <div className="py-2">
+                    <label className="cursor-pointer">
+                      <input
+                        onChange={handleChangeLanguage}
+                        type="radio"
+                        name="languages"
+                        value="en"
+                        hidden
+                      />
+                      English
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div className="mx-auto flex max-w-[1300px] items-center px-6 py-4 lg:justify-between lg:py-5 2xl:px-0 2xl:py-6">
             <div className="mr-12 flex items-center justify-center lg:mr-0">

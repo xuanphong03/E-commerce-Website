@@ -8,6 +8,7 @@ import {
 import { RiComputerLine } from 'react-icons/ri';
 import { LuGamepad2 } from 'react-icons/lu';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const CATEGORIES = [
   {
@@ -43,14 +44,16 @@ const CATEGORIES = [
 ];
 
 export default function BrowseByCategorySection() {
+  const { t } = useTranslation('home');
+
   return (
     <section className="border-b border-solid border-[#b2b2b2] pb-[70px] pt-[80px]">
       <div className="mb-6">
-        <SectionTag content="Danh mục" />
+        <SectionTag content={t('Subtitle Browse By Category')} />
       </div>
       <div className="mb-10 flex items-end gap-20">
         <h2 className="font-inter text-4xl font-semibold tracking-[1.44px]">
-          Tìm kiếm bằng danh mục
+          {t('Title Browse By Category')}
         </h2>
       </div>
       <ul className="grid grid-cols-12 gap-[30px]">
