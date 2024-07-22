@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { FaArrowUp } from 'react-icons/fa';
 
 import ServiceIcon01 from '~/assets/images/service01.png';
@@ -7,6 +8,8 @@ import ServiceIcon03 from '~/assets/images/service03.png';
 ServiceSection.propTypes = {};
 
 function ServiceSection() {
+  const { t } = useTranslation();
+
   const handleScrollTop = () => {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
@@ -20,10 +23,10 @@ function ServiceSection() {
         </div>
         <div>
           <h2 className="mb-2 text-center font-poppins text-xl font-semibold uppercase text-black">
-            GIAO HÀNG MIỄN PHÍ VÀ NHANH CHÓNG
+            {t('Heading FREE AND FAST DELIVERY Service')}
           </h2>
           <p className="text-center font-poppins text-sm">
-            Giao hàng miễn phí cho tất cả các đơn hàng trên $140
+            {t('Description FREE AND FAST DELIVERY Service')}
           </p>
         </div>
       </div>
@@ -33,10 +36,10 @@ function ServiceSection() {
         </div>
         <div>
           <h2 className="mb-2 text-center font-poppins text-xl font-semibold uppercase text-black">
-            DỊCH VỤ KHÁCH HÀNG 24/7
+            {t('Heading 24/7 CUSTOMER SERVICE Service')}
           </h2>
           <p className="text-center font-poppins text-sm">
-            Hỗ trợ khách hàng một cách thân thiện 24/7
+            {t('Description 24/7 CUSTOMER SERVICE Service')}
           </p>
         </div>
       </div>
@@ -46,10 +49,10 @@ function ServiceSection() {
         </div>
         <div>
           <h2 className="mb-2 text-center font-poppins text-xl font-semibold uppercase text-black">
-            Đảm bảo hoàn trả tiền
+            {t('Heading MONEY BACK GUARANTEE Service')}
           </h2>
           <p className="text-center font-poppins text-sm">
-            Chúng tôi trả lại tiền trong vòng 30 ngày
+            {t('Description MONEY BACK GUARANTEE Service')}
           </p>
         </div>
       </div>

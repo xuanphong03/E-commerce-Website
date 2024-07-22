@@ -4,8 +4,11 @@ import ProductImage from '~/assets/images/product01.png';
 import ProductItem from '~/components/ProductItem';
 import Skeleton from '~/components/Skeleton/Skeleton';
 import productApi from '~/apis/productApi';
+import { useTranslation } from 'react-i18next';
 
 export default function FlashSalesSection() {
+  const { t } = useTranslation('home');
+
   const [timer, setTimer] = useState(() => {
     const countdownDate = new Date('July 30, 2024 00:00:00').getTime();
     const now = new Date().getTime();
@@ -26,14 +29,14 @@ export default function FlashSalesSection() {
   const [productsList, setProductsList] = useState([]);
   const [loading, setLoading] = useState(null);
 
-  useEffect(() => {
-    setLoading(true);
-    (async () => {
-      const { products } = await productApi.getAll();
-      setProductsList(products);
-    })();
-    setLoading(false);
-  }, []);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   (async () => {
+  //     const { products } = await productApi.getAll();
+  //     setProductsList(products);
+  //   })();
+  //   setLoading(false);
+  // }, []);
 
   const interval = useRef();
 
@@ -74,36 +77,44 @@ export default function FlashSalesSection() {
   return (
     <section className="border-b border-solid border-[#b2b2b2]">
       <div className="mb-6">
-        <SectionTag content="Trong hôm nay" />
+        <SectionTag content={t('Subtitle Flash Sales')} />
       </div>
       <div className="mb-10 flex items-end gap-20">
         <h2 className="font-inter text-4xl font-semibold tracking-[1.44px]">
-          Flash Sales
+          {t('Title Flash Sales')}
         </h2>
         <div className="flex items-center gap-5">
           <div>
-            <h4 className="font-poppins text-xs font-medium">Days</h4>
+            <h4 className="text-center font-poppins text-xs font-medium">
+              {t('Days Timer')}
+            </h4>
             <p className="font-inter text-[32px] font-bold leading-[32px] tracking-[1.28px]">
               {timer.days < 10 ? '0' + timer.days : timer.days}
             </p>
           </div>
           <div className="text-2xl font-bold text-[#E07575]">:</div>
           <div>
-            <h4 className="font-poppins text-xs font-medium">Hours</h4>
+            <h4 className="text-center font-poppins text-xs font-medium">
+              {t('Hours Timer')}
+            </h4>
             <p className="font-inter text-[32px] font-bold leading-[32px] tracking-[1.28px]">
               {timer.hours < 10 ? '0' + timer.hours : timer.hours}
             </p>
           </div>
           <div className="text-2xl font-bold text-[#E07575]">:</div>
           <div>
-            <h4 className="font-poppins text-xs font-medium">Minutes</h4>
+            <h4 className="text-center font-poppins text-xs font-medium">
+              {t('Minutes Timer')}
+            </h4>
             <p className="font-inter text-[32px] font-bold leading-[32px] tracking-[1.28px]">
               {timer.minutes < 10 ? '0' + timer.minutes : timer.minutes}
             </p>
           </div>
           <div className="text-2xl font-bold text-[#E07575]">:</div>
           <div>
-            <h4 className="font-poppins text-xs font-medium">Seconds</h4>
+            <h4 className="text-center font-poppins text-xs font-medium">
+              {t('Seconds Timer')}
+            </h4>
             <p className="font-inter text-[32px] font-bold leading-[32px] tracking-[1.28px]">
               {timer.seconds < 10 ? '0' + timer.seconds : timer.seconds}
             </p>
@@ -111,7 +122,7 @@ export default function FlashSalesSection() {
         </div>
       </div>
       <div className="grid grid-cols-12 gap-16">
-        {!loading &&
+        {/* {!loading &&
           productsList.slice(0, 4).map((product) => (
             <div className="col-span-3" key={product.id}>
               <ProductItem
@@ -133,9 +144,9 @@ export default function FlashSalesSection() {
                 <Skeleton />
               </div>
             );
-          })}
+          })} */}
 
-        {/* {[...Array(4)].map((_, index) => {
+        {[...Array(4)].map((_, index) => {
           return (
             <div className="col-span-3" key={index}>
               <ProductItem
@@ -149,10 +160,10 @@ export default function FlashSalesSection() {
               />
             </div>
           );
-        })} */}
+        })}
       </div>
       <button className="mx-auto my-[60px] flex items-center justify-center rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-10 py-2 font-poppins font-medium text-[#FAFAFA] transition-colors hover:bg-[#FAFAFA] hover:text-[#DB4444]">
-        Xem tất cả
+        {t('View All Products Button')}
       </button>
     </section>
   );

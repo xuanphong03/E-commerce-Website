@@ -7,8 +7,10 @@ import NewTag from '../NewTag/NewTag';
 
 import { BsTrash3 } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function ProductItem(props) {
+  const { t } = useTranslation();
   const {
     productId,
     productImage,
@@ -44,7 +46,7 @@ export default function ProductItem(props) {
           className={`absolute bottom-0 left-0 right-0 flex cursor-pointer items-center justify-center rounded-b bg-black text-white hover:bg-[#DB4444] ${showAddToCart ? 'h-10' : 'h-0'} transition-all`}
         >
           <p className={`${showAddToCart ? 'block' : 'hidden'} py-2`}>
-            Thêm vào giỏ hàng
+            {t('Add To Cart Button')}
           </p>
         </div>
         <div className="absolute right-3 top-3">

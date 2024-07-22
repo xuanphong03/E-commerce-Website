@@ -6,6 +6,7 @@ import { store } from './app/store';
 import { SnackbarProvider } from 'notistack';
 import { BrowserRouter } from 'react-router-dom';
 import './index.css';
+import '~/i18n/i18n.js';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

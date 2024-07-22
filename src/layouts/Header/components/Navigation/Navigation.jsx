@@ -1,28 +1,30 @@
 import { NavLink } from 'react-router-dom';
 import './Navigation.css';
-
-const NavList = [
-  {
-    path: '/',
-    name: 'Trang chủ',
-  },
-  {
-    path: '/contact',
-    name: 'Liên hệ',
-  },
-  {
-    path: '/about',
-    name: 'Giới thiệu',
-  },
-  {
-    path: '/sign-up',
-    name: 'Đăng ký',
-  },
-];
-
+import { useTranslation } from 'react-i18next';
 function Navigation() {
+  const { t } = useTranslation('header');
+
+  const NavList = [
+    {
+      path: '/',
+      name: `${t('HOME')}`,
+    },
+    {
+      path: '/contact',
+      name: `${t('CONTACT')}`,
+    },
+    {
+      path: '/about',
+      name: `${t('ABOUT')}`,
+    },
+    {
+      path: '/sign-up',
+      name: `${t('SIGN UP')}`,
+    },
+  ];
+
   return (
-    <nav className="hidden lg:block">
+    <nav className="hidden font-inter lg:block">
       <ul className="flex items-center gap-12">
         {NavList.map((navItem, index) => (
           <li key={index} className="relative">
