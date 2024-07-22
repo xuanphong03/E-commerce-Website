@@ -2,19 +2,21 @@ import ContactForm from './components/ContactForm/';
 import ContactByPhone from './components/ContactInfo/ContactByPhone';
 import ContactByEmail from './components/ContactInfo/ContactByEmail';
 import Breadcrumbs from '~/components/Breadcrumbs/Breadcrumbs';
-const BREAD_CRUMBS = [
-  {
-    id: 1,
-    to: '/',
-    name: 'Trang chủ',
-  },
-  {
-    id: 2,
-    to: '/about',
-    name: 'Giới thiệu',
-  },
-];
+import { useTranslation } from 'react-i18next';
+
 export default function ContactPage() {
+  const { t } = useTranslation('contact');
+  const BREAD_CRUMBS = [
+    {
+      to: '/',
+      name: `${t('Breadcrumbs Home')}`,
+    },
+    {
+      to: '/about',
+      name: `${t('Breadcrumbs Contact')}`,
+    },
+  ];
+
   const handleSubmitContactForm = (data) => {
     // handle submit form data to backend
   };
@@ -24,12 +26,12 @@ export default function ContactPage() {
         <Breadcrumbs pathList={BREAD_CRUMBS} />
       </div>
       <section className="grid grid-cols-12 gap-10 pb-32 pt-10">
-        <div className="shadow-form col-span-4 px-9 py-10">
+        <div className="col-span-4 px-9 py-10 shadow-form">
           <ContactByPhone />
           <hr className="my-8 bg-black"></hr>
           <ContactByEmail />
         </div>
-        <div className="shadow-form col-span-8 px-8 py-10">
+        <div className="col-span-8 px-8 py-10 shadow-form">
           <ContactForm onSubmit={handleSubmitContactForm} />
         </div>
       </section>

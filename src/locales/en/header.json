@@ -4,5 +4,10 @@
   "HOME": "Home",
   "CONTACT": "Contact",
   "ABOUT": "About",
-  "SIGN UP": "Sign Up"
+  "SIGN UP": "Sign Up",
+  "Dropdown Manage My Account": "Manage My Account",
+  "Dropdown My Order": "My Order",
+  "Dropdown My Cancellations": "My Cancellations",
+  "Dropdown My Reviews": "My Reviews",
+  "Dropdown Logout": "Logout"
 }

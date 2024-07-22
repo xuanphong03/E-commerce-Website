@@ -1,8 +1,13 @@
 {
-  "Promotions": "Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!",
+  "Promotions": "Mùa hè giảm giá cho tất cả đồ bơi và miễn phí giao hàng nhanh - GIẢM GIÁ 50%!",
   "Search product placeholder": "Bạn đang tìm kiếm cái gì?",
   "HOME": "Trang chủ",
   "CONTACT": "Liên hệ",
   "ABOUT": "Giới thiệu",
-  "SIGN UP": "Đăng ký"
+  "SIGN UP": "Đăng ký",
+  "Dropdown Manage My Account": "Quản lý tài khoản",
+  "Dropdown My Order": "Đơn hàng của tôi",
+  "Dropdown My Cancellations": "Đơn hàng đã hủy",
+  "Dropdown My Reviews": "Đánh giá đơn hàng",
+  "Dropdown Logout": "Đăng xuất"
 }

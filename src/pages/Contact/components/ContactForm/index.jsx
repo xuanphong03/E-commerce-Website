@@ -8,12 +8,14 @@ import ContactInput from '../input-controls/ContactInput';
 import ContactMessage from '../input-controls/ContactMessage';
 import { useEffect } from 'react';
 import { regex } from '~/constants/regex';
+import { useTranslation } from 'react-i18next';
 
 ContactForm.propTypes = {
   onSubmit: PropTypes.func,
 };
 
 function ContactForm({ onSubmit }) {
+  const { t } = useTranslation('contact');
   const schema = yup.object().shape({
     contactFullName: yup
       .string()
@@ -65,7 +67,7 @@ function ContactForm({ onSubmit }) {
         <div className="max-w-[32%] basis-[32%]">
           <ContactInput
             id="fullName-contact"
-            label="Họ và tên"
+            label={t('Placeholder Your Name Input Field')}
             register={{ ...register('contactFullName') }}
             errorMessage={errors.contactFullName?.message}
             isRequired
@@ -74,7 +76,7 @@ function ContactForm({ onSubmit }) {
         <div className="max-w-[32%] basis-[32%]">
           <ContactInput
             id="email-contact"
-            label="Email"
+            label={t('Placeholder Your Email Input Field')}
             register={{ ...register('contactEmail') }}
             errorMessage={errors.contactEmail?.message}
             isRequired
@@ -83,7 +85,7 @@ function ContactForm({ onSubmit }) {
         <div className="max-w-[32%] basis-[32%]">
           <ContactInput
             id="phoneNumber-contact"
-            label="Số điện thoại"
+            label={t('Placeholder Your Phone Input Field')}
             register={{ ...register('contactPhoneNumber') }}
             errorMessage={errors.contactPhoneNumber?.message}
             isRequired
@@ -93,7 +95,7 @@ function ContactForm({ onSubmit }) {
       <div className="mb-8 max-w-full basis-full">
         <ContactMessage
           id="message-contact"
-          label="Tin nhắn"
+          label={t('Placeholder Your Message Input Field')}
           register={{ ...register('contactMessage') }}
           errorMessage={errors.contactMessage?.message}
         />
