@@ -3,10 +3,14 @@ import { initReactI18next } from 'react-i18next';
 import HOME_EN from '~/locales/en/home.json';
 import ABOUT_EN from '~/locales/en/about.json';
 import HEADER_EN from '~/locales/en/header.json';
+import CONTACT_EN from '~/locales/en/contact.json';
+import AUTHENTICATION_EN from '~/locales/en/authentication.json';
 
 import HOME_VI from '~/locales/vi/home.json';
 import ABOUT_VI from '~/locales/vi/about.json';
 import HEADER_VI from '~/locales/vi/header.json';
+import CONTACT_VI from '~/locales/vi/contact.json';
+import AUTHENTICATION_VI from '~/locales/vi/authentication.json';
 
 export const locales = {
   en: 'English',
@@ -21,11 +25,15 @@ const resources = {
     home: HOME_EN,
     about: ABOUT_EN,
     header: HEADER_EN,
+    contact: CONTACT_EN,
+    auth: AUTHENTICATION_EN,
   },
   vi: {
     home: HOME_VI,
     about: ABOUT_VI,
     header: HEADER_VI,
+    contact: CONTACT_VI,
+    auth: AUTHENTICATION_VI,
   },
 };
 
