@@ -3,6 +3,7 @@ import Breadcrumbs from '~/components/Breadcrumbs/Breadcrumbs';
 import HeaderTable from './components/HeaderTable';
 import DataTable from './components/CartItem';
 import CartItem from './components/CartItem';
+import { Link } from 'react-router-dom';
 
 const paths = [
   {
@@ -97,9 +98,11 @@ export default function CartPage() {
               <span>$1750</span>
             </div>
           </div>
-          <button className="mx-auto flex h-14 items-center justify-center rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-12 py-4 font-poppins font-medium text-[#fafafa] transition-colors hover:bg-[#fafafa] hover:text-[#DB4444]">
-            Thanh toán hóa đơn
-          </button>
+          <Link to="/checkout">
+            <button className="mx-auto flex h-14 items-center justify-center rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-12 py-4 font-poppins font-medium text-[#fafafa] transition-colors hover:bg-[#fafafa] hover:text-[#DB4444]">
+              Thanh toán hóa đơn
+            </button>
+          </Link>
         </div>
       </div>
     </main>
