@@ -12,6 +12,7 @@ import WishListPage from './pages/WishList';
 import CartPage from './pages/Cart';
 import ProductsList from './pages/Products/ProductsList';
 import ProductDetail from './pages/Products/ProductDetail';
+import OrdersPage from './pages/Order';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/my-orders/:orderStatus/*" element={<OrdersPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/sign-in" element={<SignInPage />} />
