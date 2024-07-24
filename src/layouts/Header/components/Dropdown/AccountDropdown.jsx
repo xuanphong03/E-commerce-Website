@@ -15,14 +15,9 @@ export default function AccountDropdown() {
       name: `${t('Dropdown Manage My Account')}`,
     },
     {
-      to: '/my-orders',
+      to: '/my-orders/all',
       pathIcon: OrderIcon,
       name: `${t('Dropdown My Order')}`,
-    },
-    {
-      to: '/my-cancelation',
-      pathIcon: CancelIcon,
-      name: `${t('Dropdown My Cancellations')}`,
     },
     {
       to: '/my-reviews',

@@ -23,7 +23,7 @@ function InputField({ id, label, errorMessage, register, autofocus = false }) {
         autoFocus={autofocus}
       />
       <label
-        htmlFor="signup-name"
+        htmlFor={id}
         className="pointer-events-none absolute left-1 top-1/2 -translate-y-1/2 text-[#999999] transition-all"
       >
         {label}
