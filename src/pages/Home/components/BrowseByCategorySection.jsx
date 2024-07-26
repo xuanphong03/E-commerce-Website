@@ -65,7 +65,7 @@ export default function BrowseByCategorySection() {
             >
               <Link
                 className="flex flex-col items-center gap-4"
-                to={`/product?category=${category.name.toLocaleLowerCase()}`}
+                to={`/products/${category.name.toLocaleLowerCase()}`}
               >
                 <span className="text-5xl">{category.icon}</span>
                 <p>{category.name}</p>
