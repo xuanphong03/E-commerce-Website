@@ -10,10 +10,10 @@ import SignInPage from './pages/Auth/SignIn';
 import ErrorPage from './pages/Error';
 import WishListPage from './pages/WishList';
 import CartPage from './pages/Cart';
-import ProductsList from './pages/Products/ProductsList';
-import ProductDetail from './pages/Products/ProductDetail';
+
 import OrdersPage from './pages/Order';
 import CheckOutPage from './pages/CheckOut/CheckOutPage';
+import Product from './pages/Products';
 
 function App() {
   return (
@@ -29,8 +29,8 @@ function App() {
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/sign-in" element={<SignInPage />} />
         <Route path="/wishlist" element={<WishListPage />} />
-        <Route path="/products" element={<ProductsList />} />
-        <Route path="/products-detail/:productId" element={<ProductDetail />} />
+        <Route path="/products/*" element={<Product />} />
+
         <Route path="*" element={<ErrorPage />} />
       </Routes>
       <ToastContainer />

@@ -78,7 +78,6 @@ function CheckOutPage(props) {
           <InputPayment
             id="payment-phoneNumber"
             label="Số điện thoại"
-            autofocus={true}
             required
             register={{ ...register('phoneNumber') }}
             errorMessage={errors.phoneNumber?.message}
@@ -87,7 +86,6 @@ function CheckOutPage(props) {
           <InputPayment
             id="payment-email"
             label="Email"
-            autofocus={true}
             required
             register={{ ...register('email') }}
             errorMessage={errors.email?.message}
@@ -96,7 +94,6 @@ function CheckOutPage(props) {
           <InputPayment
             id="payment-address"
             label="Địa chỉ giao hàng"
-            autofocus={true}
             required
             register={{ ...register('address') }}
             errorMessage={errors.address?.message}

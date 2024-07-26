@@ -140,7 +140,7 @@ export default function Header() {
                 Exclusive
               </Link>
             </div>
-            <Navigation />
+            <Navigation authenticated={isAuthenticated} />
             <div className="flex w-full items-center justify-between gap-8 lg:w-auto lg:justify-normal">
               <SearchBox />
 

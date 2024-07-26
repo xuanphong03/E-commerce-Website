@@ -5,10 +5,12 @@ import ProductItem from '~/components/ProductItem';
 import Skeleton from '~/components/Skeleton/Skeleton';
 import productApi from '~/apis/productApi';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import queryString from 'query-string';
 
 export default function FlashSalesSection() {
   const { t } = useTranslation('home');
-
+  const navigate = useNavigate();
   const [timer, setTimer] = useState(() => {
     const countdownDate = new Date('July 30, 2024 00:00:00').getTime();
     const now = new Date().getTime();
@@ -73,6 +75,16 @@ export default function FlashSalesSection() {
       clearInterval(interval.current);
     };
   }, []);
+
+  const handleViewAllProducts = () => {
+    const filters = {
+      _page: 1,
+      _limit: 16,
+      _sort: 'ASC',
+      isPromotion: 'true',
+    };
+    navigate(`/products/promotion?${queryString.stringify(filters)}`);
+  };
 
   return (
     <section className="border-b border-solid border-[#b2b2b2]">
@@ -162,7 +174,10 @@ export default function FlashSalesSection() {
           );
         })}
       </div>
-      <button className="mx-auto my-[60px] flex items-center justify-center rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-10 py-2 font-poppins font-medium text-[#FAFAFA] transition-colors hover:bg-[#FAFAFA] hover:text-[#DB4444]">
+      <button
+        onClick={handleViewAllProducts}
+        className="mx-auto my-[60px] flex items-center justify-center rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-10 py-2 font-poppins font-medium text-[#FAFAFA] transition-colors hover:bg-[#FAFAFA] hover:text-[#DB4444]"
+      >
         {t('View All Products Button')}
       </button>
     </section>
