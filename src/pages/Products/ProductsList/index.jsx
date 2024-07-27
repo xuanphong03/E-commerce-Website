@@ -11,7 +11,7 @@ import productApi from '~/apis/productApi';
 
 ProductsList.propTypes = {};
 
-function ProductsList(props) {
+function ProductsList() {
   const navigate = useNavigate();
   const location = useLocation();
   const { type } = useParams();
@@ -26,8 +26,6 @@ function ProductsList(props) {
       isReleased: params.isReleased === 'true',
     };
   }, [location.search]);
-
-  console.log(queryParams);
 
   const [productsList, setProductsList] = useState([]);
   const [pagination, setPagination] = useState({

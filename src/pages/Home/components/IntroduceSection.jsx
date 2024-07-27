@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -8,10 +8,24 @@ import Banner03 from '~/assets/images/banner03.jpg';
 import Banner04 from '~/assets/images/banner04.jpg';
 import Banner05 from '~/assets/images/banner05.jpg';
 import { useTranslation } from 'react-i18next';
+import { useMemo } from 'react';
+import queryString from 'query-string';
 
 export default function IntroduceSection() {
   const { t } = useTranslation('home');
-  console.log(t('Aside Category Phones'));
+  const location = useLocation();
+  const queryParams = useMemo(() => {
+    const params = queryString.parse(location.search);
+    return {
+      ...params,
+      _page: Number.parseInt(params._page) || 1,
+      _limit: Number.parseInt(params._limit) || 16,
+      _sort: params._sort || 'ASC',
+      isPromotion: params.isPromotion === 'true',
+      isReleased: params.isReleased === 'true',
+    };
+  }, [location.search]);
+
   const MENU = [
     {
       path: 'phones',
@@ -64,13 +78,16 @@ export default function IntroduceSection() {
     autoplaySpeed: 2000,
     slidesToScroll: 1,
   };
+
   return (
     <section className="grid grid-cols-12 pb-[140px]">
       <aside className="col-span-2 border-r border-solid border-[#D9D9D9] pr-4 pt-10">
         <ul>
           {MENU.map((menuItem, index) => (
             <li key={index} className="mb-4 font-poppins hover:text-[#DB4444]">
-              <Link to={`/products?category=${menuItem.path}`}>
+              <Link
+                to={`/products/${menuItem.path}?${queryString.stringify(queryParams)}`}
+              >
                 {menuItem.name}
               </Link>
             </li>

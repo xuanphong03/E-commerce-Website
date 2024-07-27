@@ -10,9 +10,10 @@ function FilterByRangePrice({ onChange }) {
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (value < 0 || value % 1 !== 0) return;
-    const newRangePrice = { ...rangePrice, [name]: +value };
+    const name = e.target.name;
+    const price = Number(e.target.value);
+    if (price < 0 || price % 1 !== 0) return;
+    const newRangePrice = { ...rangePrice, [name]: price };
     setRangePrice(newRangePrice);
     if (onChange) {
       onChange(newRangePrice);
@@ -29,7 +30,7 @@ function FilterByRangePrice({ onChange }) {
             onChange={handleChange}
             value={rangePrice['priceGte']}
             name="priceGte"
-            type="number"
+            type="text"
             className="w-full rounded border border-solid border-black px-2 py-1 outline-blue-500"
           />
         </div>
@@ -39,7 +40,7 @@ function FilterByRangePrice({ onChange }) {
             onChange={handleChange}
             value={rangePrice['priceLte']}
             name="priceLte"
-            type="number"
+            type="text"
             className="w-full rounded border border-solid border-black px-2 py-1 outline-blue-500"
           />
         </div>
