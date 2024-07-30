@@ -4,25 +4,25 @@ import { useDispatch } from 'react-redux';
 import signupBackground from '~/assets/images/signup-bg.png';
 import { register } from '../userSlice';
 import SignUpForm from './SignUpForm';
+import { useNavigate } from 'react-router-dom';
 
 export default function SignUpPage() {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmitSignUpForm = async (data) => {
     try {
-      // auto set user = email
-      data.username = data.email;
-
       const action = register(data);
       const resultAction = await dispatch(action);
       const user = unwrapResult(resultAction);
 
       // do something here when register successfully
-      enqueueSnackbar('Register successfully!!! 🥳🥳🥳', {
+      enqueueSnackbar('Đăng ký thành công!!! 🥳🥳🥳', {
         variant: 'success',
       });
+      // Chuyển hướng về trang Home
+      navigate('/');
     } catch (error) {
       enqueueSnackbar(error.message, { variant: 'error' });
     }

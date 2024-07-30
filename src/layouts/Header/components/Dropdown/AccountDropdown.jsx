@@ -3,11 +3,16 @@ import OrderIcon from '~/assets/icons/Group.svg';
 import CancelIcon from '~/assets/icons/icon-cancel.svg';
 import StarIcon from '~/assets/icons/Icon-Reviews.svg';
 import LogoutIcon from '~/assets/icons/Icon-logout.svg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
+import { logout } from '~/pages/Auth/userSlice';
 
 export default function AccountDropdown() {
   const { t } = useTranslation('header');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const DropdownMenu = [
     {
       to: '/account',
@@ -24,12 +29,14 @@ export default function AccountDropdown() {
       pathIcon: StarIcon,
       name: `${t('Dropdown My Reviews')}`,
     },
-    {
-      to: '/',
-      pathIcon: LogoutIcon,
-      name: `${t('Dropdown Logout')}`,
-    },
   ];
+
+  const handleLogoutAccount = () => {
+    const action = logout();
+    dispatch(action);
+    navigate('/');
+  };
+
   return (
     <ul className="min-w-40 font-poppins lg:min-w-52">
       {DropdownMenu.map((menuItem, index) => (
@@ -51,6 +58,19 @@ export default function AccountDropdown() {
           </Link>
         </li>
       ))}
+      <li
+        onClick={handleLogoutAccount}
+        className="border-b border-solid border-transparent py-2 transition-colors hover:border-white lg:mb-2"
+      >
+        <div className="flex items-center gap-6">
+          <div className="flex size-6 items-center justify-center">
+            <img className="max-h-full w-auto" alt="icon" src={LogoutIcon} />
+          </div>
+          <p className="black text-xs font-normal leading-normal text-[#fafafa] lg:text-sm">
+            {t('Dropdown Logout')}
+          </p>
+        </div>
+      </li>
     </ul>
   );
 }

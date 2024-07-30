@@ -7,11 +7,12 @@ import StarRating from '../StarRating';
 
 import { useTranslation } from 'react-i18next';
 import { BsTrash3 } from 'react-icons/bs';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { formatPrice } from '~/utils/formatPrice';
 
 export default function ProductItem(props) {
   const { t } = useTranslation();
+  const { type } = useParams();
   const {
     productId,
     productImage,
@@ -77,7 +78,7 @@ export default function ProductItem(props) {
                   <FaHeart className="text-[#DB4444]" />
                 )}
               </button>
-              <Link to={`/products/${productId}`}>
+              <Link to={`/products/${type}/${productId}`}>
                 <button className="flex h-8 w-8 items-center justify-center rounded-full bg-white transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]">
                   <FiEye />
                 </button>

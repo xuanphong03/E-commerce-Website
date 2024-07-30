@@ -1,2 +1,1 @@
-export const API_ROOT = 'http://localhost:8080';
-// export const API_ROOT = 'https://api.ezfrontend.com/';
+export const API_ROOT = 'http://localhost:8080/api/v1/';

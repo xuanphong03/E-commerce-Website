@@ -18,7 +18,7 @@ function CartItem({ data }) {
   };
 
   return (
-    <div className="shadow-table mt-10 flex w-full px-10 py-5">
+    <div className="mt-10 flex w-full px-10 py-5 shadow-table">
       <div className="flex max-w-[25%] basis-1/4 items-center gap-5">
         <div className="h-10">
           <img

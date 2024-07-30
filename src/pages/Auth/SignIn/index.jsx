@@ -5,10 +5,11 @@ import { login, register } from '../userSlice';
 import { useDispatch } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
 
 export default function SignInPage() {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmitSignInForm = async (data) => {
@@ -16,6 +17,7 @@ export default function SignInPage() {
       const action = login(data);
       const resultAction = await dispatch(action);
       const user = unwrapResult(resultAction);
+      navigate('/');
     } catch (error) {
       enqueueSnackbar(error.message, { variant: 'error' });
     }

@@ -12,6 +12,7 @@ import SearchBox from './components/Search/SearchBox';
 import { IoIosArrowDown } from 'react-icons/io';
 import { useTranslation } from 'react-i18next';
 import { locales } from '~/i18n/i18n';
+import { useSelector } from 'react-redux';
 
 const NavList = [
   {
@@ -42,14 +43,15 @@ export default function Header() {
   const [isShowedMobileNavigation, setShowMobileNavigation] = useState(false);
   const [showMenuLanguage, setShowMenuLanguage] = useState(false);
   const currentLanguage = [locales[i18n.language]];
-  const isAuthenticated = true;
+  const infoUser = useSelector((state) => state.user.current);
+  const isAuthenticated = !!infoUser.id;
 
   const accountDropdownRef = useRef(null);
   const menuLanguageRef = useRef(null);
 
   useEffect(() => {
     let handler = (e) => {
-      if (!accountDropdownRef.current.contains(e.target)) {
+      if (isAuthenticated && !accountDropdownRef.current.contains(e.target)) {
         setShowAccountDropdown(false);
       }
       if (!menuLanguageRef.current.contains(e.target)) {
@@ -60,6 +62,7 @@ export default function Header() {
     return () => {
       document.removeEventListener('mousedown', handler);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChangeLanguage = (e) => {
@@ -144,40 +147,41 @@ export default function Header() {
             <div className="flex w-full items-center justify-between gap-8 lg:w-auto lg:justify-normal">
               <SearchBox />
 
-              <div className="flex items-center gap-6 text-xl">
-                <Link to="/wishlist">
-                  <Tooltip infoText="Danh sách yêu thích">
-                    <div className="flex h-8 w-8 cursor-pointer items-center">
-                      <img
-                        alt="icon"
-                        className="max-w-full object-cover"
-                        src={HeartIcon}
-                      />
-                    </div>
-                  </Tooltip>
-                </Link>
-                <Link to="/cart">
-                  <Tooltip infoText="Giỏ hàng">
-                    <div className="relative flex h-7 w-7 cursor-pointer items-center">
-                      <img
-                        alt="icon"
-                        className="max-w-full object-cover"
-                        src={CartIcon}
-                        ref={accountDropdownRef}
-                      />
-                      <span className="absolute -right-2 -top-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500 text-xs text-white">
-                        1
-                      </span>
-                    </div>
-                  </Tooltip>
-                </Link>
-                <div
-                  onClick={() => setShowMobileNavigation(true)}
-                  className="flex h-7 w-7 cursor-pointer items-center justify-center text-2xl lg:hidden"
-                >
-                  <MdMenu />
-                </div>
-                {isAuthenticated && (
+              {isAuthenticated && (
+                <div className="flex items-center gap-6 text-xl">
+                  <Link to="/wishlist">
+                    <Tooltip infoText="Danh sách yêu thích">
+                      <div className="flex h-8 w-8 cursor-pointer items-center">
+                        <img
+                          alt="icon"
+                          className="max-w-full object-cover"
+                          src={HeartIcon}
+                        />
+                      </div>
+                    </Tooltip>
+                  </Link>
+                  <Link to="/cart">
+                    <Tooltip infoText="Giỏ hàng">
+                      <div className="relative flex h-7 w-7 cursor-pointer items-center">
+                        <img
+                          alt="icon"
+                          className="max-w-full object-cover"
+                          src={CartIcon}
+                          ref={accountDropdownRef}
+                        />
+                        <span className="absolute -right-2 -top-2 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                          1
+                        </span>
+                      </div>
+                    </Tooltip>
+                  </Link>
+                  <div
+                    onClick={() => setShowMobileNavigation(true)}
+                    className="flex h-7 w-7 cursor-pointer items-center justify-center text-2xl lg:hidden"
+                  >
+                    <MdMenu />
+                  </div>
+
                   <div
                     className="relative flex h-7 w-7 cursor-pointer items-center justify-center rounded-full"
                     ref={accountDropdownRef}
@@ -192,8 +196,8 @@ export default function Header() {
                       </div>
                     )}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
         </header>
