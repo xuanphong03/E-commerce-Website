@@ -88,6 +88,7 @@ function ProductsList() {
               return (
                 <div className="col-span-3 rounded bg-white p-2" key={index}>
                   <ProductItem
+                    productId={index}
                     productImage={ProductImage}
                     productSalePercent={40}
                     productName="HAVIT HV-G92 GamepadHAVIT HV-G92 Gamepad"

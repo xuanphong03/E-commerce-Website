@@ -5,6 +5,11 @@ const productApi = {
     const path = '/products';
     return axiosClient.get(path, { params });
   },
+
+  getDetail(params) {
+    const path = '/global/detail-ob';
+    return axiosClient.get(path, { params });
+  },
 };
 
 export default productApi;

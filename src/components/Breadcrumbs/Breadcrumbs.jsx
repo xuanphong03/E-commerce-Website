@@ -9,7 +9,7 @@ export default function Breadcrumbs({ pathList = [] }) {
           <Link
             to={path.to}
             className={`font-roboto text-sm ${isCurrentPath ? 'text-black' : 'text-[#808080]'}`}
-            key={path.id}
+            key={index}
           >
             {path.name}
             <span className="ml-2">{!isCurrentPath ? '/' : ''}</span>
