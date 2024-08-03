@@ -41,7 +41,7 @@ function Service(props) {
             </span>
           </div>
           <div className="flex flex-col items-center justify-center gap-3">
-            <h3 className="font-inter text-[32px] font-bold leading-[93.75%] tracking-[1.28px]">
+            <h3 className="text-[32px] font-bold leading-[93.75%] tracking-[1.28px]">
               {service.subtitle}
             </h3>
             <h2 className="text-center">{service.title}</h2>

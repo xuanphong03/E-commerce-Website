@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { formatPrice } from '~/utils/formatPrice';
 
 OrderedProduct.propTypes = {};
 
@@ -19,7 +20,7 @@ function OrderedProduct({
             <img alt="product" className="max-h-full" src={productImage} />
           </div>
           <div className="flex flex-col justify-between">
-            <h3 className="line-clamp-2 text-lg transition-all group-hover:text-[#DB4444] group-hover:underline">
+            <h3 className="line-clamp-2 text-base transition-all group-hover:text-[#DB4444] group-hover:underline">
               {productName}
             </h3>
             <div className="text-sm text-[#0000008a]">
@@ -33,7 +34,7 @@ function OrderedProduct({
           </div>
         </div>
         <div className="">
-          <p className="flex">Giá: {productPrice} VNĐ</p>
+          <p className="flex">Giá: {formatPrice(productPrice, 'VNĐ')} </p>
         </div>
       </Link>
     </article>

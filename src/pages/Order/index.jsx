@@ -95,7 +95,7 @@ function OrdersPage(props) {
         <div className="my-5 flex overflow-hidden rounded bg-white">
           <label
             htmlFor="search-orders"
-            className="flex size-10 cursor-pointer items-center justify-center bg-[#4e4b66] text-2xl text-white"
+            className="flex size-10 cursor-pointer items-center justify-center bg-[#4e4b66] text-xl text-white"
           >
             <IoSearchOutline />
           </label>
@@ -104,7 +104,7 @@ function OrdersPage(props) {
             onChange={handleSearchValueChange}
             placeholder="Bạn có thể tìm kiếm theo ID đơn hàng hoặc Tên sản phẩm"
             id="search-orders"
-            className="flex-1 px-4 py-2 outline-none"
+            className="flex-1 px-4 py-2 text-sm outline-none"
           />
         </div>
         <div>

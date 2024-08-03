@@ -52,7 +52,7 @@ export default function BrowseByCategorySection() {
         <SectionTag content={t('Subtitle Browse By Category')} />
       </div>
       <div className="mb-10 flex items-end gap-20">
-        <h2 className="font-inter text-4xl font-semibold tracking-[1.44px]">
+        <h2 className="text-4xl font-semibold tracking-[1.44px]">
           {t('Title Browse By Category')}
         </h2>
       </div>

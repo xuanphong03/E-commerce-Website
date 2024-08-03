@@ -7,10 +7,10 @@ function WishListSection() {
   return (
     <section className="flex flex-col gap-[60px]">
       <div className="flex items-center justify-between">
-        <h2 className="font-poppins text-xl leading-snug text-black">
+        <h2 className="text-xl leading-snug text-black">
           Danh sách yêu thích <span>(4)</span>
         </h2>
-        <button className="border-[rgba(0, 0, 0, 0.50)] flex items-center justify-center rounded border border-solid px-12 py-4 font-poppins font-medium capitalize transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]">
+        <button className="border-[rgba(0, 0, 0, 0.50)] flex items-center justify-center rounded border border-solid px-12 py-4 font-medium capitalize transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]">
           Xóa tất cả
         </button>
       </div>

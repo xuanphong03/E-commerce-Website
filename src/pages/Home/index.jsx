@@ -18,14 +18,13 @@ export default function HomePage() {
 
   return (
     <main className="bg-white">
-      <div className="mx-auto max-w-[1300px]">
-        <IntroduceSection />
+      <IntroduceSection />
+      <div className="mx-auto max-w-[1300px] py-20">
         <FlashSalesSection />
-        <BrowseByCategorySection />
-        <BestSellingSection />
-        <ExploreProductSection />
-        <FeaturedSection />
-        <ServiceSection />
+        {/* <BestSellingSection />
+        <ExploreProductSection /> */}
+        {/* <FeaturedSection /> */}
+        {/* <ServiceSection /> */}
       </div>
     </main>
   );

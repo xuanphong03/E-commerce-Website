@@ -17,7 +17,7 @@ function FeaturedSection() {
       <div className="mb-6">
         <SectionTag content={t('Subtitle New Arrival')} />
       </div>
-      <h2 className="font-inter text-4xl font-semibold tracking-[1.44px]">
+      <h2 className="text-4xl font-semibold tracking-[1.44px]">
         {t('Title New Arrival')}
       </h2>
       <div className="mt-[60px] flex h-[600px] w-full gap-8">
@@ -28,15 +28,15 @@ function FeaturedSection() {
             src={PlayStation}
           />
           <div className="absolute bottom-8 left-8 text-[#FAFAFA]">
-            <h3 className="font-inter text-2xl font-semibold leading-none tracking-[0.72px]">
+            <h3 className="text-2xl font-semibold leading-none tracking-[0.72px]">
               {t('Heading PlayStation 5 Article')}
             </h3>
-            <p className="my-4 font-poppins text-sm font-normal">
+            <p className="my-4 text-sm font-normal">
               {t('Description PlayStation 5 Article')}
             </p>
             <Link
               to="/"
-              className="font-poppins text-base font-medium capitalize text-[#FFFFFF] underline"
+              className="text-base font-medium capitalize text-[#FFFFFF] underline"
             >
               Shop now
             </Link>
@@ -50,15 +50,15 @@ function FeaturedSection() {
               src={WomenCollection}
             />
             <div className="absolute bottom-6 left-6 text-[#FAFAFA]">
-              <h3 className="font-inter text-2xl font-semibold leading-none tracking-[0.72px]">
+              <h3 className="text-2xl font-semibold leading-none tracking-[0.72px]">
                 {t('Heading Women’s Collections Article')}
               </h3>
-              <p className="my-4 font-poppins text-sm font-normal">
+              <p className="my-4 text-sm font-normal">
                 {t('Description Women’s Collections Article')}
               </p>
               <Link
                 to="/"
-                className="font-poppins text-base font-medium capitalize text-[#FFFFFF] underline"
+                className="text-base font-medium capitalize text-[#FFFFFF] underline"
               >
                 Shop now
               </Link>
@@ -72,15 +72,15 @@ function FeaturedSection() {
                 src={Speakers}
               />
               <div className="absolute bottom-6 left-6 text-[#FAFAFA]">
-                <h3 className="font-inter text-2xl font-semibold leading-none tracking-[0.72px]">
+                <h3 className="text-2xl font-semibold leading-none tracking-[0.72px]">
                   {t('Heading Speakers Article')}
                 </h3>
-                <p className="my-2 font-poppins text-sm font-normal">
+                <p className="my-2 text-sm font-normal">
                   {t('Heading Speakers Article')}
                 </p>
                 <Link
                   to="/"
-                  className="font-poppins text-base font-medium capitalize text-[#FFFFFF] underline"
+                  className="text-base font-medium capitalize text-[#FFFFFF] underline"
                 >
                   Shop now
                 </Link>
@@ -93,15 +93,15 @@ function FeaturedSection() {
                 src={Perfume}
               />
               <div className="absolute bottom-6 left-6 text-[#FAFAFA]">
-                <h3 className="font-inter text-2xl font-semibold leading-none tracking-[0.72px]">
+                <h3 className="text-2xl font-semibold leading-none tracking-[0.72px]">
                   {t('Heading Perfume Article')}
                 </h3>
-                <p className="my-2 font-poppins text-sm font-normal">
+                <p className="my-2 text-sm font-normal">
                   {t('Heading Perfume Article')}
                 </p>
                 <Link
                   to="/"
-                  className="font-poppins text-base font-medium capitalize text-[#FFFFFF] underline"
+                  className="text-base font-medium capitalize text-[#FFFFFF] underline"
                 >
                   Shop now
                 </Link>

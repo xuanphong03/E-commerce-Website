@@ -13,7 +13,7 @@ function NavLinksList({ data }) {
         <li className="flex-1" key={_id}>
           <NavLink
             className={({ isActive }) =>
-              `${isActive ? 'bg-[#DB4444] text-[#FAFAFA]' : ''} flex w-full items-center justify-center px-5 py-2 text-lg`
+              `${isActive ? 'bg-[#DB4444] text-[#FAFAFA]' : ''} flex w-full items-center justify-center px-5 py-2 text-sm`
             }
             to={navLink.path}
             end

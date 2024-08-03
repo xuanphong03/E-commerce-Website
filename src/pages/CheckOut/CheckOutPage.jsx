@@ -50,6 +50,8 @@ function CheckOutPage(props) {
 
   const formSubmit = async (data) => {
     setInfoBuyer(data);
+    console.log(data);
+
     if (!methodPayment) {
       alert('vui lòng chọn phương thức thanh toán');
       return;
@@ -58,7 +60,7 @@ function CheckOutPage(props) {
 
   return (
     <main className="mx-auto max-w-[1300px] pb-20 pt-4">
-      <h1 className="my-12 font-inter text-[36px] font-medium leading-[30px] tracking-[1.44px]">
+      <h1 className="my-12 text-[36px] font-medium leading-[30px] tracking-[1.44px]">
         Chi tiết thanh toán
       </h1>
       <form
@@ -131,7 +133,7 @@ function CheckOutPage(props) {
                     src={TemplateImage01}
                   />
                 </div>
-                <div className="flex flex-1 items-center justify-between font-poppins">
+                <div className="flex flex-1 items-center justify-between">
                   <h3>
                     LCD Monitor <span>x1</span>
                   </h3>
@@ -148,7 +150,7 @@ function CheckOutPage(props) {
                     src={TemplateImage04}
                   />
                 </div>
-                <div className="flex flex-1 items-center justify-between font-poppins">
+                <div className="flex flex-1 items-center justify-between">
                   <h3>
                     H1 Gamepad <span>x1</span>
                   </h3>
@@ -157,7 +159,7 @@ function CheckOutPage(props) {
               </article>
             </li>
           </ul>
-          <div className="flex flex-col gap-4 font-poppins">
+          <div className="flex flex-col gap-4">
             <p className="flex justify-between">
               Tổng tiền sản phẩm <span>$1750</span>
             </p>
@@ -170,7 +172,7 @@ function CheckOutPage(props) {
               Tổng hóa đơn <span>$1750</span>
             </p>
           </div>
-          <div className="flex flex-wrap justify-between font-poppins">
+          <div className="flex flex-wrap justify-between">
             <div className="mb-2 max-w-[50%] basis-1/2">
               <label className="flex items-center gap-2">
                 <input
@@ -226,22 +228,22 @@ function CheckOutPage(props) {
               </label>
             </div>
           </div>
-          <div className="flex justify-between">
+          {/* <div className="flex justify-between">
             <input
               placeholder="Mã giảm giá..."
               className="h-10 w-3/5 rounded border border-solid border-[#2c2c2c] px-2 px-4 outline-none"
             />
             <button
               type="submit"
-              className={`flex items-center justify-center gap-4 rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-2 py-1 font-poppins font-medium text-[#FAFAFA] transition-all hover:bg-[#FAFAFA] hover:text-[#DB4444]`}
+              className={`flex items-center justify-center gap-4 rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-2 py-1 font-medium text-[#FAFAFA] transition-all hover:bg-[#FAFAFA] hover:text-[#DB4444]`}
             >
               Dùng mã giảm giá
             </button>
-          </div>
+          </div> */}
           <div>
             <button
               type="submit"
-              className={`${isSubmitting ? 'cursor-not-allowed opacity-70' : 'hover:bg-[#FAFAFA] hover:text-[#DB4444]'} flex h-10 w-full items-center justify-center gap-4 rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-8 py-2 font-poppins font-medium text-[#FAFAFA] transition-all`}
+              className={`${isSubmitting ? 'cursor-not-allowed opacity-70' : 'hover:bg-[#FAFAFA] hover:text-[#DB4444]'} flex h-10 w-full items-center justify-center gap-4 rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-8 py-2 font-medium text-[#FAFAFA] transition-all`}
             >
               {isSubmitting ? (
                 <>

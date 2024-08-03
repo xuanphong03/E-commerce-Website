@@ -13,11 +13,11 @@ function FilterByRating({ onChange }) {
 
   return (
     <div className="mb-5">
-      <h3 className="mb-2 text-lg font-medium">Theo đánh giá</h3>
+      <h3 className="mb-2 text-base font-medium">Theo đánh giá</h3>
       <ul>
         {[...Array(5)].map((_, index) => (
           <li key={index} className="mb-2">
-            <label className="flex w-fit cursor-pointer items-center gap-2 text-red-500">
+            <label className="flex w-fit cursor-pointer items-center gap-2 text-sm text-red-500">
               <input
                 onChange={handleChange}
                 type="radio"

@@ -4,7 +4,7 @@ import { FiPhone } from 'react-icons/fi';
 function ContactByPhone() {
   const { t } = useTranslation('contact');
   return (
-    <article className="font-poppins">
+    <article className="">
       <div className="flex items-center gap-4">
         <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#DB4444] text-2xl text-white">
           <FiPhone />

@@ -6,7 +6,7 @@ HeaderTable.propTypes = {
 
 function HeaderTable({ thead }) {
   return (
-    <div className="shadow-table flex justify-between px-10 py-6 font-poppins text-black">
+    <div className="flex justify-between px-10 py-6 text-black shadow-table">
       {thead.map((th, index) => (
         <h3
           key={index}

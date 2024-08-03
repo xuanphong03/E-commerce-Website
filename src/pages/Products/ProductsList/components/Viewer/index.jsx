@@ -39,12 +39,12 @@ function FilterViewer({ onChange, _filters }) {
     }
   };
   return (
-    <div className="flex h-10 w-full items-center gap-5 rounded bg-white px-5 shadow-table">
-      <div className="border-gray overflow-hidden rounded border border-solid">
+    <div className="flex w-full items-center gap-5 rounded">
+      <div className="overflow-hidden">
         <select
           onChange={handleFilterSortChange}
           name="sort"
-          className="px-2 text-sm outline-none"
+          className="border-gray rounded-full border border-solid px-2 py-1 text-sm outline-none"
         >
           <option value="ASC">Giá tăng dần</option>
           <option value="DESC">Giá giảm dần</option>

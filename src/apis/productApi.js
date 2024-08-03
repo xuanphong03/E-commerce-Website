@@ -2,7 +2,7 @@ import axiosClient from './axiosClient';
 
 const productApi = {
   getAll(params) {
-    const path = '/products';
+    const path = '/global/products?';
     return axiosClient.get(path, { params });
   },
 

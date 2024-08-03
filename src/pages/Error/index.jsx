@@ -22,10 +22,10 @@ export default function ErrorPage() {
           <Breadcrumbs pathList={paths} />
         </div>
         <div className="flex flex-col items-center">
-          <h1 className="mb-10 font-inter text-[110px] font-medium leading-[115px] tracking-[3.3px]">
+          <h1 className="mb-10 text-[110px] font-medium leading-[115px] tracking-[3.3px]">
             404 Not Found
           </h1>
-          <p className="mb-20 font-poppins">
+          <p className="mb-20">
             Không tìm thấy trang bạn đã truy cập. Bạn có thể vào trang chủ
           </p>
           <Link to="/">

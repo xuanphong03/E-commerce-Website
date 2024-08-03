@@ -5,43 +5,22 @@ import NewTag from '../NewTag/NewTag';
 import SaleTag from '../SaleTag';
 import StarRating from '../StarRating';
 
-import { useTranslation } from 'react-i18next';
 import { BsTrash3 } from 'react-icons/bs';
 import { Link, useParams } from 'react-router-dom';
 import { formatPrice } from '~/utils/formatPrice';
+import { useDispatch } from 'react-redux';
+import { addProductToCart } from '~/pages/Auth/userSlice';
 
-export default function ProductItem(props) {
-  const { t } = useTranslation();
+export default function ProductItem({ product }) {
   const { type } = useParams();
-  const {
-    productId,
-    productImage,
-    productName,
-    productPrice,
-    productSalePercent,
-    productSalePrice,
-    productReviewNumber,
-    productReviewRate,
-    favorite = false,
-    isNewProduct = false,
-    isInWishList = false,
-  } = props;
-  const { i18n } = useTranslation();
-  const [showAddToCart, setShowAddToCart] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(favorite);
 
-  let formattedProductPrice;
-  if (i18n.language === 'vi') {
-    formattedProductPrice =
-      productSalePercent > 0
-        ? formatPrice(productSalePrice * 23000, 'VNĐ')
-        : formatPrice(productPrice * 23000, 'VNĐ');
-  } else {
-    formattedProductPrice =
-      productSalePercent > 0
-        ? formatPrice(productSalePrice)
-        : formatPrice(productPrice);
-  }
+  const dispatch = useDispatch();
+  const [showAddToCart, setShowAddToCart] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(product.favorite);
+  const handleAddToCart = () => {
+    dispatch(addProductToCart(product));
+  };
+
   return (
     <article className="flex flex-col gap-4">
       <div
@@ -49,10 +28,16 @@ export default function ProductItem(props) {
         onMouseLeave={() => setShowAddToCart(false)}
         className="relative flex h-[250px] items-center justify-center rounded bg-[#F5F5F5]"
       >
-        <img alt="product image" src={productImage} className="max-h-[80%]" />
+        <img
+          alt="product image"
+          src={product.imageMain}
+          className="max-h-[80%]"
+        />
         <div className="absolute left-3 top-3">
-          <SaleTag salePercent={productSalePercent} />
-          {isNewProduct && (
+          {product.saleDiscountPercent > 0 && (
+            <SaleTag salePercent={product.saleDiscountPercent} />
+          )}
+          {product.newStatus && (
             <div className="mt-1">
               <NewTag />
             </div>
@@ -61,12 +46,15 @@ export default function ProductItem(props) {
         <div
           className={`absolute bottom-0 left-0 right-0 flex cursor-pointer items-center justify-center rounded-b bg-black text-white hover:bg-[#DB4444] ${showAddToCart ? 'h-10' : 'h-0'} transition-all`}
         >
-          <p className={`${showAddToCart ? 'block' : 'hidden'} py-2`}>
-            {t('Add To Cart Button')}
+          <p
+            onClick={handleAddToCart}
+            className={`${showAddToCart ? 'block' : 'hidden'} py-2`}
+          >
+            Thêm vào giỏ hàng
           </p>
         </div>
         <div className="absolute right-3 top-3">
-          {!isInWishList ? (
+          {!product.isInWishList ? (
             <>
               <button
                 className={`mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-white transition-colors ${!isFavorite ? 'hover:bg-[#DB4444] hover:text-[#FAFAFA]' : 'hover:border-[#DB4444]'} border-2 border-solid border-transparent`}
@@ -78,7 +66,7 @@ export default function ProductItem(props) {
                   <FaHeart className="text-[#DB4444]" />
                 )}
               </button>
-              <Link to={`/products/${type}/${productId}`}>
+              <Link to={`/products/${type}/${product.id}`}>
                 <button className="flex h-8 w-8 items-center justify-center rounded-full bg-white transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]">
                   <FiEye />
                 </button>
@@ -93,22 +81,22 @@ export default function ProductItem(props) {
       </div>
       <div>
         <h3 className="mb-2 line-clamp-1 font-medium text-black">
-          {productName}
+          {product.name}
         </h3>
-        <p className="mb-2 flex flex-wrap items-center font-poppins font-medium text-[#DB4444]">
-          {formattedProductPrice}
+        <p className="mb-2 flex flex-wrap items-center font-medium text-[#DB4444]">
+          {product.saleDiscountPercent > 0
+            ? formatPrice(product.finalPrice, 'VNĐ')
+            : formatPrice(product.originalPrice, 'VNĐ')}
           <span
-            className={`ml-3 text-[#808080] line-through ${productSalePercent <= 0 ? 'hidden' : ''}`}
+            className={`ml-3 text-[#808080] line-through ${product.saleDiscountPercent <= 0 ? 'hidden' : ''}`}
           >
-            {i18n.language === 'vi'
-              ? formatPrice(productPrice * 23000, 'VNĐ')
-              : formatPrice(productPrice)}
+            {formatPrice(product.originalPrice, 'VNĐ')}
           </span>
         </p>
         <div className="flex items-center gap-2">
-          <StarRating productReviewRate={productReviewRate} />
+          <StarRating productReviewRate={product.rating} />
           <span className="text-sm font-semibold text-[#A0A0A0]">
-            ({productReviewNumber})
+            ({product.nrating})
           </span>
         </div>
       </div>

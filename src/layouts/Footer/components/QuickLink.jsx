@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function QuickLink() {
   return (
-    <div className="w-48 font-poppins text-[#FAFAFA]">
+    <div className="w-48 text-[#FAFAFA]">
       <h2 className="mb-6 text-xl font-medium">Quick Link</h2>
       <ul className="text-sm">
         <li className="mb-4">

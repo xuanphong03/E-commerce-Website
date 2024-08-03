@@ -12,7 +12,7 @@ export default function Footer() {
         <Account />
         <QuickLink />
       </div>
-      <p className="pb-6 text-center font-poppins text-sm text-white">
+      <p className="pb-6 text-center text-sm text-white">
         Copyright ThangLong University 2024. All right reserved
       </p>
     </footer>

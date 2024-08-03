@@ -1,7 +1,6 @@
-import { toast } from 'react-toastify';
 import background from '~/assets/images/signup-bg.png';
 import SignInForm from './SignInForm';
-import { login, register } from '../userSlice';
+import { login } from '../userSlice';
 import { useDispatch } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useSnackbar } from 'notistack';
