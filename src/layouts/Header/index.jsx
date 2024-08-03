@@ -21,7 +21,7 @@ export default function Header() {
 
   useEffect(() => {
     let handler = (e) => {
-      if (isAuthenticated && !accountDropdownRef.current.contains(e.target)) {
+      if (isAuthenticated && !accountDropdownRef.current?.contains(e.target)) {
         setShowAccountDropdown(false);
       }
     };
