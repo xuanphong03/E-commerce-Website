@@ -1,15 +1,12 @@
 import UserIcon from '~/assets/icons/user2.svg';
 import OrderIcon from '~/assets/icons/Group.svg';
-import CancelIcon from '~/assets/icons/icon-cancel.svg';
 import StarIcon from '~/assets/icons/Icon-Reviews.svg';
 import LogoutIcon from '~/assets/icons/Icon-logout.svg';
 import { Link, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { logout } from '~/pages/Auth/userSlice';
 
 export default function AccountDropdown() {
-  const { t } = useTranslation('header');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -17,17 +14,17 @@ export default function AccountDropdown() {
     {
       to: '/account',
       pathIcon: UserIcon,
-      name: `${t('Dropdown Manage My Account')}`,
+      name: 'Quản lý tài khoản',
     },
     {
       to: '/my-orders/all',
       pathIcon: OrderIcon,
-      name: `${t('Dropdown My Order')}`,
+      name: 'Đơn hàng',
     },
     {
       to: '/my-reviews',
       pathIcon: StarIcon,
-      name: `${t('Dropdown My Reviews')}`,
+      name: 'Đánh giá',
     },
   ];
 
@@ -38,7 +35,7 @@ export default function AccountDropdown() {
   };
 
   return (
-    <ul className="min-w-40 font-poppins lg:min-w-52">
+    <ul className="min-w-40 lg:min-w-52">
       {DropdownMenu.map((menuItem, index) => (
         <li
           key={index}
@@ -67,7 +64,7 @@ export default function AccountDropdown() {
             <img className="max-h-full w-auto" alt="icon" src={LogoutIcon} />
           </div>
           <p className="black text-xs font-normal leading-normal text-[#fafafa] lg:text-sm">
-            {t('Dropdown Logout')}
+            Đăng xuất
           </p>
         </div>
       </li>

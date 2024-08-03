@@ -22,10 +22,10 @@ function ServiceSection() {
           <img className="max-w-full" alt="service image" src={ServiceIcon01} />
         </div>
         <div>
-          <h2 className="mb-2 text-center font-poppins text-xl font-semibold uppercase text-black">
+          <h2 className="mb-2 text-center text-xl font-semibold uppercase text-black">
             {t('Heading FREE AND FAST DELIVERY Service')}
           </h2>
-          <p className="text-center font-poppins text-sm">
+          <p className="text-center text-sm">
             {t('Description FREE AND FAST DELIVERY Service')}
           </p>
         </div>
@@ -35,10 +35,10 @@ function ServiceSection() {
           <img className="max-w-full" alt="service image" src={ServiceIcon02} />
         </div>
         <div>
-          <h2 className="mb-2 text-center font-poppins text-xl font-semibold uppercase text-black">
+          <h2 className="mb-2 text-center text-xl font-semibold uppercase text-black">
             {t('Heading 24/7 CUSTOMER SERVICE Service')}
           </h2>
-          <p className="text-center font-poppins text-sm">
+          <p className="text-center text-sm">
             {t('Description 24/7 CUSTOMER SERVICE Service')}
           </p>
         </div>
@@ -48,10 +48,10 @@ function ServiceSection() {
           <img className="max-w-full" alt="service image" src={ServiceIcon03} />
         </div>
         <div>
-          <h2 className="mb-2 text-center font-poppins text-xl font-semibold uppercase text-black">
+          <h2 className="mb-2 text-center text-xl font-semibold uppercase text-black">
             {t('Heading MONEY BACK GUARANTEE Service')}
           </h2>
-          <p className="text-center font-poppins text-sm">
+          <p className="text-center text-sm">
             {t('Description MONEY BACK GUARANTEE Service')}
           </p>
         </div>

@@ -76,28 +76,28 @@ function ProductDetail() {
                 <img
                   alt="product image"
                   className="max-h-full max-w-full object-cover"
-                  src="https://khothietke.net/wp-content/uploads/2021/04/PNGKhothietke.net-02269.png"
+                  src="https://bizweb.dktcdn.net/thumb/large/100/318/614/products/ms-7.jpg"
                 />
               </div>
               <div className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4">
                 <img
                   alt="product image"
                   className="max-h-full max-w-full object-cover"
-                  src="https://khothietke.net/wp-content/uploads/2021/04/PNGKhothietke.net-02269.png"
+                  src="https://bizweb.dktcdn.net/thumb/large/100/318/614/products/detail-2-compressed.jpg"
                 />
               </div>
               <div className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4">
                 <img
                   alt="product image"
                   className="max-h-full max-w-full object-cover"
-                  src="https://khothietke.net/wp-content/uploads/2021/04/PNGKhothietke.net-02269.png"
+                  src="https://bizweb.dktcdn.net/thumb/large/100/318/614/products/logo-compressed-22.jpg"
                 />
               </div>
               <div className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4">
                 <img
                   alt="product image"
                   className="max-h-full max-w-full object-cover"
-                  src="https://khothietke.net/wp-content/uploads/2021/04/PNGKhothietke.net-02269.png"
+                  src="https://bizweb.dktcdn.net/thumb/large/100/318/614/products/details-4.jpg"
                 />
               </div>
             </div>
@@ -106,31 +106,35 @@ function ProductDetail() {
                 <img
                   alt="product image"
                   className="max-h-full max-w-full object-cover"
-                  src="https://khothietke.net/wp-content/uploads/2021/04/PNGKhothietke.net-02269.png"
+                  src="https://bizweb.dktcdn.net/100/318/614/products/mt-7-compressed-9.jpg?v=1720266932240"
                 />
               </div>
             </div>
           </div>
           <article className="flex basis-2/5 flex-col justify-between px-5">
             <div>
-              <h1 className="mb-4 font-inter text-2xl font-semibold leading-none tracking-[0.72px]">
-                {productDetail.name}
+              <h1 className="mb-4 text-2xl font-semibold leading-none tracking-[0.72px]">
+                VSC TEE - WHITE
               </h1>
               <div className="mb-4 flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-2">
                   <StarRating productReviewRate={0} />
-                  <p className="font-poppins text-[#808080]">
-                    ({productDetail.nrating} Đánh giá)
-                  </p>
+                  <p className="text-[#808080]">(0 Đánh giá)</p>
                 </div>
                 <div className="h-4 w-[1px] bg-[#808080]"></div>
-                <p className="text-[#0F6]">Còn hàng</p>
+                <p className="flex items-center gap-2">
+                  Tình trạng: <span className="text-[#0F6]">Còn hàng</span>
+                </p>
               </div>
-              <h4 className="mb-6 font-inter text-2xl tracking-[0.72px]">
-                {formatPrice(productDetail.price, 'VNĐ')}
+              <h4 className="mb-6 text-2xl tracking-[0.72px]">
+                {formatPrice(320000, 'VNĐ')}
               </h4>
-              <p className="mb-6 w-4/5 break-words font-poppins text-sm">
-                {productDetail.description}
+              <p className="mb-6 w-4/5 break-words text-sm">
+                Thiết kế giới hạn dành riêng cho đội tuyển GAM eSports tại giải
+                đấu MSI 2024. Kích thước: M - L - XL. Chất liệu: Polyester.
+                Relaxed Fit. Các logo tài trợ có hiệu ứng được sử dụng kĩ thuật
+                in decal. Toàn bộ artwork còn lại được sử dụng kĩ thuật in lụa.
+                Nhãn Jersey trang trí được may ở góc dưới thân trước.
               </p>
               {productDetail.colour && productDetail.colour.length && (
                 <div className="mb-6 flex items-center gap-6 border-t border-solid border-black pt-6">
@@ -161,13 +165,13 @@ function ProductDetail() {
                 </div>
               )}
               {productDetail.size && productDetail.size.length && (
-                <div className="mb-6 flex items-center gap-6 font-inter">
+                <div className="mb-6 flex items-center gap-6">
                   <h4 className="text-xl tracking-[0.6px]">Size</h4>
                   <div className="flex items-center gap-4">
                     {sizes.map((size, index) => (
                       <label
                         key={size}
-                        className={`${checkedSize === index ? 'border-[#DB4444] bg-[#DB4444] text-[#fafafa]' : 'border-black bg-white'} flex size-8 cursor-pointer items-center justify-center rounded border-2 border-solid font-poppins text-sm font-medium transition-all`}
+                        className={`${checkedSize === index ? 'border-[#DB4444] bg-[#DB4444] text-[#fafafa]' : 'border-black bg-white'} flex size-8 cursor-pointer items-center justify-center rounded border-2 border-solid text-sm font-medium transition-all`}
                       >
                         <input
                           onChange={() => setCheckedSize(index)}
@@ -196,7 +200,7 @@ function ProductDetail() {
                     value={quantityProduct}
                     onChange={changeQuantityProduct}
                     type="text"
-                    className="h-10 w-full border-x border-solid border-[rgba(0,0,0,0.5)] px-4 text-center font-poppins text-xl font-medium leading-[140%] outline-none"
+                    className="h-10 w-full border-x border-solid border-[rgba(0,0,0,0.5)] px-4 text-center text-xl font-medium leading-[140%] outline-none"
                   />
                   <span
                     onClick={increaseQuantityProduct}
@@ -206,9 +210,9 @@ function ProductDetail() {
                   </span>
                 </div>
                 <button
-                  className={`${!quantityProduct > 0 ? 'cursor-not-allowed opacity-50' : ''} rounded bg-[#DB4444] px-12 font-poppins font-medium text-[#fafafa]`}
+                  className={`${!quantityProduct > 0 ? 'cursor-not-allowed opacity-50' : ''} rounded bg-[#DB4444] px-12 font-medium text-[#fafafa]`}
                 >
-                  Buy Now
+                  Mua ngay
                 </button>
                 <button
                   onClick={() => setIsFavorite((prev) => !prev)}
@@ -225,11 +229,9 @@ function ProductDetail() {
                 <div className="size-10">
                   <img className="max-w-full" alt="icon" src={IconReturn} />
                 </div>
-                <div className="font-poppins font-medium">
+                <div className="font-medium">
                   <h4>Return Delivery</h4>
-                  <p className="text-xs">
-                    Free 30 Days Delivery Returns. Details
-                  </p>
+                  <p className="text-xs">Miễn phí trả hàng trong 30 ngày</p>
                 </div>
               </div>
             </div>

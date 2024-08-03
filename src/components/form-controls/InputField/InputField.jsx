@@ -12,7 +12,7 @@ InputField.propTypes = {
 
 function InputField({ id, label, errorMessage, register, autofocus = false }) {
   return (
-    <div className="relative h-10 w-full border-b-2 border-solid border-[#C0C0C0] font-poppins focus-within:border-[#315CEA]">
+    <div className="relative h-10 w-full border-b-2 border-solid border-[#C0C0C0] focus-within:border-[#315CEA]">
       <input
         {...register}
         autoComplete="off"

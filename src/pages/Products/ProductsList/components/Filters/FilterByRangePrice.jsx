@@ -22,27 +22,37 @@ function FilterByRangePrice({ onChange }) {
 
   return (
     <div className="mb-5">
-      <h3 className="mb-2 text-lg font-medium">Khoảng giá</h3>
-      <div>
+      <h3 className="mb-2 text-base font-medium">Khoảng giá</h3>
+      <div className="text-sm">
         <div className="flex flex-col gap-1">
           <label>Giá thấp nhất</label>
-          <input
-            onChange={handleChange}
-            value={rangePrice['priceGte']}
-            name="priceGte"
-            type="text"
-            className="w-full rounded border border-solid border-black px-2 py-1 outline-blue-500"
-          />
+          <div className="relative">
+            <input
+              onChange={handleChange}
+              value={rangePrice['priceGte']}
+              name="priceGte"
+              type="text"
+              className="w-full rounded border border-solid border-black px-2 py-1 outline-blue-500"
+            />
+            <span className="absolute right-2 top-1/2 -translate-y-1/2">
+              VNĐ
+            </span>
+          </div>
         </div>
         <div className="flex flex-col gap-1">
           <label>Giá cao nhất</label>
-          <input
-            onChange={handleChange}
-            value={rangePrice['priceLte']}
-            name="priceLte"
-            type="text"
-            className="w-full rounded border border-solid border-black px-2 py-1 outline-blue-500"
-          />
+          <div className="relative">
+            <input
+              onChange={handleChange}
+              value={rangePrice['priceLte']}
+              name="priceLte"
+              type="text"
+              className="w-full rounded border border-solid border-black px-2 py-1 outline-blue-500"
+            />
+            <span className="absolute right-2 top-1/2 -translate-y-1/2">
+              VNĐ
+            </span>
+          </div>
         </div>
       </div>
     </div>

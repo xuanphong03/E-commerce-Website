@@ -6,8 +6,10 @@ import queryString from 'query-string';
 import FilterViewer from './components/Viewer';
 import ProductItem from '~/components/ProductItem';
 import ProductImage from '~/assets/images/product01.png';
-import Pagination from './components/Pagination';
 import productApi from '~/apis/productApi';
+import { Pagination } from '@mui/material';
+import { formatPrice } from '~/utils/formatPrice';
+import { fakeProductsList } from '~/data/dataProduct';
 
 ProductsList.propTypes = {};
 
@@ -28,6 +30,8 @@ function ProductsList() {
   }, [location.search]);
 
   const [productsList, setProductsList] = useState([]);
+  const [loading, setLoading] = useState(null);
+
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 16,
@@ -35,29 +39,42 @@ function ProductsList() {
   });
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    setLoading(true);
+    (async () => {
+      // const { products } = await productApi.getAll();
+      // setProductsList(products);
+      setProductsList(fakeProductsList);
+      console.log(fakeProductsList);
+
+      setPagination((prev) => ({ ...prev, total: fakeProductsList.length }));
+    })();
+    setLoading(false);
   }, []);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       const { data } = await productApi.getAll(queryParams);
-  //       setProductsList(data);
+  useEffect(() => {
+    (async () => {
+      try {
+        // const { data } = await productApi.getAll(queryParams);
+        // setProductsList(data);
+        // window.scrollTo(0, 0);
+        // const response = await productApi.getAll(queryParams);
+        // console.log(response);
+        //  setProductsList(productsList)
+        // console.log(fakeProductsList);
+      } catch (error) {
+        console.log('Error: ', error);
+      }
+    })();
+  }, [queryParams]);
 
-  //       window.scrollTo(0, 0);
-  //     } catch (error) {
-  //       console.log('Error: ', error);
-  //     }
-  //   })();
-  // }, [queryParams]);
-
-  const handlePageChange = (page) => {
+  const handlePageChange = (event, page) => {
     const filters = {
       ...queryParams,
       _page: page,
     };
     setPagination((prev) => ({ ...prev, page }));
     navigate(`/products/${type}?${queryString.stringify(filters)}`);
+    window.scrollTo(0, 0);
   };
 
   const handleFiltersChange = (newFilters) => {
@@ -72,41 +89,42 @@ function ProductsList() {
 
   return (
     <main className="bg-[#F5F5F5] pb-20 pt-5">
-      <div className="max-w-ful mx-auto grid grid-cols-12 gap-10 px-5 xl:max-w-[1400px] xl:px-0">
-        <aside className="col-span-3 h-fit rounded bg-white">
+      <div className="max-w-ful mx-auto grid grid-cols-10 gap-10 px-5 xl:max-w-[1400px] xl:px-0">
+        <aside className="col-span-2 h-fit rounded bg-white">
           <FiltersAside onFilter={handleFiltersChange} />
         </aside>
-        <div className="col-span-9">
-          <div className="mb-5">
+        <div className="col-span-8">
+          <div className="mb-4">
             <FilterViewer
               _filters={queryParams}
               onChange={handleFiltersChange}
             />
           </div>
           <section className="grid grid-cols-12 gap-4">
-            {[...Array(16)].map((product, index) => {
-              return (
-                <div className="col-span-3 rounded bg-white p-2" key={index}>
-                  <ProductItem
-                    productId={index}
-                    productImage={ProductImage}
-                    productSalePercent={40}
-                    productName="HAVIT HV-G92 GamepadHAVIT HV-G92 Gamepad"
-                    productSalePrice={120}
-                    productPrice={160}
-                    productReviewRate={4.5}
-                    productReviewNumber={88}
-                    isNewProduct={true}
-                  />
-                </div>
-              );
-            })}
+            {productsList
+              .slice(
+                pagination.limit * (pagination.page - 1),
+                pagination.limit * pagination.page,
+              )
+              .map((product, index) => {
+                return (
+                  <div
+                    className="col-span-3 rounded bg-white p-2"
+                    key={product.id}
+                  >
+                    <ProductItem product={product} />
+                  </div>
+                );
+              })}
           </section>
           <div className="m-10 flex justify-center">
             <Pagination
-              currentPage={pagination.page}
-              totalPage={10}
+              count={Math.ceil(pagination.total / pagination.limit)}
+              page={pagination.page}
               onChange={handlePageChange}
+              variant="outlined"
+              shape="rounded"
+              color="primary"
             />
           </div>
         </div>

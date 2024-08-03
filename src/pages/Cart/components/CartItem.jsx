@@ -2,13 +2,14 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import './CartItem.css';
+import { formatPrice } from '~/utils/formatPrice';
 
 CartItem.propTypes = {
   data: PropTypes.object.isRequired,
 };
 
 function CartItem({ data }) {
-  const [quantity, setQuantity] = useState(() => data.productQuantity);
+  const [quantity, setQuantity] = useState(() => data.count);
 
   const handleChangeQuantity = (e) => {
     let newQuantity = Number(e.target.value);
@@ -21,16 +22,12 @@ function CartItem({ data }) {
     <div className="mt-10 flex w-full px-10 py-5 shadow-table">
       <div className="flex max-w-[25%] basis-1/4 items-center gap-5">
         <div className="h-10">
-          <img
-            className="max-h-full"
-            alt="product image"
-            src={data.productImage}
-          />
+          <img className="max-h-full" alt="product image" src={data.imgURL} />
         </div>
         <h4>{data.productName}</h4>
       </div>
       <div className="flex max-w-[25%] basis-1/4 items-center justify-center">
-        ${data.productPrice}
+        {formatPrice(data.unitPrice, 'VNĐ')}
       </div>
       <div className="flex max-w-[25%] basis-1/4 items-center justify-center">
         <div className="flex h-11 w-24 items-center justify-between rounded border-[1.5px] border-solid border-[#999999] px-3 py-1">
@@ -59,7 +56,7 @@ function CartItem({ data }) {
         </div>
       </div>
       <div className="flex max-w-[25%] basis-1/4 items-center justify-center">
-        ${data.subtotal}
+        {formatPrice(data.totalPrice, 'VNĐ')}
       </div>
     </div>
   );

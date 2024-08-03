@@ -34,11 +34,11 @@ function FilterByBrand({ onChange, onSubmit }) {
 
   return (
     <div className="mb-5">
-      <h3 className="mb-2 text-lg font-medium">Theo thương hiệu</h3>
+      <h3 className="mb-2 text-base font-medium">Theo thương hiệu</h3>
       <ul>
         {brandsList.map((brandItem) => (
           <li key={brandItem} className="mb-1">
-            <label className="flex w-fit cursor-pointer items-center gap-2 hover:text-red-500">
+            <label className="flex w-fit cursor-pointer items-center gap-2 text-sm hover:text-red-500">
               <input
                 onChange={handleChange}
                 type="checkbox"

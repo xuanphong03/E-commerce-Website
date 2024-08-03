@@ -24,7 +24,7 @@ function ExploreProductSection() {
       <div className="mb-6">
         <SectionTag content={t('Subtitle Explore Our Products')} />
       </div>
-      <h2 className="font-inter text-4xl font-semibold tracking-[1.44px]">
+      <h2 className="text-4xl font-semibold tracking-[1.44px]">
         {t('Title Explore Our Products')}
       </h2>
       <div className="my-[60px]">
@@ -63,7 +63,7 @@ function ExploreProductSection() {
           })} */}
         </div>
       </div>
-      <button className="mx-auto flex items-center justify-center rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-10 py-2 font-poppins font-medium text-[#FAFAFA] transition-colors hover:bg-[#FAFAFA] hover:text-[#DB4444]">
+      <button className="mx-auto flex items-center justify-center rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-10 py-2 font-medium text-[#FAFAFA] transition-colors hover:bg-[#FAFAFA] hover:text-[#DB4444]">
         {t('View All Products Button')}
       </button>
     </section>

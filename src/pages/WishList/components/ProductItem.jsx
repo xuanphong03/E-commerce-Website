@@ -49,7 +49,7 @@ export default function ProductItem(props) {
         <h3 className="mb-2 line-clamp-1 font-medium text-black">
           {productName}
         </h3>
-        <p className="mb-2 font-poppins font-medium text-[#DB4444]">
+        <p className="mb-2 font-medium text-[#DB4444]">
           ${productSalePercent > 0 ? productSalePrice : productPrice}
           <span
             className={`ml-3 text-[#808080] line-through ${productSalePercent <= 0 ? 'hidden' : ''}`}

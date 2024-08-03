@@ -14,28 +14,35 @@ import CartPage from './pages/Cart';
 import OrdersPage from './pages/Order';
 import CheckOutPage from './pages/CheckOut/CheckOutPage';
 import Product from './pages/Products';
+import ChatBox from './components/Chat';
+import { useSelector } from 'react-redux';
 
 function App() {
-  return (
-    <>
-      <Header />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/checkout" element={<CheckOutPage />} />
-        <Route path="/my-orders/:orderStatus/*" element={<OrdersPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/sign-up" element={<SignUpPage />} />
-        <Route path="/sign-in" element={<SignInPage />} />
-        <Route path="/wishlist" element={<WishListPage />} />
-        <Route path="/products/*" element={<Product />} />
+  const infoUser = useSelector((state) => state.user.current);
+  const isAuthenticated = !!infoUser.id;
 
-        <Route path="*" element={<ErrorPage />} />
-      </Routes>
-      <ToastContainer />
+  return (
+    <div className="relative font-roboto">
+      <Header />
+      <div className="mt-32">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckOutPage />} />
+          <Route path="/my-orders/:orderStatus/*" element={<OrdersPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/sign-up" element={<SignUpPage />} />
+          <Route path="/sign-in" element={<SignInPage />} />
+          <Route path="/wishlist" element={<WishListPage />} />
+          <Route path="/products/*" element={<Product />} />
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+        <ToastContainer />
+      </div>
       <Footer />
-    </>
+      {isAuthenticated && <ChatBox />}
+    </div>
   );
 }
 

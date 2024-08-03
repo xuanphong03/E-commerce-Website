@@ -15,7 +15,7 @@ function FeedbackList(props) {
         <SectionTag content="Feedback của khách hàng" />
       </div>
       <ul className="customizedScrollbar flex h-56 gap-10 overflow-x-auto scroll-smooth rounded-lg bg-[#f5f5f5] px-4 py-5">
-        {feedbacksList.length ? (
+        {feedbacksList.length > 0 ? (
           feedbacksList.map((_, index) => (
             <li key={index}>
               <article className="">
@@ -45,7 +45,7 @@ function FeedbackList(props) {
             </li>
           ))
         ) : (
-          <div className="flex w-full items-center justify-center gap-2 font-inter text-xl text-[#2c2c2c]">
+          <div className="flex w-full items-center justify-center gap-2 text-xl text-[#2c2c2c]">
             <MdOutlineFeedback />
             <p className="text-">Chưa có Feedback !!!</p>
           </div>

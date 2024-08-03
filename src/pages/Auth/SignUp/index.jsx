@@ -16,9 +16,10 @@ export default function SignUpPage() {
       const action = register(data);
       const resultAction = await dispatch(action);
       const user = unwrapResult(resultAction);
+      console.log(user);
 
       // do something here when register successfully
-      enqueueSnackbar('Đăng ký thành công!!! 🥳🥳🥳', {
+      enqueueSnackbar('Đăng ký thành công!', {
         variant: 'success',
       });
       // Chuyển hướng về trang Home
@@ -30,10 +31,10 @@ export default function SignUpPage() {
 
   return (
     <main className="mx-auto grid max-w-[1300px] grid-cols-12 pb-[60px] pt-5">
-      <div className="col-span-7 h-[550px]">
+      <div className="hidden h-[550px] lg:col-span-7 lg:block">
         <img alt="background" className="max-h-full" src={signupBackground} />
       </div>
-      <section className="col-span-5 flex items-center">
+      <section className="col-span-12 mx-auto flex items-center lg:col-span-5">
         <SignUpForm onSubmit={handleSubmitSignUpForm} />
       </section>
     </main>

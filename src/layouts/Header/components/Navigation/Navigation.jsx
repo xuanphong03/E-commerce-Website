@@ -1,49 +1,42 @@
 import { NavLink } from 'react-router-dom';
 import './Navigation.css';
-import { useTranslation } from 'react-i18next';
-function Navigation({ authenticated }) {
-  const { t } = useTranslation('header');
-
-  const NavList = [
-    {
-      path: '/',
-      name: `${t('HOME')}`,
-    },
-    {
-      path: '/contact',
-      name: `${t('CONTACT')}`,
-    },
-    {
-      path: '/about',
-      name: `${t('ABOUT')}`,
-    },
-    {
-      path: '/sign-up',
-      name: `${t('SIGN UP')}`,
-    },
-  ];
-
+function Navigation() {
   return (
-    <nav className="hidden font-inter lg:block">
-      <ul className="flex items-center gap-12">
-        {NavList.map((navItem, index) => {
-          if (authenticated && navItem.path === '/sign-up') {
-            return;
-          }
-          return (
-            <li key={index} className="relative">
-              <NavLink
-                className={({ isActive }) =>
-                  `${isActive ? 'active' : ''} nav-link block py-1 text-center text-sm font-normal leading-normal transition-colors lg:text-base`
-                }
-                to={navItem.path}
-              >
-                {navItem.name}
-              </NavLink>
-            </li>
-          );
-        })}
-      </ul>
+    <nav className="flex items-center gap-10">
+      <NavLink
+        to="/"
+        className={({ isActive }) =>
+          `${isActive ? 'active' : ''} nav-link block py-1 text-center text-sm font-normal leading-normal transition-colors lg:text-base`
+        }
+      >
+        Trang chủ
+      </NavLink>
+      <NavLink
+        to="/contact"
+        className={({ isActive }) =>
+          `${isActive ? 'active' : ''} nav-link block py-1 text-center text-sm font-normal leading-normal transition-colors lg:text-base`
+        }
+      >
+        Liên hệ
+      </NavLink>
+
+      <NavLink
+        to="/about"
+        className={({ isActive }) =>
+          `${isActive ? 'active' : ''} nav-link block py-1 text-center text-sm font-normal leading-normal transition-colors lg:text-base`
+        }
+      >
+        Giới thiệu
+      </NavLink>
+
+      <NavLink
+        to="/products/all_products"
+        className={({ isActive }) =>
+          `${isActive ? 'active' : ''} nav-link block py-1 text-center text-sm font-normal leading-normal transition-colors lg:text-base`
+        }
+      >
+        Sản phẩm
+      </NavLink>
     </nav>
   );
 }

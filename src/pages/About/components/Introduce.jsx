@@ -7,7 +7,7 @@ function Introduce() {
   return (
     <section className="flex items-center">
       <article className="max-w-[50%] basis-1/2">
-        <h2 className="mb-10 text-justify font-inter text-[54px] font-semibold leading-[64px] tracking-[3.24px]">
+        <h2 className="mb-10 text-justify text-[54px] font-semibold leading-[64px] tracking-[3.24px]">
           {t('Heading')}
         </h2>
         <div className="flex max-w-[80%] flex-col gap-6">
