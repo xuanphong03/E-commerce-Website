@@ -10,6 +10,7 @@ import SignInPage from './pages/Auth/SignIn';
 import ErrorPage from './pages/Error';
 import WishListPage from './pages/WishList';
 import CartPage from './pages/Cart';
+import 'react-toastify/dist/ReactToastify.css';
 
 import OrdersPage from './pages/Order';
 import CheckOutPage from './pages/CheckOut/CheckOutPage';

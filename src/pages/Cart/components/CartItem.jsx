@@ -9,7 +9,7 @@ CartItem.propTypes = {
 };
 
 function CartItem({ data }) {
-  const [quantity, setQuantity] = useState(() => data.count);
+  const [quantity, setQuantity] = useState(() => data.quantity);
 
   const handleChangeQuantity = (e) => {
     let newQuantity = Number(e.target.value);
@@ -22,12 +22,18 @@ function CartItem({ data }) {
     <div className="mt-10 flex w-full px-10 py-5 shadow-table">
       <div className="flex max-w-[25%] basis-1/4 items-center gap-5">
         <div className="h-10">
-          <img className="max-h-full" alt="product image" src={data.imgURL} />
+          <img className="max-h-full" alt="product image" src={data.image} />
         </div>
-        <h4>{data.productName}</h4>
+        <h4>{data.name}</h4>
       </div>
       <div className="flex max-w-[25%] basis-1/4 items-center justify-center">
         {formatPrice(data.unitPrice, 'VNĐ')}
+      </div>
+      <div className="flex basis-1/4 items-center justify-center">
+        {data.size}
+      </div>
+      <div className="flex basis-1/4 items-center justify-center">
+        {data.color}
       </div>
       <div className="flex max-w-[25%] basis-1/4 items-center justify-center">
         <div className="flex h-11 w-24 items-center justify-between rounded border-[1.5px] border-solid border-[#999999] px-3 py-1">

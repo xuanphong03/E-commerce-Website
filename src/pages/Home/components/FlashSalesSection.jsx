@@ -6,7 +6,7 @@ import Skeleton from '~/components/Skeleton/Skeleton';
 import productApi from '~/apis/productApi';
 import { useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
-import { original } from '@reduxjs/toolkit';
+import { fakeProductsList } from '~/data/dataProduct';
 
 export default function FlashSalesSection() {
   const navigate = useNavigate();
@@ -35,60 +35,7 @@ export default function FlashSalesSection() {
     (async () => {
       // const { products } = await productApi.getAll();
       // setProductsList(products);
-      setProductsList([
-        {
-          id: 1,
-          name: 'Product 1',
-          description: 'Product 1 description',
-          saleDiscountPercent: 50,
-          isNewProduct: true,
-          finalPrice: 100000,
-          originalPrice: 200000,
-          rating: 5,
-          nrating: 1,
-          image:
-            'https://bizweb.dktcdn.net/100/318/614/products/mt-7-compressed-9.jpg?v=1720266932240',
-        },
-        {
-          id: 2,
-          name: 'Product 2',
-          description: 'Product 2 description',
-          saleDiscountPercent: 50,
-          isNewProduct: true,
-          finalPrice: 100000,
-          originalPrice: 200000,
-          rating: 5,
-          nrating: 1,
-          image:
-            'https://bizweb.dktcdn.net/100/318/614/products/mt-6-compressed-3.jpg?v=1709004305517',
-        },
-        {
-          id: 3,
-          name: 'Product 3',
-          description: 'Product 3 description',
-          saleDiscountPercent: 50,
-          isNewProduct: true,
-          finalPrice: 100000,
-          originalPrice: 200000,
-          rating: 5,
-          nrating: 1,
-          image:
-            'https://bizweb.dktcdn.net/thumb/large/100/318/614/products/mt-7-compressed-6.jpg',
-        },
-        {
-          id: 4,
-          name: 'Product 4',
-          description: 'Product 4 description',
-          saleDiscountPercent: 50,
-          isNewProduct: true,
-          finalPrice: 100000,
-          originalPrice: 200000,
-          rating: 5,
-          nrating: 1,
-          image:
-            'https://bizweb.dktcdn.net/100/318/614/products/mt-compressed-cd964315-a756-45c9-9430-185dcdbca123.jpg?v=1718882984120',
-        },
-      ]);
+      setProductsList(fakeProductsList);
     })();
     setLoading(false);
   }, []);

@@ -20,34 +20,44 @@ const paths = [
   },
 ];
 
-const FAKE_DATA = [
-  {
-    id: '1',
-    productName: 'San pham 1',
-    productImage:
-      'https://firebasestorage.googleapis.com/v0/b/ecommerce-website-5ff4a.appspot.com/o/product_images%2Fproduct01.png?alt=media&token=527fbc62-8677-4cb1-b00c-0d149f9c3631',
-    productPrice: 650,
-    productQuantity: 1,
-    subtotal: 650,
-  },
-  {
-    id: '2',
-    productName: 'San pham 2',
-    productImage:
-      'https://firebasestorage.googleapis.com/v0/b/ecommerce-website-5ff4a.appspot.com/o/product_images%2Fproduct04.png?alt=media&token=a51497fc-4824-4523-9101-fe19ac47025f',
-    productPrice: 550,
-    productQuantity: 1,
-    subtotal: 550,
-  },
-];
+const RESPONSE_GET_ALL = {
+  user: 1,
+  totalPayment: 2000000,
+  totalQuantity: 20,
+  carts: [
+    {
+      id: 1,
+      name: 'Product 01',
+      size: 'L',
+      color: 'Đỏ',
+      image:
+        'https://product.hstatic.net/1000026602/product/img_0095_9890f80f95df47cba45438e38f9f74d1_master.jpg',
+      quantity: 3,
+      unitPrice: 200000,
+      totalPrice: 600000,
+    },
+    {
+      id: 2,
+      name: 'Product 02',
+      size: 'XL',
+      color: 'Xanh',
+      image:
+        'https://product.hstatic.net/1000026602/product/00009070_e116726e40ed4bdd908cad5c98fb9e79_master.jpg',
+      quantity: 5,
+      unitPrice: 200000,
+      totalPrice: 1000000,
+    },
+  ],
+};
 
 export default function CartPage() {
+  const [cartList, setCartList] = useState(RESPONSE_GET_ALL);
   const [discountPrice, setDiscountPrice] = useState(0);
   const [discountCouponCode, setDiscountCouponCode] = useState('');
 
   const { cart } = useSelector((state) => state.user);
   const { items, totalCost } = cart;
-  const shippingFee = totalCost > 500000 ? 0 : 100000;
+  const shippingFee = cartList.totalPayment > 500000 ? 0 : 100000;
 
   const handleChangeDiscountCouponCode = (e) => {
     const { value } = e.target;
@@ -66,10 +76,19 @@ export default function CartPage() {
       </div> */}
       <div className="mb-[80px]">
         <div className="mb-6">
-          <HeaderTable thead={['Sản phẩm', 'Giá', 'Số lượng', 'Tổng tiền']} />
-          {items.map((data) => (
-            <div key={data.id}>
-              <CartItem data={data} />
+          <HeaderTable
+            thead={[
+              'Sản phẩm',
+              'Giá',
+              'Kích cỡ',
+              'Màu sắc',
+              'Số lượng',
+              'Tổng tiền',
+            ]}
+          />
+          {cartList.carts.map((cart) => (
+            <div key={cart.id}>
+              <CartItem data={cart} />
             </div>
           ))}
         </div>
@@ -106,7 +125,7 @@ export default function CartPage() {
           <div className="mb-4">
             <div className="flex justify-between py-4">
               <h3>Tổng tiền đơn hàng</h3>
-              <span>{formatPrice(totalCost, 'VNĐ')}</span>
+              <span>{formatPrice(cartList.totalPayment, 'VNĐ')}</span>
             </div>
             <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
               <h3>Giảm giá</h3>
@@ -120,7 +139,9 @@ export default function CartPage() {
             </div>
             <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
               <h3>Tổng hóa đơn</h3>
-              <span>{formatPrice(totalCost - discountPrice, 'VNĐ')}</span>
+              <span>
+                {formatPrice(cartList.totalPayment - discountPrice, 'VNĐ')}
+              </span>
             </div>
           </div>
           <Link to="/checkout">

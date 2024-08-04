@@ -6,19 +6,24 @@ import SaleTag from '../SaleTag';
 import StarRating from '../StarRating';
 
 import { BsTrash3 } from 'react-icons/bs';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { formatPrice } from '~/utils/formatPrice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addProductToCart } from '~/pages/Auth/userSlice';
+import { toast } from 'react-toastify';
 
 export default function ProductItem({ product }) {
-  const { type } = useParams();
-
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user.current);
+  const isAuthenticated = !!user.id;
   const [showAddToCart, setShowAddToCart] = useState(false);
   const [isFavorite, setIsFavorite] = useState(product.favorite);
   const handleAddToCart = () => {
-    dispatch(addProductToCart(product));
+    if (!isAuthenticated) {
+      toast.info('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');
+      return;
+    }
+    navigate(`/products/detail/${product.id}`);
   };
 
   return (
@@ -66,7 +71,7 @@ export default function ProductItem({ product }) {
                   <FaHeart className="text-[#DB4444]" />
                 )}
               </button>
-              <Link to={`/products/${type}/${product.id}`}>
+              <Link to={`/products/detail/${product.id}`}>
                 <button className="flex h-8 w-8 items-center justify-center rounded-full bg-white transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]">
                   <FiEye />
                 </button>
