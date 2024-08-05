@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import './CartItem.css';
 import { formatPrice } from '~/utils/formatPrice';
+import { placeholder30x40 } from '~/constants/placeholder';
 
 CartItem.propTypes = {
   data: PropTypes.object.isRequired,
@@ -22,7 +23,11 @@ function CartItem({ data }) {
     <div className="mt-10 flex w-full px-10 py-5 shadow-table">
       <div className="flex max-w-[25%] basis-1/4 items-center gap-5">
         <div className="h-10">
-          <img className="max-h-full" alt="product image" src={data.image} />
+          <img
+            className="max-h-full"
+            alt="product image"
+            src={data.image || placeholder30x40}
+          />
         </div>
         <h4>{data.name}</h4>
       </div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Breadcrumbs from '~/components/Breadcrumbs/Breadcrumbs';
 import HeaderTable from './components/HeaderTable';
 import DataTable from './components/CartItem';
@@ -6,6 +6,8 @@ import CartItem from './components/CartItem';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { formatPrice } from '~/utils/formatPrice';
+import { toast } from 'react-toastify';
+import cartApi from '~/apis/cartApi';
 
 const paths = [
   {
@@ -51,13 +53,28 @@ const RESPONSE_GET_ALL = {
 };
 
 export default function CartPage() {
-  const [cartList, setCartList] = useState(RESPONSE_GET_ALL);
+  const user = useSelector((state) => state.user.current);
+  const { id } = user;
+  const [cart_items, setCart_items] = useState([]);
+  const [totalPayment, setTotalPayment] = useState(0);
+  const [totalQuantity, setTotalQuantity] = useState(0);
   const [discountPrice, setDiscountPrice] = useState(0);
   const [discountCouponCode, setDiscountCouponCode] = useState('');
+  const shippingFee = totalPayment > 2000000 ? 0 : 500000;
 
-  const { cart } = useSelector((state) => state.user);
-  const { items, totalCost } = cart;
-  const shippingFee = cartList.totalPayment > 500000 ? 0 : 100000;
+  useEffect(() => {
+    try {
+      (async () => {
+        const response = await cartApi.getAll({ user_id: id });
+        const { cart_items, totalPayment, totalQuantity } = response;
+        setCart_items(cart_items);
+        setTotalPayment(totalPayment);
+        setTotalQuantity(totalQuantity);
+      })();
+    } catch (error) {
+      toast.error('API GET ALL CART LỖI');
+    }
+  }, []);
 
   const handleChangeDiscountCouponCode = (e) => {
     const { value } = e.target;
@@ -71,9 +88,6 @@ export default function CartPage() {
 
   return (
     <main className="mx-auto mb-[140px] max-w-[1300px] pt-[50px]">
-      {/* <div className="my-[80px]">
-        <Breadcrumbs pathList={paths} />
-      </div> */}
       <div className="mb-[80px]">
         <div className="mb-6">
           <HeaderTable
@@ -86,11 +100,27 @@ export default function CartPage() {
               'Tổng tiền',
             ]}
           />
-          {cartList.carts.map((cart) => (
-            <div key={cart.id}>
-              <CartItem data={cart} />
+          {cart_items.length ? (
+            cart_items.map((cart) => (
+              <div key={cart.itemDetail_id}>
+                <CartItem data={cart} />
+              </div>
+            ))
+          ) : (
+            <div className="mt-5 flex min-h-[300px] flex-col items-center justify-center gap-5 shadow-table">
+              <div className="h-[100px]">
+                <img
+                  className="max-h-full"
+                  src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png"
+                  alt="empty cart"
+                />
+              </div>
+              <p className="text-center text-[#2c2c2c]">
+                Giỏ hàng của bạn hiện chưa có sản phẩm nào. <br></br>Quay lại
+                trang sản phẩm để thêm sản phẩm vào giỏ hàng
+              </p>
             </div>
-          ))}
+          )}
         </div>
         <div className="flex justify-between">
           <button className="border-[#b3b3b3 flex items-center justify-center rounded border border-solid px-12 py-4 font-medium text-black transition-colors hover:bg-[#DB4444] hover:text-[#fafafa]">
@@ -125,7 +155,7 @@ export default function CartPage() {
           <div className="mb-4">
             <div className="flex justify-between py-4">
               <h3>Tổng tiền đơn hàng</h3>
-              <span>{formatPrice(cartList.totalPayment, 'VNĐ')}</span>
+              <span>{formatPrice(totalPayment, 'VNĐ')}</span>
             </div>
             <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
               <h3>Giảm giá</h3>
@@ -139,9 +169,7 @@ export default function CartPage() {
             </div>
             <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
               <h3>Tổng hóa đơn</h3>
-              <span>
-                {formatPrice(cartList.totalPayment - discountPrice, 'VNĐ')}
-              </span>
+              <span>{formatPrice(totalPayment - discountPrice, 'VNĐ')}</span>
             </div>
           </div>
           <Link to="/checkout">

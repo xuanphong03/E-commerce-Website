@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import BackgroundBanner from '~/assets/images/jbl_boombox.png';
 import ProductItem from '~/components/ProductItem';
 import SectionTag from '~/components/SectionTag';
-
-import ProductImage from '~/assets/images/product01.png';
+import { fakeProductsList } from '~/data/dataProduct';
 
 BestSellingSection.propTypes = {};
 
 function BestSellingSection() {
+  const [bestSellingProductsList, setBestSellingProductsList] = useState([]);
   const [timer, setTimer] = useState(() => {
     const countdownDate = new Date('August 30, 2024 00:00:00').getTime();
     const now = new Date().getTime();
@@ -62,35 +61,49 @@ function BestSellingSection() {
     };
   }, []);
 
+  useEffect(() => {
+    setBestSellingProductsList(fakeProductsList);
+  }, []);
+
   return (
     <section className="py-16">
       <div className="mb-6">
-        <SectionTag content={'Best selling'} />
+        <SectionTag content={'Trong tháng này'} />
       </div>
       <div className="mb-[60px] flex justify-between">
         <h2 className="text-4xl font-semibold tracking-[1.44px]">
-          {/* {t('Title Best Selling Products')} */}
+          Best Selling
         </h2>
         <button className="flex items-center justify-center rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-10 py-2 font-medium text-[#FAFAFA] transition-colors hover:bg-[#FAFAFA] hover:text-[#DB4444]">
-          Xem tât cả
+          Xem tât cả sản phẩm
         </button>
       </div>
-      <div className="mb-[140px] grid grid-cols-12 gap-16">
-        {[...Array(4)].map((_, index) => {
+      <div className="grid grid-cols-12 gap-16 pb-[100px]">
+        {bestSellingProductsList.slice(0, 4).map((product, index) => {
           return (
             <div className="col-span-3" key={index}>
-              {/* <ProductItem /> */}
+              <ProductItem product={product} />
             </div>
           );
         })}
       </div>
-      <div className="flex h-[500px] w-full items-center bg-black px-16">
-        <div className="mr-[80px]">
+      <div className="relative flex h-[500px] w-full items-center overflow-hidden px-16">
+        <div
+          style={{
+            backgroundImage: `url('https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F6%2Ffiles%2F2018%2F09%2Fparis-fashion-week-best-runway-collections-spring-summer-2019-1.jpg?w=1080&cbr=1&q=90&fit=max')`,
+          }}
+          className={`absolute inset-0 flex items-center justify-center bg-cover`}
+        >
+          <div className="absolute inset-0 bg-black opacity-50"></div>
+        </div>
+
+        <div className="relative">
           <h2 className="mb-8 font-semibold leading-tight text-[#00FF66]">
-            {/* {t('Heading Best Seller Categories')} */}
+            Loại sản phẩm
           </h2>
-          <h3 className="mb-8 text-5xl font-semibold leading-tight tracking-[1.92px] text-[#FAFAFA]">
-            {/* {t('Description Best Seller Categories')} */}
+          <h3 className="mb-8 max-w-[60%] text-4xl font-semibold uppercase leading-tight tracking-[1.92px] text-[#FAFAFA]">
+            Khám Phá Ngay Những Sản Phẩm Được Yêu Thích Và Bán Chạy Nhất Tại Cửa
+            Hàng Chúng Tôi
           </h3>
           <div className="mb-10 flex items-center gap-6">
             <div className="flex h-14 w-14 flex-col items-center justify-center rounded-full bg-white">
@@ -121,12 +134,6 @@ function BestSellingSection() {
           <button className="flex h-14 items-center justify-center gap-[10px] rounded border-2 border-solid border-[#00FF66] bg-[#00FF66] px-12 py-4 font-medium capitalize text-[#FAFAFA] hover:bg-white hover:text-[#00FF66]">
             Mua ngay
           </button>
-        </div>
-        <div className="relative flex items-center">
-          <div className="h-[400px] w-[600px] rounded-full bg-gray-500 blur-3xl"></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <img className="w-full" alt="background" src={BackgroundBanner} />
-          </div>
         </div>
       </div>
     </section>

@@ -1,22 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import StarRating from '~/components/StarRating';
 import { formatPrice } from '~/utils/formatPrice';
 import { FiMinus, FiPlus } from 'react-icons/fi';
 import IconReturn from '~/assets/icons/Icon-return.svg';
-import { FaCartPlus, FaHeart, FaRegHeart } from 'react-icons/fa';
+import {
+  FaCartPlus,
+  FaHeart,
+  FaRegHeart,
+  FaShippingFast,
+} from 'react-icons/fa';
 import SectionTag from '~/components/SectionTag';
 import './CustomizedScrollbar.css';
 import FeedbackList from './components/FeedbackList';
 import productApi from '~/apis/productApi';
-
 import { placeholder80x80, placeholder500x500 } from '~/constants/placeholder';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import cartApi from '~/apis/cartApi';
-
-ProductDetail.propTypes = {};
+import { AiOutlineFileProtect } from 'react-icons/ai';
+import { RiLoopLeftLine } from 'react-icons/ri';
 
 function ProductDetail() {
   const user = useSelector((state) => state.user.current);
@@ -132,13 +135,6 @@ function ProductDetail() {
     setCheckedSize(size);
   };
 
-  const handleBuyProduct = () => {
-    if (!isAuthenticated) {
-      toast.info('Vui lòng đăng nhập để thực hiện yêu cầu');
-      return;
-    }
-  };
-
   const checkOutOfStock = (color) => {
     const { quantityDetails } = productDetail;
     const newQuantityDetails = quantityDetails.map((colorItem) => {
@@ -160,7 +156,7 @@ function ProductDetail() {
     <main className="pb-36 pt-10">
       <div className="mx-auto max-w-[1400px]">
         <section className="flex gap-10">
-          <div className="flex basis-3/5 gap-2">
+          <div className="flex max-h-[500px] basis-3/5 gap-2">
             <div className="flex basis-1/4 flex-col items-center justify-between gap-4">
               {[...Array(4)].map((_, index) => {
                 return (
@@ -282,7 +278,7 @@ function ProductDetail() {
             </div>
             <div className="flex flex-col gap-5">
               <div className="flex items-center justify-between">
-                <div className="flex w-32 overflow-hidden rounded border border-solid border-[rgba(0,0,0,0.5)]">
+                <div className="flex w-40 overflow-hidden rounded border border-solid border-[rgba(0,0,0,0.5)]">
                   <span
                     onClick={decreaseQuantityProduct}
                     className="flex size-10 shrink-0 cursor-pointer items-center justify-center text-2xl"
@@ -304,16 +300,10 @@ function ProductDetail() {
                 </div>
                 <button
                   onClick={handleAddProductToCart}
-                  className={`${!quantityProduct > 0 ? 'cursor-not-allowed opacity-50' : ''} flex items-center gap-2 rounded border border-solid border-[#DB4444] bg-[#FFEEE8] px-5 py-2 text-[#DB4444]`}
+                  className={`${!quantityProduct > 0 ? 'cursor-not-allowed opacity-50' : ''} flex min-w-64 items-center justify-center gap-2 rounded border border-solid border-[#DB4444] bg-[#FFEEE8] px-5 py-2 text-[#DB4444]`}
                 >
                   <FaCartPlus />
                   Thêm giỏ hàng
-                </button>
-                <button
-                  onClick={handleBuyProduct}
-                  className={`rounded bg-[#DB4444] px-5 py-2 font-medium text-[#fafafa]`}
-                >
-                  Mua ngay
                 </button>
                 <button
                   onClick={() => setIsFavorite((prev) => !prev)}
@@ -326,15 +316,49 @@ function ProductDetail() {
                   )}
                 </button>
               </div>
-              <div className="flex items-center justify-center gap-4 rounded border border-solid border-[#b0b0b0] px-4 py-6">
-                <div className="flex size-16 items-center justify-center">
-                  <img className="max-w-full" alt="icon" src={IconReturn} />
+              <div className="flex items-center justify-between gap-5">
+                <div className="basis-1/2 rounded bg-[#F0F0EE] px-10 py-4 text-center font-medium leading-tight text-[#2c2c2c]">
+                  FREESHIP đơn hàng giá trị từ 2 triệu đồng
                 </div>
-                <div className="font-medium">
-                  <h4 className="text-xl">Return Delivery</h4>
-                  <p className="text-base">Miễn phí trả hàng trong 30 ngày</p>
+                <div className="basis-1/2 rounded bg-[#F0F0EE] px-10 py-4 text-center font-medium leading-tight text-[#2c2c2c]">
+                  Miễn phí đổi trả phát sinh từ nhà sản xuất
                 </div>
               </div>
+              {/* <div className="rounded bg-[#F0F0EE] px-4 py-2">
+                <h4 className="mb-5 text-base font-medium uppercase">
+                  Dịch vụ giao hàng
+                </h4>
+                <ul className="flex flex-col gap-5 text-sm">
+                  <li className="flex items-center gap-4">
+                    <span className="text-xl">
+                      <AiOutlineFileProtect />
+                    </span>
+                    <h5>Cam kết 100% hàng chính hãng</h5>
+                  </li>
+                  <li className="flex items-center gap-4">
+                    <span className="text-xl">
+                      <FaShippingFast />
+                    </span>
+                    <div>
+                      <h5>Giao hàng dự kiến</h5>
+                      <p className="font-medium">
+                        Thứ 2 - Thứ 6 từ 9h00 - 17h00
+                      </p>
+                    </div>
+                  </li>
+                  <li className="flex items-center gap-4">
+                    <span className="text-xl">
+                      <RiLoopLeftLine />
+                    </span>
+                    <div>
+                      <h5>Hỗ trợ 9h-21h hằng ngày:</h5>
+                      <p className="font-medium">
+                        Với các kênh chat, email & phone
+                      </p>
+                    </div>
+                  </li>
+                </ul>
+              </div> */}
             </div>
           </article>
         </section>

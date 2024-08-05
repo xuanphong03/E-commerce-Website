@@ -25,7 +25,7 @@ function App() {
   return (
     <div className="relative font-roboto">
       <Header />
-      <div className="mt-32">
+      <div className="mt-[124px]">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/contact" element={<ContactPage />} />
