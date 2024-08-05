@@ -10,8 +10,8 @@ function Product() {
   return (
     <div>
       <Routes>
-        <Route path="/:type" element={<ProductsList />} />
-        <Route path="/:type/:id" element={<ProductDetail />} />
+        <Route path="/:category" element={<ProductsList />} />
+        <Route path="/detail/:id" element={<ProductDetail />} />
       </Routes>
     </div>
   );

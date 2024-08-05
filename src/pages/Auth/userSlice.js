@@ -30,11 +30,6 @@ const userSlice = createSlice({
   initialState: {
     current: JSON.parse(localStorage.getItem(StorageKeys.USER)) || {},
     setting: {},
-    cart: JSON.parse(localStorage.getItem(StorageKeys.CART)) || {
-      totalItem: 0,
-      totalCost: 0,
-      items: [],
-    },
   },
   reducers: {
     logout(state) {
@@ -49,38 +44,6 @@ const userSlice = createSlice({
         totalCost: 0,
         items: [],
       };
-    },
-    addProductToCart(state, action) {
-      const product = action.payload;
-      let addedQuantity = 1;
-      if (product) {
-        // Kiểm tra sản phẩm đã tồn tại trong giỏ hàng hay chưa
-        const existingItem = state.cart.items.find(
-          (item) => item.name === product.name,
-        );
-
-        if (existingItem) {
-          // Nếu sản phẩm đã tồn tại, chỉ cần tăng số lượng và giá tiền
-          existingItem.count += addedQuantity;
-          existingItem.totalPrice += product.finalPrice * addedQuantity;
-        } else {
-          // Nếu sản phẩm chưa tồn tại, thêm vào giỏ hàng
-          const newItem = {
-            count: addedQuantity,
-            id: product.id,
-            name: product.name,
-            imgURL: product.image,
-            unitPrice: product.finalPrice,
-            totalPrice: product.finalPrice,
-          };
-          state.cart.items.push(newItem);
-        }
-        state.cart.totalItem += addedQuantity;
-        state.cart.totalCost += product.finalPrice * addedQuantity;
-
-        // Lưu vào localStorage
-        localStorage.setItem(StorageKeys.CART, JSON.stringify(state.cart));
-      }
     },
   },
   extraReducers: (builder) => {

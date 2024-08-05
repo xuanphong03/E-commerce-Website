@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Breadcrumbs from '~/components/Breadcrumbs/Breadcrumbs';
 import HeaderTable from './components/HeaderTable';
 import DataTable from './components/CartItem';
@@ -6,6 +6,8 @@ import CartItem from './components/CartItem';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { formatPrice } from '~/utils/formatPrice';
+import { toast } from 'react-toastify';
+import cartApi from '~/apis/cartApi';
 
 const paths = [
   {
@@ -20,34 +22,59 @@ const paths = [
   },
 ];
 
-const FAKE_DATA = [
-  {
-    id: '1',
-    productName: 'San pham 1',
-    productImage:
-      'https://firebasestorage.googleapis.com/v0/b/ecommerce-website-5ff4a.appspot.com/o/product_images%2Fproduct01.png?alt=media&token=527fbc62-8677-4cb1-b00c-0d149f9c3631',
-    productPrice: 650,
-    productQuantity: 1,
-    subtotal: 650,
-  },
-  {
-    id: '2',
-    productName: 'San pham 2',
-    productImage:
-      'https://firebasestorage.googleapis.com/v0/b/ecommerce-website-5ff4a.appspot.com/o/product_images%2Fproduct04.png?alt=media&token=a51497fc-4824-4523-9101-fe19ac47025f',
-    productPrice: 550,
-    productQuantity: 1,
-    subtotal: 550,
-  },
-];
+const RESPONSE_GET_ALL = {
+  user: 1,
+  totalPayment: 2000000,
+  totalQuantity: 20,
+  carts: [
+    {
+      id: 1,
+      name: 'Product 01',
+      size: 'L',
+      color: 'Đỏ',
+      image:
+        'https://product.hstatic.net/1000026602/product/img_0095_9890f80f95df47cba45438e38f9f74d1_master.jpg',
+      quantity: 3,
+      unitPrice: 200000,
+      totalPrice: 600000,
+    },
+    {
+      id: 2,
+      name: 'Product 02',
+      size: 'XL',
+      color: 'Xanh',
+      image:
+        'https://product.hstatic.net/1000026602/product/00009070_e116726e40ed4bdd908cad5c98fb9e79_master.jpg',
+      quantity: 5,
+      unitPrice: 200000,
+      totalPrice: 1000000,
+    },
+  ],
+};
 
 export default function CartPage() {
+  const user = useSelector((state) => state.user.current);
+  const { id } = user;
+  const [cart_items, setCart_items] = useState([]);
+  const [totalPayment, setTotalPayment] = useState(0);
+  const [totalQuantity, setTotalQuantity] = useState(0);
   const [discountPrice, setDiscountPrice] = useState(0);
   const [discountCouponCode, setDiscountCouponCode] = useState('');
+  const shippingFee = totalPayment > 2000000 ? 0 : 500000;
 
-  const { cart } = useSelector((state) => state.user);
-  const { items, totalCost } = cart;
-  const shippingFee = totalCost > 500000 ? 0 : 100000;
+  useEffect(() => {
+    try {
+      (async () => {
+        const response = await cartApi.getAll({ user_id: id });
+        const { cart_items, totalPayment, totalQuantity } = response;
+        setCart_items(cart_items);
+        setTotalPayment(totalPayment);
+        setTotalQuantity(totalQuantity);
+      })();
+    } catch (error) {
+      toast.error('API GET ALL CART LỖI');
+    }
+  }, []);
 
   const handleChangeDiscountCouponCode = (e) => {
     const { value } = e.target;
@@ -61,17 +88,39 @@ export default function CartPage() {
 
   return (
     <main className="mx-auto mb-[140px] max-w-[1300px] pt-[50px]">
-      {/* <div className="my-[80px]">
-        <Breadcrumbs pathList={paths} />
-      </div> */}
       <div className="mb-[80px]">
         <div className="mb-6">
-          <HeaderTable thead={['Sản phẩm', 'Giá', 'Số lượng', 'Tổng tiền']} />
-          {items.map((data) => (
-            <div key={data.id}>
-              <CartItem data={data} />
+          <HeaderTable
+            thead={[
+              'Sản phẩm',
+              'Giá',
+              'Kích cỡ',
+              'Màu sắc',
+              'Số lượng',
+              'Tổng tiền',
+            ]}
+          />
+          {cart_items.length ? (
+            cart_items.map((cart) => (
+              <div key={cart.itemDetail_id}>
+                <CartItem data={cart} />
+              </div>
+            ))
+          ) : (
+            <div className="mt-5 flex min-h-[300px] flex-col items-center justify-center gap-5 shadow-table">
+              <div className="h-[100px]">
+                <img
+                  className="max-h-full"
+                  src="https://cdn-icons-png.flaticon.com/512/11329/11329060.png"
+                  alt="empty cart"
+                />
+              </div>
+              <p className="text-center text-[#2c2c2c]">
+                Giỏ hàng của bạn hiện chưa có sản phẩm nào. <br></br>Quay lại
+                trang sản phẩm để thêm sản phẩm vào giỏ hàng
+              </p>
             </div>
-          ))}
+          )}
         </div>
         <div className="flex justify-between">
           <button className="border-[#b3b3b3 flex items-center justify-center rounded border border-solid px-12 py-4 font-medium text-black transition-colors hover:bg-[#DB4444] hover:text-[#fafafa]">
@@ -106,7 +155,7 @@ export default function CartPage() {
           <div className="mb-4">
             <div className="flex justify-between py-4">
               <h3>Tổng tiền đơn hàng</h3>
-              <span>{formatPrice(totalCost, 'VNĐ')}</span>
+              <span>{formatPrice(totalPayment, 'VNĐ')}</span>
             </div>
             <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
               <h3>Giảm giá</h3>
@@ -120,7 +169,7 @@ export default function CartPage() {
             </div>
             <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
               <h3>Tổng hóa đơn</h3>
-              <span>{formatPrice(totalCost - discountPrice, 'VNĐ')}</span>
+              <span>{formatPrice(totalPayment - discountPrice, 'VNĐ')}</span>
             </div>
           </div>
           <Link to="/checkout">

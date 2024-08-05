@@ -1,5 +1,3 @@
-import { original } from '@reduxjs/toolkit';
-
 export const fakeProductsList = [
   {
     id: 1,

@@ -1,59 +1,59 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { useLocation, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import StarRating from '~/components/StarRating';
 import { formatPrice } from '~/utils/formatPrice';
-import { use } from 'i18next';
 import { FiMinus, FiPlus } from 'react-icons/fi';
 import IconReturn from '~/assets/icons/Icon-return.svg';
-import { FaHeart, FaRegHeart } from 'react-icons/fa';
+import {
+  FaCartPlus,
+  FaHeart,
+  FaRegHeart,
+  FaShippingFast,
+} from 'react-icons/fa';
 import SectionTag from '~/components/SectionTag';
 import './CustomizedScrollbar.css';
 import FeedbackList from './components/FeedbackList';
 import productApi from '~/apis/productApi';
-ProductDetail.propTypes = {};
+import { placeholder80x80, placeholder500x500 } from '~/constants/placeholder';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import cartApi from '~/apis/cartApi';
+import { AiOutlineFileProtect } from 'react-icons/ai';
+import { RiLoopLeftLine } from 'react-icons/ri';
 
 function ProductDetail() {
+  const user = useSelector((state) => state.user.current);
+  const isAuthenticated = !!user.id;
   let { id } = useParams();
   const [checkedColor, setCheckedColor] = useState(null);
   const [checkedSize, setCheckedSize] = useState(null);
-  const [colors, setColors] = useState([
-    'blue',
-    'gray',
-    'green',
-    'red',
-    'black',
-    'white',
-  ]);
-  const [sizes, setSizes] = useState(['XS', 'S', 'M', 'L', 'XL']);
   const [isFavorite, setIsFavorite] = useState(false);
   const [productDetail, setProductDetail] = useState({});
   const [quantityProduct, setQuantityProduct] = useState(1);
+  const [outStockSizeList, setOutStockSizeList] = useState([]);
 
   useEffect(() => {
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: 'smooth',
     });
 
     (async () => {
       try {
         const response = await productApi.getDetail({ id });
         setProductDetail(response);
+        console.log(response);
       } catch (error) {
         throw new Error(error);
       }
     })();
   }, [id]);
 
-  const changeColor = (index) => {
-    setCheckedColor(index);
-  };
   const increaseQuantityProduct = () => {
     if (quantityProduct >= 100) return;
     setQuantityProduct((prev) => prev + 1);
   };
+
   const decreaseQuantityProduct = () => {
     if (quantityProduct <= 0) return;
     setQuantityProduct((prev) => prev - 1);
@@ -66,55 +66,127 @@ function ProductDetail() {
     }
   };
 
+  const handleAddProductToCart = () => {
+    if (!isAuthenticated) {
+      toast.info('Vui lòng đăng nhập để thực hiện yêu cầu');
+      return;
+    } else if (checkedColor === null) {
+      toast.info('Vui lòng chọn màu sắc của sản phẩm');
+      return;
+    } else if (checkedSize === null) {
+      toast.info('Vui lòng chọn kích cỡ của sản phẩm');
+      return;
+    }
+
+    const requestData = {
+      user_id: 1,
+      cart_item: {
+        product_id: productDetail.id,
+        name: productDetail.name,
+        image: productDetail.imageMain,
+        quantity: quantityProduct,
+        color: productDetail.colours[checkedColor],
+        size: productDetail.sizes[checkedSize],
+        unitPrice: productDetail.finalPrice,
+        totalPrice: productDetail.finalPrice * quantityProduct,
+      },
+    };
+    try {
+      (async () => {
+        // Call API thêm sản phẩm vào giỏ hàng
+        await cartApi.create(requestData);
+      })();
+      toast.success('Đã thêm sản phẩm vào giỏ hàng!');
+    } catch (error) {
+      toast.success('Thêm sản phẩm vào giỏ hàng thất bại!');
+    }
+  };
+  const getOutStockSizeList = (color) => {
+    const { quantityDetails } = productDetail;
+    const _outStockSizeList = [];
+
+    const variants = quantityDetails.find((item) => item.color === color);
+    variants.sizes.forEach((variant) => {
+      if (variant.quantity === 0) {
+        _outStockSizeList.push(variant.size);
+      }
+    });
+    return _outStockSizeList;
+  };
+  const handleChangeColor = (color) => {
+    const isOutOfStock = checkOutOfStock(color);
+    if (isOutOfStock) {
+      return;
+    }
+    setCheckedColor(color);
+    const _outStockSizeList = getOutStockSizeList(color);
+    setOutStockSizeList(_outStockSizeList);
+
+    // Reset checked size if it's out of stock for the new color
+    if (_outStockSizeList.includes(checkedSize)) {
+      setCheckedSize(null);
+    }
+  };
+
+  const handleChangeSize = (size) => {
+    if (outStockSizeList.includes(size)) {
+      return;
+    }
+    setCheckedSize(size);
+  };
+
+  const checkOutOfStock = (color) => {
+    const { quantityDetails } = productDetail;
+    const newQuantityDetails = quantityDetails.map((colorItem) => {
+      const totalQuantity = colorItem.sizes.reduce(
+        (prevValue, currentValue) => {
+          return prevValue + currentValue.quantity;
+        },
+        0,
+      );
+      return { ...colorItem, totalQuantity };
+    });
+    const _color = newQuantityDetails.find((prod) => prod.color === color);
+    return _color.totalQuantity === 0;
+  };
+
+  // const checkQuantityBySize = (size) => {};
+
   return (
     <main className="pb-36 pt-10">
-      <div className="mx-auto max-w-[1200px]">
+      <div className="mx-auto max-w-[1400px]">
         <section className="flex gap-10">
-          <div className="flex basis-3/5 gap-2">
-            <div className="flex basis-1/4 flex-col items-center gap-4">
-              <div className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4">
-                <img
-                  alt="product image"
-                  className="max-h-full max-w-full object-cover"
-                  src="https://bizweb.dktcdn.net/thumb/large/100/318/614/products/ms-7.jpg"
-                />
-              </div>
-              <div className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4">
-                <img
-                  alt="product image"
-                  className="max-h-full max-w-full object-cover"
-                  src="https://bizweb.dktcdn.net/thumb/large/100/318/614/products/detail-2-compressed.jpg"
-                />
-              </div>
-              <div className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4">
-                <img
-                  alt="product image"
-                  className="max-h-full max-w-full object-cover"
-                  src="https://bizweb.dktcdn.net/thumb/large/100/318/614/products/logo-compressed-22.jpg"
-                />
-              </div>
-              <div className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4">
-                <img
-                  alt="product image"
-                  className="max-h-full max-w-full object-cover"
-                  src="https://bizweb.dktcdn.net/thumb/large/100/318/614/products/details-4.jpg"
-                />
-              </div>
+          <div className="flex max-h-[500px] basis-3/5 gap-2">
+            <div className="flex basis-1/4 flex-col items-center justify-between gap-4">
+              {[...Array(4)].map((_, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4"
+                  >
+                    <img
+                      alt="product image"
+                      className="max-h-full max-w-full object-cover"
+                      src={placeholder80x80}
+                    />
+                  </div>
+                );
+              })}
             </div>
             <div className="basis-3/4">
               <div className="flex h-full w-full items-center justify-center rounded-md bg-[#f5f5f5] p-10">
                 <img
                   alt="product image"
                   className="max-h-full max-w-full object-cover"
-                  src="https://bizweb.dktcdn.net/100/318/614/products/mt-7-compressed-9.jpg?v=1720266932240"
+                  src={productDetail.imageMain || placeholder500x500}
                 />
               </div>
             </div>
           </div>
           <article className="flex basis-2/5 flex-col justify-between px-5">
             <div>
-              <h1 className="mb-4 text-2xl font-semibold leading-none tracking-[0.72px]">
-                VSC TEE - WHITE
+              <h1 className="mb-4 text-2xl font-semibold capitalize leading-none tracking-[0.72px]">
+                {productDetail.name}
               </h1>
               <div className="mb-4 flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-2">
@@ -123,58 +195,75 @@ function ProductDetail() {
                 </div>
                 <div className="h-4 w-[1px] bg-[#808080]"></div>
                 <p className="flex items-center gap-2">
-                  Tình trạng: <span className="text-[#0F6]">Còn hàng</span>
+                  Tình trạng:{' '}
+                  {productDetail.totalQuantity > 0 ? (
+                    <span className="text-[#0F6]">
+                      Còn hàng ({productDetail.totalQuantity})
+                    </span>
+                  ) : (
+                    <span className="text-red-500">Hết hàng</span>
+                  )}
                 </p>
               </div>
-              <h4 className="mb-6 text-2xl tracking-[0.72px]">
-                {formatPrice(320000, 'VNĐ')}
-              </h4>
-              <p className="mb-6 w-4/5 break-words text-sm">
-                Thiết kế giới hạn dành riêng cho đội tuyển GAM eSports tại giải
-                đấu MSI 2024. Kích thước: M - L - XL. Chất liệu: Polyester.
-                Relaxed Fit. Các logo tài trợ có hiệu ứng được sử dụng kĩ thuật
-                in decal. Toàn bộ artwork còn lại được sử dụng kĩ thuật in lụa.
-                Nhãn Jersey trang trí được may ở góc dưới thân trước.
-              </p>
-              {productDetail.colour && productDetail.colour.length && (
-                <div className="mb-6 flex items-center gap-6 border-t border-solid border-black pt-6">
-                  <h4 className="text-xl leading-none tracking-[0.6px]">
-                    Colors:
-                  </h4>
-                  <div className="flex items-center gap-2">
-                    {colors.map((color, index) => {
-                      return (
-                        <label
-                          key={color}
-                          className={`${checkedColor === index ? 'border-2 border-solid border-black' : ''} flex size-5 cursor-pointer items-center justify-center overflow-hidden rounded-full`}
-                        >
-                          <span
-                            className={`${checkedColor === index ? 'size-3' : 'size-full'} ${color !== 'white' && color !== 'black' ? `bg-${color}-400` : `bg-${color}`} ${color === 'white' ? 'border-2 border-solid border-black' : ''} flex rounded-full`}
-                          ></span>
-                          <input
-                            onChange={() => changeColor(index)}
-                            hidden
-                            type="radio"
-                            name="colors"
-                            value={color}
-                          />
-                        </label>
-                      );
-                    })}
+              <div className="mb-4 flex items-center gap-5 text-2xl">
+                <h4 className="tracking-[0.72px]">
+                  {formatPrice(productDetail.finalPrice, 'VNĐ')}
+                </h4>
+                {productDetail.saleDiscountPercent > 0 && (
+                  <div className="flex items-start gap-2">
+                    <h4 className="tracking-[0.72px] text-[#929292] line-through">
+                      {formatPrice(productDetail.originalPrice, 'VNĐ')}
+                    </h4>
+                    <span className="flex items-center justify-center rounded bg-[#DB4444] px-1 text-xs text-[#fafafa]">
+                      Giảm {productDetail.saleDiscountPercent}%
+                    </span>
                   </div>
-                </div>
-              )}
-              {productDetail.size && productDetail.size.length && (
-                <div className="mb-6 flex items-center gap-6">
-                  <h4 className="text-xl tracking-[0.6px]">Size</h4>
-                  <div className="flex items-center gap-4">
-                    {sizes.map((size, index) => (
+                )}
+              </div>
+              <p className="mb-6 w-4/5 break-words text-sm">
+                Mô tả: {productDetail.description}
+              </p>
+
+              <div className="mb-4 flex items-center gap-4">
+                <h4 className="min-w-20 text-base tracking-[0.6px]">
+                  Màu sắc:
+                </h4>
+                <div className="flex items-center gap-4">
+                  {productDetail.colours?.map((color) => {
+                    const isOutOfStock = checkOutOfStock(color);
+                    return (
                       <label
-                        key={size}
-                        className={`${checkedSize === index ? 'border-[#DB4444] bg-[#DB4444] text-[#fafafa]' : 'border-black bg-white'} flex size-8 cursor-pointer items-center justify-center rounded border-2 border-solid text-sm font-medium transition-all`}
+                        key={color}
+                        className={`${isOutOfStock ? 'cursor-not-allowed bg-[#FAFAFA] text-[#C3D2EA]' : 'cursor-pointer text-[#333333]'} ${checkedColor === color ? 'border-[#DB4444] text-[#fafafa]' : 'border-gray'} flex items-center justify-center rounded-md border-2 border-solid px-4 py-2 text-sm transition-all`}
                       >
                         <input
-                          onChange={() => setCheckedSize(index)}
+                          onChange={() => handleChangeColor(color)}
+                          hidden
+                          name="colors"
+                          value="xs"
+                          type="checkbox"
+                        />
+                        {color}
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="mb-4 flex items-center gap-4">
+                <h4 className="min-w-20 text-base tracking-[0.6px]">
+                  Kích cỡ:
+                </h4>
+                <div className="flex items-center gap-4">
+                  {productDetail.sizes?.map((size) => {
+                    const isOutOfStock = outStockSizeList.includes(size);
+                    return (
+                      <label
+                        key={size}
+                        className={`${isOutOfStock ? 'cursor-not-allowed bg-[#FAFAFA] text-[#C3D2EA]' : 'cursor-pointer text-[#333333]'} ${checkedSize === size ? 'border-[#DB4444] text-[#fafafa]' : 'border-gray'} flex items-center justify-center rounded-md border-2 border-solid px-4 py-2 text-sm transition-all`}
+                      >
+                        <input
+                          onChange={() => handleChangeSize(size)}
                           hidden
                           name="sizes"
                           value="xs"
@@ -182,13 +271,13 @@ function ProductDetail() {
                         />
                         {size}
                       </label>
-                    ))}
-                  </div>
+                    );
+                  })}
                 </div>
-              )}
+              </div>
             </div>
             <div className="flex flex-col gap-5">
-              <div className="flex justify-between gap-6">
+              <div className="flex items-center justify-between">
                 <div className="flex w-40 overflow-hidden rounded border border-solid border-[rgba(0,0,0,0.5)]">
                   <span
                     onClick={decreaseQuantityProduct}
@@ -210,9 +299,11 @@ function ProductDetail() {
                   </span>
                 </div>
                 <button
-                  className={`${!quantityProduct > 0 ? 'cursor-not-allowed opacity-50' : ''} rounded bg-[#DB4444] px-12 font-medium text-[#fafafa]`}
+                  onClick={handleAddProductToCart}
+                  className={`${!quantityProduct > 0 ? 'cursor-not-allowed opacity-50' : ''} flex min-w-64 items-center justify-center gap-2 rounded border border-solid border-[#DB4444] bg-[#FFEEE8] px-5 py-2 text-[#DB4444]`}
                 >
-                  Mua ngay
+                  <FaCartPlus />
+                  Thêm giỏ hàng
                 </button>
                 <button
                   onClick={() => setIsFavorite((prev) => !prev)}
@@ -225,15 +316,49 @@ function ProductDetail() {
                   )}
                 </button>
               </div>
-              <div className="flex gap-4 rounded border border-solid border-[#b0b0b0] px-4 py-6">
-                <div className="size-10">
-                  <img className="max-w-full" alt="icon" src={IconReturn} />
+              <div className="flex items-center justify-between gap-5">
+                <div className="basis-1/2 rounded bg-[#F0F0EE] px-10 py-4 text-center font-medium leading-tight text-[#2c2c2c]">
+                  FREESHIP đơn hàng giá trị từ 2 triệu đồng
                 </div>
-                <div className="font-medium">
-                  <h4>Return Delivery</h4>
-                  <p className="text-xs">Miễn phí trả hàng trong 30 ngày</p>
+                <div className="basis-1/2 rounded bg-[#F0F0EE] px-10 py-4 text-center font-medium leading-tight text-[#2c2c2c]">
+                  Miễn phí đổi trả phát sinh từ nhà sản xuất
                 </div>
               </div>
+              {/* <div className="rounded bg-[#F0F0EE] px-4 py-2">
+                <h4 className="mb-5 text-base font-medium uppercase">
+                  Dịch vụ giao hàng
+                </h4>
+                <ul className="flex flex-col gap-5 text-sm">
+                  <li className="flex items-center gap-4">
+                    <span className="text-xl">
+                      <AiOutlineFileProtect />
+                    </span>
+                    <h5>Cam kết 100% hàng chính hãng</h5>
+                  </li>
+                  <li className="flex items-center gap-4">
+                    <span className="text-xl">
+                      <FaShippingFast />
+                    </span>
+                    <div>
+                      <h5>Giao hàng dự kiến</h5>
+                      <p className="font-medium">
+                        Thứ 2 - Thứ 6 từ 9h00 - 17h00
+                      </p>
+                    </div>
+                  </li>
+                  <li className="flex items-center gap-4">
+                    <span className="text-xl">
+                      <RiLoopLeftLine />
+                    </span>
+                    <div>
+                      <h5>Hỗ trợ 9h-21h hằng ngày:</h5>
+                      <p className="font-medium">
+                        Với các kênh chat, email & phone
+                      </p>
+                    </div>
+                  </li>
+                </ul>
+              </div> */}
             </div>
           </article>
         </section>

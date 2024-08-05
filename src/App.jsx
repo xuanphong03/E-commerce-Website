@@ -10,6 +10,7 @@ import SignInPage from './pages/Auth/SignIn';
 import ErrorPage from './pages/Error';
 import WishListPage from './pages/WishList';
 import CartPage from './pages/Cart';
+import 'react-toastify/dist/ReactToastify.css';
 
 import OrdersPage from './pages/Order';
 import CheckOutPage from './pages/CheckOut/CheckOutPage';
@@ -24,7 +25,7 @@ function App() {
   return (
     <div className="relative font-roboto">
       <Header />
-      <div className="mt-32">
+      <div className="mt-[124px]">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/contact" element={<ContactPage />} />

@@ -1,263 +1,247 @@
-// import React, { useEffect, useRef, useState } from 'react';
-// import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
-// import { IoIosArrowDown, IoMdSend } from 'react-icons/io';
-// import './ChatBox.css';
-
-// import { over } from 'stompjs';
-// import SockJS from 'sockjs-client';
-// import StorageKeys from '~/constants/storage-key';
-
-// ChatBox.propTypes = {};
-
-// const RECEIVER = {
-//   chatbot: 'Aza Chōbei Assistant',
-//   admin: 'ADMIN',
-// };
-
-// let stompClient = null;
-// const SOCKET_URL = 'http://localhost:8080/ws';
-
-// function ChatBox(props) {
-//   const token = localStorage.getItem(StorageKeys.TOKEN) || '';
-//   const user = JSON.parse(localStorage.getItem(StorageKeys.USER)) || {};
-//   const { id, name } = user;
-//   const [chatting, setChatting] = useState(false);
-//   const [receiverId, setReceiverId] = useState(null);
-//   const [receiversList, setReceiversList] = useState([]);
-//   const [message, setMessage] = useState('');
-//   const [messages, setMessages] = useState([]);
-
-//   const connect = () => {
-//     const socket = new SockJS(SOCKET_URL);
-//     stompClient = over(socket);
-//     stompClient.connect(
-//       { Authorization: `Bearer ${token}` },
-//       onConnected,
-//       onError,
-//     );
-//   };
-
-//   const onConnected = () => {
-//     stompClient.subscribe(`/user/${name}/queue/messages`, onMessageReceived); //check
-//     stompClient.subscribe(`/user/queue/public`, onMessageReceived); //check
-
-//     // register the connected user
-//     stompClient.send(
-//       '/app/addUser',
-//       { Authorization: `Bearer ${token}` },
-//       JSON.stringify({
-//         name: name,
-//         fullName: name,
-//         img_url: 'img_Url_User',
-//         status: 'ONLINE',
-//       }),
-//     );
-
-//     findAndDisplayConnectedUsers();
-//   };
-
-//   const findAndDisplayConnectedUsers = async () => {
-//     const connectedUsersResponse = await fetch('http://localhost:8080/users', {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     })
-//       .then((response) => response.json())
-//       .then((data) => data);
-
-//     const connectedUsers = connectedUsersResponse.filter(
-//       (user) => user.name !== name,
-//     );
-
-//     setReceiversList(connectedUsers);
-//   };
-
-//   const fetchAndDisplayUserChat = async () => {
-//     const userChatResponse = await fetch(
-//       `http://localhost:8080/api/v1/chat-box/messages/${name}/${receiverId}`,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       },
-//     )
-//       .then((response) => response.json())
-//       .then((data) => data);
-//     setMessages(userChatResponse);
-//   };
-
-//   // const displayMessage = () => {};
-
-//   const onError = (err) => {
-//     console.log('Lỗi', err);
-//   };
-//   const onMessageReceived = async (payload) => {
-//     await findAndDisplayConnectedUsers();
-//     const payloadData = JSON.parse(payload.body);
-
-//     console.log('PAYLOAD DATA: ', payload);
-//   };
-
-//   const handleSendMessage = () => {
-//     if (!message.trim()) return;
-
-//     if (stompClient) {
-//       const chatMessage = {
-//         senderId: name,
-//         recipientId: receiverId,
-//         content: message.trim(),
-//         timestamp: new Date(),
-//       };
-//       stompClient.send('/app/chat', {}, JSON.stringify(chatMessage));
-
-//       setMessages((prev) => [...prev, { name, message }]);
-//       if (receiverId === RECEIVER.chatbot) {
-//         fetchAndDisplayUserChat();
-//       }
-//       setMessage('');
-//     }
-//     // chatArea.scrollTop = chatArea.scrollHeight;
-//   };
-
-//   const handleChangeMessage = (e) => {
-//     const { value } = e.target;
-//     setMessage(value);
-//   };
-
-//   return (
-//     <div className={`fixed bottom-2 right-5`}>
-//       <div
-//         onClick={() => {
-//           setChatting(true);
-//           connect();
-//         }}
-//         className={`${chatting ? 'invisible opacity-0' : 'visible opacity-100'} flex cursor-pointer items-center gap-2 rounded bg-red-500 px-4 py-2 text-white transition-all delay-300 duration-500 ease-in-out hover:bg-red-400`}
-//       >
-//         <IoChatbubbleEllipsesOutline className="text-xl" /> Nhắn tin
-//       </div>
-//       <div
-//         className={`${chatting ? 'h-[500px] w-[700px]' : 'h-0 w-0'} chatBox absolute bottom-0 right-0 overflow-hidden rounded bg-white text-black`}
-//       >
-//         <div className="border-gray flex h-12 items-center justify-between border-b border-solid px-5 py-2">
-//           <h2 className="text-lg font-semibold tracking-wide text-red-500">
-//             Nhắn tin
-//           </h2>
-//           <button
-//             onClick={() => setChatting(false)}
-//             className="flex size-5 items-center justify-center rounded border border-solid border-black"
-//           >
-//             <IoIosArrowDown className="text-xs" />
-//           </button>
-//         </div>
-//         <div className="flex h-[calc(100%-48px)]">
-//           <div className="border-gray w-[200px] border-r border-solid">
-//             <article
-//               onClick={() => {
-//                 setReceiverId(RECEIVER.chatbot);
-//                 fetchAndDisplayUserChat();
-//               }}
-//               className={`${receiverId === RECEIVER.chatbot ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'} flex cursor-pointer gap-2 px-5 py-2 text-[#2c2c2c] transition-all`}
-//             >
-//               <div className="flex size-6 items-center justify-center overflow-hidden rounded-full">
-//                 <img
-//                   src="https://e7.pngegg.com/pngimages/498/917/png-clipart-computer-icons-desktop-chatbot-icon-blue-angle-thumbnail.png"
-//                   className="max-w-full object-cover"
-//                 />
-//               </div>
-//               <div>
-//                 <h4>Chat bot</h4>
-//               </div>
-//             </article>
-
-//             <article
-//               onClick={() => {
-//                 setReceiverId(RECEIVER.admin);
-//                 fetchAndDisplayUserChat();
-//               }}
-//               className={`${receiverId === RECEIVER.admin ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'} flex cursor-pointer gap-2 px-5 py-2 text-[#2c2c2c] transition-all`}
-//             >
-//               <div className="flex size-6 items-center justify-center overflow-hidden rounded-full">
-//                 <img
-//                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRILDn3A82Ed8Sq7yGAzk8PNqZjpzAYgSF3-g&s"
-//                   className="max-w-full object-cover"
-//                 />
-//               </div>
-//               <div>
-//                 <h4>Admin</h4>
-//               </div>
-//             </article>
-//           </div>
-//           <div className="relative w-[calc(100%-200px)]">
-//             <div className="h-[calc(100%-40px)] overflow-y-auto px-4 py-2">
-//               <ul>
-//                 {messages.map((messageItem, index) => {
-//                   return (
-//                     <li className="text-sm" key={index}>
-//                       {messageItem.content}
-//                     </li>
-//                   );
-//                 })}
-//               </ul>
-//             </div>
-//             <div className="border-gray absolute bottom-0 left-0 right-0 h-10 border-t border-solid pr-10">
-//               <input
-//                 value={message}
-//                 onChange={handleChangeMessage}
-//                 className="h-full w-full px-2 py-1 text-sm outline-none"
-//                 placeholder="Nhập tin nhắn..."
-//               />
-//               <button
-//                 onClick={handleSendMessage}
-//                 className="absolute right-0 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center bg-blue-500 text-xl text-white transition-all hover:bg-blue-400"
-//               >
-//                 <IoMdSend />
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default ChatBox;
 import React, { useEffect, useRef, useState } from 'react';
 import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 import { IoIosArrowDown, IoMdSend } from 'react-icons/io';
 import { v4 as uuidv4 } from 'uuid';
 import './ChatBox.css';
-
+import EmojiPicker from 'emoji-picker-react';
 import { over } from 'stompjs';
 import SockJS from 'sockjs-client';
 import StorageKeys from '~/constants/storage-key';
-
+import { EmojiStyle } from 'emoji-picker-react';
 ChatBox.propTypes = {};
 
 const RECEIVER = {
-  chatbot: 'Aza Chōbei Assistant',
+  chatbot: 'Aza Assistant',
   admin: 'ADMIN',
 };
 
 let stompClient = null;
 const SOCKET_URL = 'http://localhost:8080/ws';
-
+let save_ReiverID = null;
+let save_Img = null;
 function ChatBox(props) {
   const token = localStorage.getItem(StorageKeys.TOKEN) || '';
   const user = JSON.parse(localStorage.getItem(StorageKeys.USER)) || {};
-  const { id, name } = user;
+  const { id, name, userImgUrl } = user;
   const [chatting, setChatting] = useState(false);
-  const [receiverId, setReceiverId] = useState(null);
+  const [receiverId, setReceiverId] = useState();
   const [receiversList, setReceiversList] = useState([]);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
+  // --------------------------------------------------------------------------------------
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const handleEmojiClick = (event, emojiObject) => {
+    setMessage((prevMessage) => prevMessage + event.emoji);
+    // setOptionalListVisible((prev) => !prev);
+    // setShowEmojiPicker(false);
+  };
+  //--------------------------------------------------------------------------------------
+  const isImageUrl = (url) => {
+    return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
+  };
 
+  //--------------------------------------------------------------------------------------
+  const [optionalListVisible, setOptionalListVisible] = useState(false);
+  const [options, setOptions] = useState([]);
+  const [filteredOptions, setFilteredOptions] = useState([]); // State to hold filtered options
+  const [inputFilter, setInputFilter] = useState(''); // State to hold input filter value
+
+  const normalizeString = (str) => {
+    if (typeof str === 'string') {
+      return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+    console.error('Expected a string, but got:', typeof str);
+    return ''; // Return an empty string if `str` is not a string
+  };
+
+  const fetchOptions = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:8080/api/v1/rest/getAllQuestions',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      const data = await response.json();
+      console.log(data);
+
+      setOptions(data); // Store options in state
+    } catch (error) {
+      console.error('Error fetching options:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (optionalListVisible) {
+      fetchOptions();
+    }
+  }, [optionalListVisible]);
+
+  useEffect(() => {
+    // Normalize the input filter value
+    const normalizedFilter = normalizeString(inputFilter);
+    setFilteredOptions(
+      options.filter((option) =>
+        normalizeString(option)
+          .toLowerCase()
+          .includes(normalizedFilter.toLowerCase()),
+      ),
+    );
+  }, [inputFilter, options]);
+
+  const handleOptionClick = (option) => {
+    setMessage(option); // Set the message input to the selected option
+    setInputFilter('');
+    // setOptionalListVisible(false); // Hide options list after selection
+    // fetchOptions();
+  };
+  const handleInputChange = (e) => {
+    setInputFilter(e.target.value); // Update filter value
+  };
+  //--------------------------------------------------------------------------------------
+  const [newOptions, setNewOptions] = useState([]);
+  const [inputFilter2, setInputFilter2] = useState(''); // State to hold input filter value
+  const [optionalListVisible2, setOptionalListVisible2] = useState(false);
+  const [filteredOptions2, setFilteredOptions2] = useState([]);
+  const handleInputChange2 = (e) => {
+    setInputFilter2(e.target.value);
+  };
+  const fetchOptions2 = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:8080/api/v1/global/products-chat-bot',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      const data = await response.json();
+      console.log(data);
+
+      setNewOptions(data); // Store options in state
+    } catch (error) {
+      console.error('Error fetching options:', error);
+    }
+  };
+
+  useEffect(() => {
+    const normalizedFilter2 = normalizeString(inputFilter2);
+    setFilteredOptions2(
+      newOptions.filter(
+        (option) =>
+          normalizeString(option.name)
+            .toLowerCase()
+            .includes(normalizedFilter2.toLowerCase()) ||
+          normalizeString(option.originalPrice)
+            .toLowerCase()
+            .includes(normalizedFilter2.toLowerCase()) ||
+          normalizeString(option.finalPrice)
+            .toLowerCase()
+            .includes(normalizedFilter2.toLowerCase()),
+      ),
+    );
+  }, [inputFilter2, newOptions]);
+  const handleOptionClick2 = (e) => {
+    setMessage(e.sku); // Set the message input to the selected option
+    setInputFilter2('');
+    // setOptionalListVisible2(false); // Hide options list after selection
+  };
+  //--------------------------------------------------------------------------------------
+  const [optionalListVisible3, setOptionalListVisible3] = useState(false);
+  const [lastOptions, setLastOptions] = useState([]);
+  const [filteredOptions3, setFilteredOptions3] = useState([]); // State to hold filtered options
+  const [inputFilter3, setInputFilter3] = useState(''); // State to hold input filter value
+  const fetchOptions3 = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:8080/api/v1/global/products-chat-bot-image',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      const data = await response.json();
+      console.log(data);
+      setLastOptions(data); // Store options in state
+    } catch (error) {
+      console.error('Error fetching options:', error);
+    }
+  };
+
+  useEffect(() => {
+    // Normalize the input filter value
+    const normalizedFilter = normalizeString(inputFilter3);
+    setFilteredOptions3(
+      lastOptions.filter((option) =>
+        normalizeString(option)
+          .toLowerCase()
+          .includes(normalizedFilter.toLowerCase()),
+      ),
+    );
+  }, [inputFilter3, lastOptions]);
+  const handleInputChange3 = (e) => {
+    setInputFilter3(e.target.value);
+  };
+  const handleOptionClick3 = (e) => {
+    setMessage(e.img_url); // Set the message input to the selected option
+    setInputFilter('');
+    // handleSendMessage();
+    // setOptionalListVisible2(false); // Hide options list after selection
+  };
+
+  //--------------------------------------------------------------------------------------
+  const toggleOptionalList3 = () => {
+    fetchOptions3();
+    setOptionalListVisible3((prev) => !prev);
+    if (!optionalListVisible3) {
+      setOptionalListVisible(false);
+      setShowEmojiPicker(false);
+      setOptionalListVisible2(false);
+    }
+  };
+
+  const toggleOptionalList2 = () => {
+    fetchOptions2();
+    setOptionalListVisible2((prev) => !prev);
+    if (!optionalListVisible2) {
+      setOptionalListVisible(false);
+      setOptionalListVisible3(false);
+      setShowEmojiPicker(false);
+    }
+  };
+
+  const toggleOptionalList = () => {
+    setOptionalListVisible((prev) => !prev);
+    if (!optionalListVisible) {
+      setOptionalListVisible3(false);
+      setOptionalListVisible2(false);
+      setShowEmojiPicker(false);
+    }
+  };
+
+  const toggleShowEmojiList = () => {
+    setShowEmojiPicker((prev) => !prev);
+    if (!showEmojiPicker) {
+      setOptionalListVisible3(false);
+      setOptionalListVisible(false);
+      setOptionalListVisible2(false);
+    }
+  };
+  //--------------------------------------------------------------------------------------
+  const contactUs = () => {
+    window.location.href = 'http://localhost:8888/contact';
+  };
+  //--------------------------------------------------------------------------------------
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({});
   };
 
   useEffect(scrollToBottom, [messages]);
-
   const connect = () => {
     const socket = new SockJS(SOCKET_URL);
     stompClient = over(socket);
@@ -271,19 +255,17 @@ function ChatBox(props) {
   const onConnected = () => {
     stompClient.subscribe(`/user/${name}/queue/messages`, onMessageReceived);
     stompClient.subscribe(`/user/queue/public`, onMessageReceived);
-
-    // register the connected user
     stompClient.send(
       '/app/addUser',
       { Authorization: `Bearer ${token}` },
       JSON.stringify({
         name: name,
         fullName: name,
-        img_url: 'img_Url_User',
+        img_url: userImgUrl,
         status: 'ONLINE',
       }),
     );
-
+    console.log(userImgUrl);
     findAndDisplayConnectedUsers();
   };
 
@@ -311,6 +293,18 @@ function ChatBox(props) {
       },
     ).then((response) => response.json());
     setMessages(userChatResponse);
+    if (receiverId === RECEIVER.chatbot) {
+      const userChatResponse = await fetch(
+        `http://localhost:8080/api/v1/chat-box/messages/${receiverId}/${name}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      ).then((response) => response.json());
+      setMessages(userChatResponse);
+    }
+    console.log(userChatResponse);
   };
 
   const onError = (err) => {
@@ -321,19 +315,36 @@ function ChatBox(props) {
     await findAndDisplayConnectedUsers();
     const payloadData = JSON.parse(payload.body);
 
-    // Kiểm tra nếu payload có trường content, nếu có thì mới thêm vào messages
-    if (payloadData.content) {
+    // console.log(name);
+    // console.log(con);
+    // console.log(payloadData.senderId);
+    // console.log(payloadData.recipientId);
+    if (
+      name === payloadData.recipientId &&
+      save_ReiverID === payloadData.senderId
+    ) {
       setMessages((prev) => [...prev, payloadData]);
+      // console.log(save_Img);
     }
+    if (name === payloadData.senderId) {
+      setMessages((prev) => [...prev, payloadData]);
+      // console.log(save_Img);
+    }
+    // Dành cho trường hợp tự load đến tin nhắn =)) trông hơi đần tí
+    // if (payloadData.senderId !== RECEIVER.admin) {
+    //   setReceiverId(payloadData.senderId);
+    //   setMessages((prev) => [...prev, payloadData]);
+    // }
   };
-
   const handleSendMessage = (e) => {
+    console.log(message.trim());
     e.preventDefault();
     if (!message.trim() || !stompClient) return;
-
+    console.log(message.trim());
     const chatMessage = {
       senderId: name,
-      recipientId: receiverId,
+      senderImage: userImgUrl,
+      recipientId: save_ReiverID,
       content: message.trim(),
       timestamp: new Date(),
     };
@@ -358,7 +369,7 @@ function ChatBox(props) {
   }, [receiverId]);
 
   return (
-    <div className={`fixed bottom-2 right-5`}>
+    <div className="fixed bottom-2 right-5">
       <div
         onClick={() => {
           setChatting(true);
@@ -369,68 +380,123 @@ function ChatBox(props) {
         <IoChatbubbleEllipsesOutline className="text-xl" /> Nhắn tin
       </div>
       <div
-        className={`${chatting ? 'h-[500px] w-[700px]' : 'h-0 w-0'} chatBox absolute bottom-0 right-0 overflow-hidden rounded bg-white text-black`}
+        className={`${chatting ? 'h-[550px] w-[1200px]' : 'h-0 w-0'} chatBox absolute bottom-0 right-0 overflow-hidden rounded bg-white text-black`}
       >
         <div className="border-gray flex h-12 items-center justify-between border-b border-solid px-5 py-2">
           <h2 className="text-lg font-semibold tracking-wide text-red-500">
-            Nhắn tin
+            {/* Nhắn tin */}
           </h2>
-          <button
-            onClick={() => setChatting(false)}
-            className="flex size-5 items-center justify-center rounded border border-solid border-black"
-          >
-            <IoIosArrowDown className="text-xs" />
-          </button>
-        </div>
-        <div className="flex h-[calc(100%-48px)]">
-          <div className="border-gray w-[200px] border-r border-solid">
-            <article
-              onClick={() => setReceiverId(RECEIVER.chatbot)}
-              className={`${receiverId === RECEIVER.chatbot ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'} flex cursor-pointer gap-2 px-5 py-2 text-[#2c2c2c] transition-all`}
+          <div className="flex space-x-2">
+            <button
+              type="button"
+              id="contactUs"
+              className="items-center justify-center rounded border border-solid border-black text-xs tracking-wide"
+              onClick={contactUs}
+              title="Contact Us"
             >
-              <div className="flex size-6 items-center justify-center overflow-hidden rounded-full">
-                <img
-                  src="https://e7.pngegg.com/pngimages/498/917/png-clipart-computer-icons-desktop-chatbot-icon-blue-angle-thumbnail.png"
-                  className="max-w-full object-cover"
-                />
-              </div>
-              <div>
-                <h4>Chat bot</h4>
-              </div>
-            </article>
-
-            <article
-              onClick={() => setReceiverId(RECEIVER.admin)}
-              className={`${receiverId === RECEIVER.admin ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'} flex cursor-pointer gap-2 px-5 py-2 text-[#2c2c2c] transition-all`}
+              Thắc Mắc
+            </button>
+            <button
+              onClick={() => setChatting(false)}
+              className="flex size-5 items-center justify-center rounded border border-solid border-black"
             >
-              <div className="flex size-6 items-center justify-center overflow-hidden rounded-full">
-                <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRILDn3A82Ed8Sq7yGAzk8PNqZjpzAYgSF3-g&s"
-                  className="max-w-full object-cover"
-                />
-              </div>
-              <div>
-                <h4>Admin</h4>
-              </div>
-            </article>
+              <IoIosArrowDown className="text-xs" />
+            </button>
           </div>
+        </div>
+
+        <div className="flex h-[calc(100%-48px)]">
+          <div className="border-gray w-[268px] border-r border-solid">
+            {receiversList.map((receiver) => (
+              <article
+                key={receiver.id}
+                onClick={() => {
+                  setReceiverId(receiver.name);
+                  save_ReiverID = receiver.name;
+                  save_Img = receiver.img_url;
+                }}
+                className={`${save_ReiverID === receiver.name ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'} flex cursor-pointer gap-2 px-5 py-2 text-[#2c2c2c] transition-all`}
+              >
+                <div className="mb-2 flex items-center gap-2">
+                  <div className="flex size-10 items-center justify-center overflow-hidden rounded-full">
+                    <img
+                      src={
+                        receiver.img_url ||
+                        'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
+                      }
+                      className="max-w-full object-cover"
+                      alt={receiver.name}
+                    />
+                  </div>
+                  <div className="flex flex-col justify-center">
+                    <h4 className="text-base">{receiver.name}</h4>
+                    <p
+                      className={`${receiver.status === 'ONLINE' ? 'text-emerald-500' : 'text-slate-600'} text-xs`}
+                    >
+                      {receiver.status.toLowerCase()}
+                    </p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+
           <div className="relative w-[calc(100%-200px)]">
-            <div className="h-[calc(100%-40px)] overflow-y-auto px-4 py-2">
-              <ul>
-                {messages.map((messageItem, index) => (
-                  <li
-                    className={`${messageItem.senderId === name ? 'ml-auto bg-blue-500 text-right text-white' : 'mr-auto bg-gray-200 text-left'} mb-4 w-fit max-w-[80%] rounded-lg px-2 py-2 text-sm`}
-                    key={index}
-                  >
-                    <p className={``}>{messageItem.content}</p>
-                  </li>
-                ))}
+            <div className="display: flex; relative h-[calc(100%-40px)] overflow-y-auto px-4 py-2">
+              <ul className="flex flex-col space-y-1">
+                {messages.map((messageItem, index) => {
+                  console.log(index, messageItem);
+
+                  return (
+                    <li
+                      key={index}
+                      className={`flex items-start ${
+                        messageItem.senderId === name
+                          ? 'ml-auto flex-row-reverse'
+                          : 'mr-auto'
+                      } max-w-[80%] rounded-lg text-sm`}
+                    >
+                      <div className="flex flex-col items-start">
+                        <img
+                          src={
+                            messageItem.senderId === name
+                              ? userImgUrl
+                              : messageItem.senderImage
+                          }
+                          className="h-[60px] w-[60px] rounded-full"
+                          alt="Sender"
+                        />
+                      </div>
+                      {isImageUrl(messageItem.content) ? (
+                        <img
+                          src={messageItem.content}
+                          className={`max-w-[42%] ${
+                            messageItem.senderId === name
+                              ? 'mt-15 mr-2 bg-black text-right text-white'
+                              : 'mt-15 ml-2 bg-gray-200 text-left'
+                          } mt-2 rounded-lg`}
+                          alt="Message content"
+                        />
+                      ) : (
+                        <p
+                          className={`${
+                            messageItem.senderId === name
+                              ? 'mt-15 mr-4 bg-black text-right text-white'
+                              : 'mt-15 ml-4 bg-gray-200 text-left'
+                          } mt-2 max-w-[85%] whitespace-pre-wrap rounded-lg px-2 py-2 text-base`}
+                        >
+                          {messageItem.content}
+                        </p>
+                      )}
+                    </li>
+                  );
+                })}
                 <div ref={messagesEndRef} />
               </ul>
             </div>
             <form
               onSubmit={handleSendMessage}
-              className="border-gray absolute bottom-0 left-0 right-0 h-10 border-t border-solid pr-10"
+              className="border-gray absolute bottom-0 left-0 right-0 flex h-10 items-center border-t border-solid"
             >
               <input
                 value={message}
@@ -439,12 +505,165 @@ function ChatBox(props) {
                 placeholder="Nhập tin nhắn..."
               />
               <button
+                type="button"
+                id="optional3"
+                className="w-30px size-15 mx-2 h-full"
+                onClick={toggleOptionalList3}
+                title="Chọn nhãn dán"
+              >
+                💀
+              </button>
+              <button
+                type="button"
+                id="optional2"
+                className="w-30px size-15 mx-2 h-full"
+                onClick={toggleOptionalList2}
+                title="Tìm kiêm thông tin về sản phẩm"
+              >
+                🤡
+              </button>
+              <button
+                type="button"
+                id="optional"
+                className="w-30px size-15 mx-2 h-full"
+                onClick={toggleOptionalList}
+                title="Tìm từ khóa Chat Bot"
+              >
+                🤖
+              </button>
+              <button
+                type="button"
+                id="emoji-btn"
+                className="w-30px size-15 mx-2 h-full"
+                onClick={toggleShowEmojiList}
+                title="Chọn biểu tượng cảm xúc"
+              >
+                🎃
+              </button>
+              <button
                 type="submit"
-                className="absolute right-0 top-1/2 flex size-10 -translate-y-1/2 items-center justify-center bg-blue-500 text-xl text-white transition-all hover:bg-blue-400"
+                className="flex size-12 h-full items-center justify-center bg-blue-500 px-4 text-xl text-white transition-all hover:bg-blue-400"
               >
                 <IoMdSend />
               </button>
             </form>
+          </div>
+          <div className="border-gray w-[450px] border-r border-solid">
+            {optionalListVisible && (
+              <div
+                className="overflow-auto rounded border border-gray-300 bg-white shadow-lg"
+                style={{
+                  top: '100%',
+                  left: '0',
+                  maxHeight: '502px', // Adjust height as needed
+                }}
+              >
+                <input
+                  type="text"
+                  value={inputFilter}
+                  onChange={handleInputChange}
+                  className="w-full border-b border-gray-300 px-2 py-1 text-sm"
+                  placeholder="Tìm kiếm từ khóa..."
+                />
+                <ul>
+                  {filteredOptions.map((option, index) => (
+                    <li
+                      key={index}
+                      className="cursor-pointer px-4 py-2 text-sm hover:bg-gray-300"
+                      onClick={() => handleOptionClick(option)}
+                    >
+                      {option}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {optionalListVisible2 && (
+              <div
+                className="overflow-auto rounded border border-gray-300 bg-white shadow-lg"
+                style={{
+                  top: '100%',
+                  left: '0',
+                  maxHeight: '502px', // Adjust height as needed
+                }}
+              >
+                <input
+                  type="text"
+                  value={inputFilter2}
+                  onChange={handleInputChange2}
+                  className="w-full border-b border-gray-300 px-2 py-1"
+                  placeholder="Search..."
+                />
+                <ul>
+                  {filteredOptions2.map((option, index) => (
+                    <li
+                      key={index}
+                      className="flex cursor-pointer items-center gap-4 px-4 py-2 hover:bg-gray-300"
+                      onClick={() => handleOptionClick2(option)}
+                    >
+                      <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full">
+                        <img
+                          src={option.imageMain}
+                          className="h-full w-full object-cover"
+                          alt={`Option ${index}`}
+                        />
+                      </div>
+                      <div className="ml-4 flex flex-col">
+                        <p className="hidden text-sm font-medium">
+                          {option.sku}
+                        </p>
+                        <p className="font-family: ui-serif bold text-sm font-medium">
+                          {option.name}
+                        </p>
+                        <p className="text-xs line-through">
+                          OriginalPrice: {option.originalPrice} VND
+                        </p>
+                        <p className="text-xs text-red-700">
+                          Sale Price: {option.finalPrice} VND
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {optionalListVisible3 && (
+              <div
+                className="overflow-auto rounded border border-gray-300 bg-white shadow-lg"
+                style={{
+                  top: '100%',
+                  left: '0',
+                  maxHeight: '502px',
+                }}
+              >
+                <ul className="grid grid-cols-3 gap-4 p-1">
+                  {' '}
+                  {/* Use grid layout with 4 columns */}
+                  {filteredOptions3.map((option, index) => (
+                    <li
+                      key={index}
+                      className="flex cursor-pointer flex-col items-center"
+                      onClick={() => handleOptionClick3(option)}
+                    >
+                      <img
+                        src={option.img_url} // Assuming option.imageUrl contains the image URL
+                        alt="option image"
+                        className="h-full w-full rounded-sm object-cover" // Square images with rounded corners
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {showEmojiPicker && (
+              <div id="emoji-picker" className="absolute right-0">
+                <EmojiPicker
+                  onEmojiClick={handleEmojiClick}
+                  height="41em"
+                  width="19.5em"
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
