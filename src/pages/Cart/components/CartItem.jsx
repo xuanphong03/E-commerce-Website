@@ -21,7 +21,7 @@ function CartItem({ data }) {
 
   return (
     <div className="mt-10 flex w-full px-10 py-5 shadow-table">
-      <div className="flex max-w-[25%] basis-1/4 items-center gap-5">
+      <div className="flex basis-[30%] items-center gap-5">
         <div className="h-10">
           <img
             className="max-h-full"
@@ -31,16 +31,16 @@ function CartItem({ data }) {
         </div>
         <h4>{data.name}</h4>
       </div>
-      <div className="flex max-w-[25%] basis-1/4 items-center justify-center">
+      <div className="flex basis-[15%] items-center justify-center">
         {formatPrice(data.unitPrice, 'VNĐ')}
       </div>
-      <div className="flex basis-1/4 items-center justify-center">
+      <div className="flex basis-[10%] items-center justify-center">
         {data.size}
       </div>
-      <div className="flex basis-1/4 items-center justify-center">
+      <div className="flex basis-[10%] items-center justify-center">
         {data.color}
       </div>
-      <div className="flex max-w-[25%] basis-1/4 items-center justify-center">
+      <div className="flex basis-[20%] items-center justify-center">
         <div className="flex h-11 w-24 items-center justify-between rounded border-[1.5px] border-solid border-[#999999] px-3 py-1">
           <input
             className="w-14 px-2 outline-none"
@@ -66,7 +66,7 @@ function CartItem({ data }) {
           </div>
         </div>
       </div>
-      <div className="flex max-w-[25%] basis-1/4 items-center justify-center">
+      <div className="flex basis-[15%] items-center justify-center">
         {formatPrice(data.totalPrice, 'VNĐ')}
       </div>
     </div>

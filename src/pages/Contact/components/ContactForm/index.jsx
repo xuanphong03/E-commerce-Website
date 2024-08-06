@@ -8,16 +8,14 @@ import ContactInput from '../input-controls/ContactInput';
 import ContactMessage from '../input-controls/ContactMessage';
 import { useEffect } from 'react';
 import { regex } from '~/constants/regex';
-import { useTranslation } from 'react-i18next';
 
 ContactForm.propTypes = {
   onSubmit: PropTypes.func,
 };
 
 function ContactForm({ onSubmit }) {
-  const { t } = useTranslation('contact');
   const schema = yup.object().shape({
-    contactFullName: yup
+    name: yup
       .string()
       .required('Vui lòng nhập họ và tên')
       .matches(regex.fullName, 'Tên không hợp lệ')
@@ -25,18 +23,18 @@ function ContactForm({ onSubmit }) {
         'Họ và tên phải có ít nhất 2 từ',
         'Họ và tên phải chứa ít nhất 2 từ.',
         (value) => {
-          return value.trim().split(' ').length >= 2;
+          return value.trim().split(' ').length >= 1;
         },
       ),
-    contactEmail: yup
+    email: yup
       .string()
       .required('Vui lòng nhập email.')
       .email('Vui lòng nhập email hợp lệ.'),
-    contactPhoneNumber: yup
+    phone: yup
       .string()
       .required('Vui lòng nhập số điện thoại')
       .matches(regex.phoneNumber, 'Số điện thoại không hợp lệ'),
-    contactMessage: yup.string().required('Vui lòng nhập tin nhắn'),
+    question: yup.string().required('Vui lòng nhập tin nhắn'),
   });
 
   const {
@@ -67,27 +65,27 @@ function ContactForm({ onSubmit }) {
         <div className="max-w-[32%] basis-[32%]">
           <ContactInput
             id="fullName-contact"
-            label={t('Placeholder Your Name Input Field')}
-            register={{ ...register('contactFullName') }}
-            errorMessage={errors.contactFullName?.message}
+            label={'Họ và tên'}
+            register={{ ...register('name') }}
+            errorMessage={errors.name?.message}
             isRequired
           />
         </div>
         <div className="max-w-[32%] basis-[32%]">
           <ContactInput
             id="email-contact"
-            label={t('Placeholder Your Email Input Field')}
-            register={{ ...register('contactEmail') }}
-            errorMessage={errors.contactEmail?.message}
+            label={'Email'}
+            register={{ ...register('email') }}
+            errorMessage={errors.email?.message}
             isRequired
           />
         </div>
         <div className="max-w-[32%] basis-[32%]">
           <ContactInput
             id="phoneNumber-contact"
-            label={t('Placeholder Your Phone Input Field')}
-            register={{ ...register('contactPhoneNumber') }}
-            errorMessage={errors.contactPhoneNumber?.message}
+            label={'Số điện thoại'}
+            register={{ ...register('phone') }}
+            errorMessage={errors.phone?.message}
             isRequired
           />
         </div>
@@ -95,9 +93,9 @@ function ContactForm({ onSubmit }) {
       <div className="mb-8 max-w-full basis-full">
         <ContactMessage
           id="message-contact"
-          label={t('Placeholder Your Message Input Field')}
-          register={{ ...register('contactMessage') }}
-          errorMessage={errors.contactMessage?.message}
+          label={'Tin nhắn'}
+          register={{ ...register('question') }}
+          errorMessage={errors.question?.message}
         />
       </div>
       <div className="flex justify-end">

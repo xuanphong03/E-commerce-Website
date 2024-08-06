@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import SectionTag from '~/components/SectionTag';
-import ProductImage from '~/assets/images/product01.png';
 import ProductItem from '~/components/ProductItem';
 import Skeleton from '~/components/Skeleton/Skeleton';
 import productApi from '~/apis/productApi';
 import { useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
-import { fakeProductsList } from '~/data/dataProduct';
 
 export default function FlashSalesSection() {
   const navigate = useNavigate();
@@ -33,9 +31,8 @@ export default function FlashSalesSection() {
   useEffect(() => {
     setLoading(true);
     (async () => {
-      // const { products } = await productApi.getAll();
-      // setProductsList(products);
-      setProductsList(fakeProductsList);
+      const { data } = await productApi.getAll({ isPromotion: true });
+      setProductsList(data);
     })();
     setLoading(false);
   }, []);
@@ -79,11 +76,11 @@ export default function FlashSalesSection() {
   const handleViewAllProducts = () => {
     const filters = {
       _page: 1,
-      _limit: 16,
+      _limit: 20,
       _sort: 'ASC',
       isPromotion: 'true',
     };
-    navigate(`/products/promotion?${queryString.stringify(filters)}`);
+    navigate(`/products/all_products?${queryString.stringify(filters)}`);
   };
 
   return (

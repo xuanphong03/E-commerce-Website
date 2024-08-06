@@ -1,56 +1,10 @@
 import { useEffect, useState } from 'react';
-import Breadcrumbs from '~/components/Breadcrumbs/Breadcrumbs';
-import HeaderTable from './components/HeaderTable';
-import DataTable from './components/CartItem';
 import CartItem from './components/CartItem';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { formatPrice } from '~/utils/formatPrice';
 import { toast } from 'react-toastify';
 import cartApi from '~/apis/cartApi';
-
-const paths = [
-  {
-    id: 1,
-    to: '/',
-    name: 'Home',
-  },
-  {
-    id: 2,
-    to: '/cart',
-    name: 'Cart',
-  },
-];
-
-const RESPONSE_GET_ALL = {
-  user: 1,
-  totalPayment: 2000000,
-  totalQuantity: 20,
-  carts: [
-    {
-      id: 1,
-      name: 'Product 01',
-      size: 'L',
-      color: 'Đỏ',
-      image:
-        'https://product.hstatic.net/1000026602/product/img_0095_9890f80f95df47cba45438e38f9f74d1_master.jpg',
-      quantity: 3,
-      unitPrice: 200000,
-      totalPrice: 600000,
-    },
-    {
-      id: 2,
-      name: 'Product 02',
-      size: 'XL',
-      color: 'Xanh',
-      image:
-        'https://product.hstatic.net/1000026602/product/00009070_e116726e40ed4bdd908cad5c98fb9e79_master.jpg',
-      quantity: 5,
-      unitPrice: 200000,
-      totalPrice: 1000000,
-    },
-  ],
-};
 
 export default function CartPage() {
   const user = useSelector((state) => state.user.current);
@@ -74,6 +28,7 @@ export default function CartPage() {
     } catch (error) {
       toast.error('API GET ALL CART LỖI');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChangeDiscountCouponCode = (e) => {
@@ -90,16 +45,14 @@ export default function CartPage() {
     <main className="mx-auto mb-[140px] max-w-[1300px] pt-[50px]">
       <div className="mb-[80px]">
         <div className="mb-6">
-          <HeaderTable
-            thead={[
-              'Sản phẩm',
-              'Giá',
-              'Kích cỡ',
-              'Màu sắc',
-              'Số lượng',
-              'Tổng tiền',
-            ]}
-          />
+          <div className="flex justify-between px-10 py-6 text-black shadow-table">
+            <h3 className={`max-w-[30%] basis-[30%]`}>Sản phẩm</h3>
+            <h3 className={`max-w-[15%] basis-[15%] text-center`}>Giá</h3>
+            <h3 className={`max-w-[10%] basis-[10%] text-center`}>Kích cỡ</h3>
+            <h3 className={`max-w-[10%] basis-[10%] text-center`}>Màu sắc</h3>
+            <h3 className={`max-w-[20%] basis-[20%] text-center`}>Số lượng</h3>
+            <h3 className={`max-w-[15%] basis-[15%] text-center`}>Tổng tiền</h3>
+          </div>
           {cart_items.length ? (
             cart_items.map((cart) => (
               <div key={cart.itemDetail_id}>
