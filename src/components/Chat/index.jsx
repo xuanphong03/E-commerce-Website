@@ -30,6 +30,9 @@ let stompClient = null;
 const SOCKET_URL = 'http://localhost:8080/ws';
 let save_ReiverID = null;
 let save_Img = null;
+let unreadMessages = 0;
+let unreadMessages_2 = 0;
+let save_ReiverID_unreadMessages = '';
 function ChatBox(props) {
   const token = localStorage.getItem(StorageKeys.TOKEN) || '';
   const user = JSON.parse(localStorage.getItem(StorageKeys.USER)) || {};
@@ -287,6 +290,7 @@ function ChatBox(props) {
         fullName: name,
         img_url: userImgUrl,
         status: 'ONLINE',
+        role: user.role,
       }),
     );
     if (
@@ -310,11 +314,12 @@ function ChatBox(props) {
           fullName: name,
           img_url: userImgUrl,
           status: 'OFFLINE',
+          role: user.role,
         }),
       );
+      save_ReiverID = null;
+      setMessages([]);
       stompClient.disconnect();
-      // setMessage('');
-      // setSendTriggered((prev) => !prev);
     }
   };
 
@@ -366,23 +371,40 @@ function ChatBox(props) {
     await findAndDisplayConnectedUsers();
     const payloadData = JSON.parse(payload.body);
     console.log(payloadData);
-
     if (
       name === payloadData.recipientId &&
       save_ReiverID === payloadData.senderId
     ) {
       setMessages((prev) => [...prev, payloadData]);
-      // console.log(save_Img);
     }
-    if (name === payloadData.senderId) {
+    if (
+      name === payloadData.senderId &&
+      save_ReiverID === payloadData.recipientId
+    ) {
       setMessages((prev) => [...prev, payloadData]);
-      // console.log(save_Img);
     }
-    // Dành cho trường hợp tự load đến tin nhắn =)) trông hơi đần tí
-    // if (payloadData.senderId !== RECEIVER.admin) {
-    //   setReceiverId(payloadData.senderId);
-    //   setMessages((prev) => [...prev, payloadData]);
-    // }
+
+    // console.log(name);
+    // console.log(payloadData.recipientId);
+    // console.log(payloadData.senderId);
+    // console.log(save_ReiverID);
+    // console.log(save_ReiverID_unreadMessages);
+
+    if (
+      name === payloadData.recipientId &&
+      save_ReiverID !== payloadData.senderId
+    ) {
+      unreadMessages = unreadMessages + 1;
+      save_ReiverID_unreadMessages = payloadData.senderId;
+      console.log(save_ReiverID_unreadMessages);
+    } else if (save_ReiverID_unreadMessages !== null) {
+      // eslint-disable-next-line no-self-assign
+      unreadMessages = unreadMessages;
+    }
+    if (save_ReiverID === payloadData.senderId) {
+      unreadMessages = 0;
+      save_ReiverID_unreadMessages = '';
+    }
   };
   const handleSendMessage = (e) => {
     if (e) {
@@ -485,14 +507,21 @@ function ChatBox(props) {
         </div>
 
         <div className="flex h-[calc(100%-48px)]">
-          <div className="border-gray w-[268px] border-r border-solid">
+          <div className="border-gray w-[320px] border-r border-solid">
             {receiversList.map((receiver) => (
               <article
                 key={receiver.id}
                 onClick={() => {
                   setReceiverId(receiver.name);
+                  if (save_ReiverID === receiver.name) {
+                    fetchAndDisplayUserChat();
+                  }
                   save_ReiverID = receiver.name;
                   save_Img = receiver.img_url;
+                  if (save_ReiverID === save_ReiverID_unreadMessages) {
+                    unreadMessages = 0;
+                    save_ReiverID_unreadMessages = '';
+                  }
                 }}
                 className={`${save_ReiverID === receiver.name ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'} flex cursor-pointer gap-2 px-5 py-2 text-[#2c2c2c] transition-all`}
               >
@@ -508,11 +537,21 @@ function ChatBox(props) {
                     />
                   </div>
                   <div className="flex flex-col justify-center">
-                    <h4 className="text-base">{receiver.name}</h4>
+                    <h4 className="text-base">{receiver.name} </h4>
+                    <p className={'text-xs'}>
+                      {receiver.role === 'ADMIN' ? 'Manage' : 'Guest'}
+                    </p>
                     <p
                       className={`${receiver.status === 'ONLINE' ? 'text-emerald-500' : 'text-slate-600'} text-xs`}
                     >
                       {receiver.status.toLowerCase()}
+                    </p>
+                  </div>
+                  <div className="flex h-[18px] w-[18px] flex-col items-center justify-center">
+                    <p
+                      className={`${unreadMessages >= 1 && save_ReiverID_unreadMessages === receiver.name && save_ReiverID !== receiver.name ? 'bg-red-600 text-gray-200' : 'hidden text-blue-600'} flex h-4 w-4 flex-col items-center justify-center rounded-full text-xs`}
+                    >
+                      {unreadMessages}
                     </p>
                   </div>
                 </div>
@@ -539,8 +578,10 @@ function ChatBox(props) {
                         <img
                           src={
                             messageItem.senderId === name
-                              ? userImgUrl
-                              : messageItem.senderImage
+                              ? userImgUrl ||
+                                'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
+                              : messageItem.senderImage ||
+                                'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
                           }
                           className="h-[60px] w-[60px] rounded-full"
                           alt="Sender"
