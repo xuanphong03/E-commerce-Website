@@ -312,7 +312,7 @@ function ChatBox(props) {
           status: 'OFFLINE',
         }),
       );
-      window.location.reload();
+      stompClient.disconnect();
       // setMessage('');
       // setSendTriggered((prev) => !prev);
     }
