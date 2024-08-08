@@ -6,10 +6,9 @@ import SaleTag from '../SaleTag';
 import StarRating from '../StarRating';
 
 import { BsTrash3 } from 'react-icons/bs';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { formatPrice } from '~/utils/formatPrice';
-import { useDispatch, useSelector } from 'react-redux';
-import { addProductToCart } from '~/pages/Auth/userSlice';
+import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
 export default function ProductItem({ product }) {
@@ -88,19 +87,19 @@ export default function ProductItem({ product }) {
         <h3 className="mb-2 line-clamp-1 font-medium text-black">
           {product.name}
         </h3>
-        <p className="mb-2 flex flex-wrap items-center font-medium text-[#DB4444]">
+        <p className="mb-2 flex flex-wrap items-end font-medium text-[#DB4444]">
           {product.saleDiscountPercent > 0
             ? formatPrice(product.finalPrice, 'VNĐ')
             : formatPrice(product.originalPrice, 'VNĐ')}
           <span
-            className={`ml-3 text-[#808080] line-through ${product.saleDiscountPercent <= 0 ? 'hidden' : ''}`}
+            className={`ml-2 text-sm text-[#808080] line-through ${product.saleDiscountPercent <= 0 ? 'hidden' : ''}`}
           >
             {formatPrice(product.originalPrice, 'VNĐ')}
           </span>
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-sm">
           <StarRating productReviewRate={product.rating} />
-          <span className="text-sm font-semibold text-[#A0A0A0]">
+          <span className="font-semibold text-[#A0A0A0]">
             ({product.nrating})
           </span>
         </div>

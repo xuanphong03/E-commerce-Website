@@ -21,15 +21,19 @@ export default function Header() {
   const [openProductMenu, setOpenProductMenu] = useState(false);
 
   useEffect(() => {
-    try {
-      (async () => {
-        const response = await cartApi.getAll({ user_id: user.id });
-        const { cartDetails } = response;
-        setTotalQuantityCart(cartDetails.length);
-      })();
-    } catch (error) {
-      toast.error('API GET ALL CART LỖI');
+    if (isAuthenticated) {
+      try {
+        (async () => {
+          const response = await cartApi.getAll({ user_id: user.id });
+          const { cart_items } = response;
+          setTotalQuantityCart(cart_items.length);
+        })();
+      } catch (error) {
+        toast.error('API GET ALL CART LỖI');
+      }
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -42,6 +46,7 @@ export default function Header() {
     return () => {
       document.removeEventListener('mousedown', handler);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleToggleProductMenu = (status) => {
@@ -142,19 +147,22 @@ export default function Header() {
       >
         <ul className="mx-auto flex max-w-[1300px] justify-center gap-20 uppercase">
           <li className="cursor-pointer px-4 py-2 text-[#2c2c2c] transition-colors hover:text-[#DB4444]">
-            Jacket
+            <Link to={'products/jacket'}>Jacket</Link>
           </li>
           <li className="cursor-pointer px-4 py-2 text-[#2c2c2c] transition-colors hover:text-[#DB4444]">
-            Hoodie
+            <Link to={'products/hoodie'}>Hoodie</Link>
           </li>
           <li className="cursor-pointer px-4 py-2 text-[#2c2c2c] transition-colors hover:text-[#DB4444]">
-            Đồ ngủ
+            <Link to={'products/sleepwear'}>Đồ ngủ</Link>
           </li>
           <li className="cursor-pointer px-4 py-2 text-[#2c2c2c] transition-colors hover:text-[#DB4444]">
-            Áo
+            <Link to={'products/shirt'}>Áo</Link>
           </li>
           <li className="cursor-pointer px-4 py-2 text-[#2c2c2c] transition-colors hover:text-[#DB4444]">
-            Quần
+            <Link to={'products/pants'}>Quần</Link>
+          </li>
+          <li className="cursor-pointer px-4 py-2 text-[#2c2c2c] transition-colors hover:text-[#DB4444]">
+            <Link to={'products/dress'}>Váy</Link>
           </li>
         </ul>
       </div>

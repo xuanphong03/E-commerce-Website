@@ -1,30 +1,33 @@
 import ContactForm from './components/ContactForm/';
 import ContactByPhone from './components/ContactInfo/ContactByPhone';
 import ContactByEmail from './components/ContactInfo/ContactByEmail';
-import Breadcrumbs from '~/components/Breadcrumbs/Breadcrumbs';
-import { useTranslation } from 'react-i18next';
-
+import questionGuest from '~/apis/questionGuest';
+import { toast } from 'react-toastify';
 export default function ContactPage() {
-  const { t } = useTranslation('contact');
-  const BREAD_CRUMBS = [
-    {
-      to: '/',
-      name: `${t('Breadcrumbs Home')}`,
-    },
-    {
-      to: '/about',
-      name: `${t('Breadcrumbs Contact')}`,
-    },
-  ];
+  // const [feedbackMessage, setFeedbackMessage] = useState('');
 
-  const handleSubmitContactForm = (data) => {
-    // handle submit form data to backend
+  const handleSubmitContactForm = async (data) => {
+    try {
+      await questionGuest.postQuestionGuest(data);
+      toast.success(
+        'Gửi yêu cầu thành công. Chúng tôi sẽ phản hồi lại trong vòng 24h',
+      );
+
+      // const res = await questionGuest.postQuestionGuest(data);
+      // console.log(data);
+      // console.log(res);
+      // if (res.data.status === 200) {
+      //   setFeedbackMessage(t('submissionSuccess'));
+      // } else {
+      //   setFeedbackMessage(t('submissionFail') + ': ' + res.data.message);
+      // }
+    } catch (error) {
+      // setFeedbackMessage(t('submissionError'));
+      toast.error('Gửi yêu cầu thất bại');
+    }
   };
   return (
     <main className="mx-auto max-w-[1300px]">
-      <div className="mt-10">
-        <Breadcrumbs pathList={BREAD_CRUMBS} />
-      </div>
       <section className="grid grid-cols-12 gap-10 pb-32 pt-10">
         <div className="col-span-4 px-9 py-10 shadow-form">
           <ContactByPhone />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Route, Routes, useParams } from 'react-router-dom';
 import ProductsList from './ProductsList';

@@ -1,8 +1,6 @@
-import { useTranslation } from 'react-i18next';
 import { FiPhone } from 'react-icons/fi';
 
 function ContactByPhone() {
-  const { t } = useTranslation('contact');
   return (
     <article className="">
       <div className="flex items-center gap-4">
@@ -10,12 +8,12 @@ function ContactByPhone() {
           <FiPhone />
         </span>
         <h2 className="text-lg font-medium capitalize text-black">
-          {t('Heading Call To Us')}
+          Liên hệ trực tiếp
         </h2>
       </div>
       <div className="mt-6 flex flex-col gap-4 text-base text-black">
-        <p>{t('Description Call To Us')}</p>
-        <p>{t('Phone Number Call To Us')}</p>
+        <p>Chúng tôi luôn sẵn sàng 24/7, 7 ngày một tuần.</p>
+        <p>Số điện thoại: 086 578 359</p>
       </div>
     </article>
   );

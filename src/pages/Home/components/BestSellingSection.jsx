@@ -1,4 +1,6 @@
+import queryString from 'query-string';
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import ProductItem from '~/components/ProductItem';
 import SectionTag from '~/components/SectionTag';
 import { fakeProductsList } from '~/data/dataProduct';
@@ -6,6 +8,12 @@ import { fakeProductsList } from '~/data/dataProduct';
 BestSellingSection.propTypes = {};
 
 function BestSellingSection() {
+  const queryParams = {
+    _page: 1,
+    _limit: 20,
+    _sort: 'ASC',
+    isBestSelling: true,
+  };
   const [bestSellingProductsList, setBestSellingProductsList] = useState([]);
   const [timer, setTimer] = useState(() => {
     const countdownDate = new Date('August 30, 2024 00:00:00').getTime();
@@ -74,8 +82,13 @@ function BestSellingSection() {
         <h2 className="text-4xl font-semibold tracking-[1.44px]">
           Best Selling
         </h2>
-        <button className="flex items-center justify-center rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-10 py-2 font-medium text-[#FAFAFA] transition-colors hover:bg-[#FAFAFA] hover:text-[#DB4444]">
-          Xem tât cả sản phẩm
+        <button className="rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] font-medium text-[#FAFAFA] transition-colors hover:bg-[#FAFAFA] hover:text-[#DB4444]">
+          <Link
+            to={`products/all_products?${queryString.stringify(queryParams)}`}
+            className="flex items-center justify-center px-10 py-2"
+          >
+            Xem tât cả sản phẩm
+          </Link>
         </button>
       </div>
       <div className="grid grid-cols-12 gap-16 pb-[100px]">

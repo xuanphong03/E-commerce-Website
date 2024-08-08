@@ -3,13 +3,7 @@ import { useParams } from 'react-router-dom';
 import StarRating from '~/components/StarRating';
 import { formatPrice } from '~/utils/formatPrice';
 import { FiMinus, FiPlus } from 'react-icons/fi';
-import IconReturn from '~/assets/icons/Icon-return.svg';
-import {
-  FaCartPlus,
-  FaHeart,
-  FaRegHeart,
-  FaShippingFast,
-} from 'react-icons/fa';
+import { FaCartPlus, FaHeart, FaRegHeart } from 'react-icons/fa';
 import SectionTag from '~/components/SectionTag';
 import './CustomizedScrollbar.css';
 import FeedbackList from './components/FeedbackList';
@@ -18,8 +12,6 @@ import { placeholder80x80, placeholder500x500 } from '~/constants/placeholder';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import cartApi from '~/apis/cartApi';
-import { AiOutlineFileProtect } from 'react-icons/ai';
-import { RiLoopLeftLine } from 'react-icons/ri';
 
 function ProductDetail() {
   const user = useSelector((state) => state.user.current);
@@ -42,12 +34,12 @@ function ProductDetail() {
       try {
         const response = await productApi.getDetail({ id });
         setProductDetail(response);
-        console.log(response);
       } catch (error) {
         throw new Error(error);
       }
     })();
-  }, [id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const increaseQuantityProduct = () => {
     if (quantityProduct >= 100) return;
@@ -79,18 +71,19 @@ function ProductDetail() {
     }
 
     const requestData = {
-      user_id: 1,
+      user_id: user.id,
       cart_item: {
-        product_id: productDetail.id,
+        itemDetail_id: productDetail.id,
         name: productDetail.name,
         image: productDetail.imageMain,
         quantity: quantityProduct,
-        color: productDetail.colours[checkedColor],
-        size: productDetail.sizes[checkedSize],
+        color: checkedColor,
+        size: checkedSize,
         unitPrice: productDetail.finalPrice,
         totalPrice: productDetail.finalPrice * quantityProduct,
       },
     };
+
     try {
       (async () => {
         // Call API thêm sản phẩm vào giỏ hàng
@@ -205,20 +198,20 @@ function ProductDetail() {
                   )}
                 </p>
               </div>
-              <div className="mb-4 flex items-center gap-5 text-2xl">
-                <h4 className="tracking-[0.72px]">
-                  {formatPrice(productDetail.finalPrice, 'VNĐ')}
-                </h4>
+              <div className="mb-4 flex items-end gap-5 text-3xl">
                 {productDetail.saleDiscountPercent > 0 && (
-                  <div className="flex items-start gap-2">
-                    <h4 className="tracking-[0.72px] text-[#929292] line-through">
-                      {formatPrice(productDetail.originalPrice, 'VNĐ')}
-                    </h4>
+                  <h4 className="text-2xl text-[#929292] line-through">
+                    {formatPrice(productDetail.originalPrice, 'VNĐ')}
+                  </h4>
+                )}
+                <h4 className="flex items-start gap-2">
+                  {formatPrice(productDetail.finalPrice, 'VNĐ')}
+                  {productDetail.saleDiscountPercent > 0 && (
                     <span className="flex items-center justify-center rounded bg-[#DB4444] px-1 text-xs text-[#fafafa]">
                       Giảm {productDetail.saleDiscountPercent}%
                     </span>
-                  </div>
-                )}
+                  )}
+                </h4>
               </div>
               <p className="mb-6 w-4/5 break-words text-sm">
                 Mô tả: {productDetail.description}
@@ -234,7 +227,7 @@ function ProductDetail() {
                     return (
                       <label
                         key={color}
-                        className={`${isOutOfStock ? 'cursor-not-allowed bg-[#FAFAFA] text-[#C3D2EA]' : 'cursor-pointer text-[#333333]'} ${checkedColor === color ? 'border-[#DB4444] text-[#fafafa]' : 'border-gray'} flex items-center justify-center rounded-md border-2 border-solid px-4 py-2 text-sm transition-all`}
+                        className={`${isOutOfStock ? 'cursor-not-allowed bg-[#FAFAFA] text-[#C3D2EA]' : 'cursor-pointer text-[#333333]'} ${checkedColor === color ? 'border-[#DB4444]' : 'border-gray'} flex items-center justify-center rounded-md border-2 border-solid px-4 py-2 text-sm transition-all`}
                       >
                         <input
                           onChange={() => handleChangeColor(color)}
@@ -260,7 +253,7 @@ function ProductDetail() {
                     return (
                       <label
                         key={size}
-                        className={`${isOutOfStock ? 'cursor-not-allowed bg-[#FAFAFA] text-[#C3D2EA]' : 'cursor-pointer text-[#333333]'} ${checkedSize === size ? 'border-[#DB4444] text-[#fafafa]' : 'border-gray'} flex items-center justify-center rounded-md border-2 border-solid px-4 py-2 text-sm transition-all`}
+                        className={`${isOutOfStock ? 'cursor-not-allowed bg-[#FAFAFA] text-[#C3D2EA]' : 'cursor-pointer text-[#333333]'} ${checkedSize === size ? 'border-[#DB4444]' : 'border-gray'} flex items-center justify-center rounded-md border-2 border-solid px-4 py-2 text-sm transition-all`}
                       >
                         <input
                           onChange={() => handleChangeSize(size)}
@@ -324,46 +317,16 @@ function ProductDetail() {
                   Miễn phí đổi trả phát sinh từ nhà sản xuất
                 </div>
               </div>
-              {/* <div className="rounded bg-[#F0F0EE] px-4 py-2">
-                <h4 className="mb-5 text-base font-medium uppercase">
-                  Dịch vụ giao hàng
-                </h4>
-                <ul className="flex flex-col gap-5 text-sm">
-                  <li className="flex items-center gap-4">
-                    <span className="text-xl">
-                      <AiOutlineFileProtect />
-                    </span>
-                    <h5>Cam kết 100% hàng chính hãng</h5>
-                  </li>
-                  <li className="flex items-center gap-4">
-                    <span className="text-xl">
-                      <FaShippingFast />
-                    </span>
-                    <div>
-                      <h5>Giao hàng dự kiến</h5>
-                      <p className="font-medium">
-                        Thứ 2 - Thứ 6 từ 9h00 - 17h00
-                      </p>
-                    </div>
-                  </li>
-                  <li className="flex items-center gap-4">
-                    <span className="text-xl">
-                      <RiLoopLeftLine />
-                    </span>
-                    <div>
-                      <h5>Hỗ trợ 9h-21h hằng ngày:</h5>
-                      <p className="font-medium">
-                        Với các kênh chat, email & phone
-                      </p>
-                    </div>
-                  </li>
-                </ul>
-              </div> */}
             </div>
           </article>
         </section>
         <section className="my-20">
           <FeedbackList />
+        </section>
+        <section>
+          <div>
+            <SectionTag content="Sản phẩm liên quan" />
+          </div>
         </section>
       </div>
     </main>

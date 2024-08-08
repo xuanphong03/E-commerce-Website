@@ -1,6 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
-import { IoIosArrowDown, IoMdSend } from 'react-icons/io';
+import {
+  IoIosArrowDown,
+  IoMdSearch,
+  IoMdHelp,
+  IoIosList,
+  IoMdHome,
+  IoMdMail,
+  IoIosShirt,
+  IoMdHappy,
+  IoLogoPinterest,
+  IoIosPaperPlane,
+} from 'react-icons/io';
 import { v4 as uuidv4 } from 'uuid';
 import './ChatBox.css';
 import EmojiPicker from 'emoji-picker-react';
@@ -19,6 +30,9 @@ let stompClient = null;
 const SOCKET_URL = 'http://localhost:8080/ws';
 let save_ReiverID = null;
 let save_Img = null;
+let unreadMessages = 0;
+let unreadMessages_2 = 0;
+let save_ReiverID_unreadMessages = '';
 function ChatBox(props) {
   const token = localStorage.getItem(StorageKeys.TOKEN) || '';
   const user = JSON.parse(localStorage.getItem(StorageKeys.USER)) || {};
@@ -44,15 +58,15 @@ function ChatBox(props) {
   //--------------------------------------------------------------------------------------
   const [optionalListVisible, setOptionalListVisible] = useState(false);
   const [options, setOptions] = useState([]);
-  const [filteredOptions, setFilteredOptions] = useState([]); // State to hold filtered options
-  const [inputFilter, setInputFilter] = useState(''); // State to hold input filter value
+  const [filteredOptions, setFilteredOptions] = useState([]);
+  const [inputFilter, setInputFilter] = useState('');
 
   const normalizeString = (str) => {
     if (typeof str === 'string') {
       return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
     console.error('Expected a string, but got:', typeof str);
-    return ''; // Return an empty string if `str` is not a string
+    return '';
   };
 
   const fetchOptions = async () => {
@@ -66,9 +80,7 @@ function ChatBox(props) {
         },
       );
       const data = await response.json();
-      console.log(data);
-
-      setOptions(data); // Store options in state
+      setOptions(data);
     } catch (error) {
       console.error('Error fetching options:', error);
     }
@@ -122,7 +134,7 @@ function ChatBox(props) {
       const data = await response.json();
       console.log(data);
 
-      setNewOptions(data); // Store options in state
+      setNewOptions(data);
     } catch (error) {
       console.error('Error fetching options:', error);
     }
@@ -146,9 +158,9 @@ function ChatBox(props) {
     );
   }, [inputFilter2, newOptions]);
   const handleOptionClick2 = (e) => {
-    setMessage(e.sku); // Set the message input to the selected option
+    setMessage(e.sku);
     setInputFilter2('');
-    // setOptionalListVisible2(false); // Hide options list after selection
+    // setOptionalListVisible2(false);
   };
   //--------------------------------------------------------------------------------------
   const [optionalListVisible3, setOptionalListVisible3] = useState(false);
@@ -184,15 +196,24 @@ function ChatBox(props) {
       ),
     );
   }, [inputFilter3, lastOptions]);
-  const handleInputChange3 = (e) => {
-    setInputFilter3(e.target.value);
-  };
+  // const handleInputChange3 = (e) => {
+  //   setInputFilter3(e.target.value);
+  // };
   const handleOptionClick3 = (e) => {
     setMessage(e.img_url); // Set the message input to the selected option
     setInputFilter('');
-    // handleSendMessage();
-    // setOptionalListVisible2(false); // Hide options list after selection
+    console.log('BUG1');
+
+    setSendTriggered(true); // Set the flag to true
   };
+  const [sendTriggered, setSendTriggered] = useState(false);
+  useEffect(() => {
+    if (sendTriggered) {
+      handleSendMessage();
+      // console.log('BUG2');
+      setSendTriggered(false); // Reset the flag
+    }
+  }, [sendTriggered, message]);
 
   //--------------------------------------------------------------------------------------
   const toggleOptionalList3 = () => {
@@ -233,8 +254,14 @@ function ChatBox(props) {
     }
   };
   //--------------------------------------------------------------------------------------
+  const backhome = () => {
+    window.location.href = 'http://localhost:8888';
+  };
   const contactUs = () => {
     window.location.href = 'http://localhost:8888/contact';
+  };
+  const guide = () => {
+    window.location.href = 'http://localhost:8888/about';
   };
   //--------------------------------------------------------------------------------------
   const scrollToBottom = () => {
@@ -263,10 +290,37 @@ function ChatBox(props) {
         fullName: name,
         img_url: userImgUrl,
         status: 'ONLINE',
+        role: user.role,
       }),
     );
-    console.log(userImgUrl);
+    if (
+      !optionalListVisible &&
+      !optionalListVisible2 &&
+      !optionalListVisible3 &&
+      !showEmojiPicker
+    ) {
+      fetchOptions3();
+      setOptionalListVisible3((prev) => !prev);
+    }
     findAndDisplayConnectedUsers();
+  };
+  const logout = () => {
+    if (name !== RECEIVER.chatbot) {
+      stompClient.send(
+        '/app/disconnectUser',
+        {},
+        JSON.stringify({
+          name: name,
+          fullName: name,
+          img_url: userImgUrl,
+          status: 'OFFLINE',
+          role: user.role,
+        }),
+      );
+      save_ReiverID = null;
+      setMessages([]);
+      stompClient.disconnect();
+    }
   };
 
   const findAndDisplayConnectedUsers = async () => {
@@ -293,6 +347,8 @@ function ChatBox(props) {
       },
     ).then((response) => response.json());
     setMessages(userChatResponse);
+    // console.log(userChatResponse);
+
     if (receiverId === RECEIVER.chatbot) {
       const userChatResponse = await fetch(
         `http://localhost:8080/api/v1/chat-box/messages/${receiverId}/${name}`,
@@ -304,7 +360,7 @@ function ChatBox(props) {
       ).then((response) => response.json());
       setMessages(userChatResponse);
     }
-    console.log(userChatResponse);
+    // console.log(userChatResponse);
   };
 
   const onError = (err) => {
@@ -314,33 +370,48 @@ function ChatBox(props) {
   const onMessageReceived = async (payload) => {
     await findAndDisplayConnectedUsers();
     const payloadData = JSON.parse(payload.body);
-
-    // console.log(name);
-    // console.log(con);
-    // console.log(payloadData.senderId);
-    // console.log(payloadData.recipientId);
+    console.log(payloadData);
     if (
       name === payloadData.recipientId &&
       save_ReiverID === payloadData.senderId
     ) {
       setMessages((prev) => [...prev, payloadData]);
-      // console.log(save_Img);
     }
-    if (name === payloadData.senderId) {
+    if (
+      name === payloadData.senderId &&
+      save_ReiverID === payloadData.recipientId
+    ) {
       setMessages((prev) => [...prev, payloadData]);
-      // console.log(save_Img);
     }
-    // Dành cho trường hợp tự load đến tin nhắn =)) trông hơi đần tí
-    // if (payloadData.senderId !== RECEIVER.admin) {
-    //   setReceiverId(payloadData.senderId);
-    //   setMessages((prev) => [...prev, payloadData]);
-    // }
+
+    // console.log(name);
+    // console.log(payloadData.recipientId);
+    // console.log(payloadData.senderId);
+    // console.log(save_ReiverID);
+    // console.log(save_ReiverID_unreadMessages);
+
+    if (
+      name === payloadData.recipientId &&
+      save_ReiverID !== payloadData.senderId
+    ) {
+      unreadMessages = unreadMessages + 1;
+      save_ReiverID_unreadMessages = payloadData.senderId;
+      console.log(save_ReiverID_unreadMessages);
+    } else if (save_ReiverID_unreadMessages !== null) {
+      // eslint-disable-next-line no-self-assign
+      unreadMessages = unreadMessages;
+    }
+    if (save_ReiverID === payloadData.senderId) {
+      unreadMessages = 0;
+      save_ReiverID_unreadMessages = '';
+    }
   };
   const handleSendMessage = (e) => {
-    console.log(message.trim());
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+    }
     if (!message.trim() || !stompClient) return;
-    console.log(message.trim());
+
     const chatMessage = {
       senderId: name,
       senderImage: userImgUrl,
@@ -369,13 +440,13 @@ function ChatBox(props) {
   }, [receiverId]);
 
   return (
-    <div className="fixed bottom-2 right-5">
+    <div className="fixed bottom-5 right-5">
       <div
         onClick={() => {
           setChatting(true);
           connect();
         }}
-        className={`${chatting ? 'invisible opacity-0' : 'visible opacity-100'} flex cursor-pointer items-center gap-2 rounded bg-red-500 px-4 py-2 text-white transition-all delay-300 duration-500 ease-in-out hover:bg-red-400`}
+        className={`${chatting ? 'invisible opacity-0' : 'visible opacity-100'} flex cursor-pointer items-center gap-2 rounded-full bg-cyan-600 px-4 py-2 text-white transition-all delay-300 duration-500 ease-in-out hover:bg-stone-600`}
       >
         <IoChatbubbleEllipsesOutline className="text-xl" /> Nhắn tin
       </div>
@@ -383,37 +454,74 @@ function ChatBox(props) {
         className={`${chatting ? 'h-[550px] w-[1200px]' : 'h-0 w-0'} chatBox absolute bottom-0 right-0 overflow-hidden rounded bg-white text-black`}
       >
         <div className="border-gray flex h-12 items-center justify-between border-b border-solid px-5 py-2">
-          <h2 className="text-lg font-semibold tracking-wide text-red-500">
-            {/* Nhắn tin */}
+          <h2 className="ml-1 text-lg font-semibold tracking-wide text-stone-600">
+            Nhắn tin
           </h2>
           <div className="flex space-x-2">
             <button
               type="button"
+              id="backhome"
+              className="flex size-8 items-center justify-center rounded border border-solid border-black text-base text-xs tracking-wide"
+              onClick={backhome}
+              title="Back To Home"
+            >
+              <IoMdHome className="text-base" />
+            </button>
+            <button
+              type="button"
               id="contactUs"
-              className="items-center justify-center rounded border border-solid border-black text-xs tracking-wide"
+              className="flex size-8 items-center justify-center rounded border border-solid border-black text-base text-xs tracking-wide"
               onClick={contactUs}
               title="Contact Us"
             >
-              Thắc Mắc
+              <IoMdMail className="text-base" />
             </button>
             <button
-              onClick={() => setChatting(false)}
-              className="flex size-5 items-center justify-center rounded border border-solid border-black"
+              type="buttonhelp"
+              id="guide"
+              className="flex size-8 items-center justify-center rounded border border-solid border-black text-base text-xs tracking-wide"
+              onClick={guide}
+              title="Guide Chat Bot"
             >
-              <IoIosArrowDown className="text-xs" />
+              <IoMdHelp className="text-base" />
+            </button>
+            <button
+              type="buttonhelp"
+              id="IoIosList"
+              className="flex size-8 items-center justify-center rounded border border-solid border-black text-base text-xs tracking-wide"
+              onClick={guide}
+              title="IoIosList"
+            >
+              <IoIosList className="text-base" />
+            </button>
+            <button
+              onClick={() => {
+                setChatting(false);
+                logout();
+              }}
+              className="flex size-8 items-center justify-center rounded border border-solid border-black"
+            >
+              <IoIosArrowDown className="text-lg" />
             </button>
           </div>
         </div>
 
         <div className="flex h-[calc(100%-48px)]">
-          <div className="border-gray w-[268px] border-r border-solid">
+          <div className="border-gray w-[320px] border-r border-solid">
             {receiversList.map((receiver) => (
               <article
                 key={receiver.id}
                 onClick={() => {
                   setReceiverId(receiver.name);
+                  if (save_ReiverID === receiver.name) {
+                    fetchAndDisplayUserChat();
+                  }
                   save_ReiverID = receiver.name;
                   save_Img = receiver.img_url;
+                  if (save_ReiverID === save_ReiverID_unreadMessages) {
+                    unreadMessages = 0;
+                    save_ReiverID_unreadMessages = '';
+                  }
                 }}
                 className={`${save_ReiverID === receiver.name ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'} flex cursor-pointer gap-2 px-5 py-2 text-[#2c2c2c] transition-all`}
               >
@@ -429,11 +537,21 @@ function ChatBox(props) {
                     />
                   </div>
                   <div className="flex flex-col justify-center">
-                    <h4 className="text-base">{receiver.name}</h4>
+                    <h4 className="text-base">{receiver.name} </h4>
+                    <p className={'text-xs'}>
+                      {receiver.role === 'ADMIN' ? 'Manage' : 'Guest'}
+                    </p>
                     <p
                       className={`${receiver.status === 'ONLINE' ? 'text-emerald-500' : 'text-slate-600'} text-xs`}
                     >
                       {receiver.status.toLowerCase()}
+                    </p>
+                  </div>
+                  <div className="flex h-[18px] w-[18px] flex-col items-center justify-center">
+                    <p
+                      className={`${unreadMessages >= 1 && save_ReiverID_unreadMessages === receiver.name && save_ReiverID !== receiver.name ? 'bg-red-600 text-gray-200' : 'hidden text-blue-600'} flex h-4 w-4 flex-col items-center justify-center rounded-full text-xs`}
+                    >
+                      {unreadMessages}
                     </p>
                   </div>
                 </div>
@@ -442,10 +560,10 @@ function ChatBox(props) {
           </div>
 
           <div className="relative w-[calc(100%-200px)]">
-            <div className="display: flex; relative h-[calc(100%-40px)] overflow-y-auto px-4 py-2">
+            <div className="display: flex; relative h-[calc(100%-40px)] overflow-x-hidden px-4 py-2">
               <ul className="flex flex-col space-y-1">
                 {messages.map((messageItem, index) => {
-                  console.log(index, messageItem);
+                  // console.log(index, messageItem);
 
                   return (
                     <li
@@ -460,8 +578,10 @@ function ChatBox(props) {
                         <img
                           src={
                             messageItem.senderId === name
-                              ? userImgUrl
-                              : messageItem.senderImage
+                              ? userImgUrl ||
+                                'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
+                              : messageItem.senderImage ||
+                                'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
                           }
                           className="h-[60px] w-[60px] rounded-full"
                           alt="Sender"
@@ -472,7 +592,7 @@ function ChatBox(props) {
                           src={messageItem.content}
                           className={`max-w-[42%] ${
                             messageItem.senderId === name
-                              ? 'mt-15 mr-2 bg-black text-right text-white'
+                              ? 'mt-15 mr-2 bg-stone-700 text-right text-white'
                               : 'mt-15 ml-2 bg-gray-200 text-left'
                           } mt-2 rounded-lg`}
                           alt="Message content"
@@ -481,7 +601,7 @@ function ChatBox(props) {
                         <p
                           className={`${
                             messageItem.senderId === name
-                              ? 'mt-15 mr-4 bg-black text-right text-white'
+                              ? 'mt-15 mr-4 bg-stone-700 text-right text-white'
                               : 'mt-15 ml-4 bg-gray-200 text-left'
                           } mt-2 max-w-[85%] whitespace-pre-wrap rounded-lg px-2 py-2 text-base`}
                         >
@@ -506,45 +626,46 @@ function ChatBox(props) {
               />
               <button
                 type="button"
-                id="optional3"
-                className="w-30px size-15 mx-2 h-full"
-                onClick={toggleOptionalList3}
-                title="Chọn nhãn dán"
-              >
-                💀
-              </button>
-              <button
-                type="button"
                 id="optional2"
-                className="w-30px size-15 mx-2 h-full"
+                className="w-30px size-15 mx-2 flex h-full items-center justify-center"
                 onClick={toggleOptionalList2}
                 title="Tìm kiêm thông tin về sản phẩm"
               >
-                🤡
+                <IoIosShirt />
               </button>
               <button
                 type="button"
                 id="optional"
-                className="w-30px size-15 mx-2 h-full"
+                className="w-30px size-15 mx-2 flex h-full items-center justify-center"
                 onClick={toggleOptionalList}
                 title="Tìm từ khóa Chat Bot"
               >
-                🤖
+                <IoMdSearch />
+              </button>
+              <button
+                type="button"
+                id="optional3"
+                className="w-30px size-15 mx-2 flex h-full items-center justify-center"
+                onClick={toggleOptionalList3}
+                title="Chọn nhãn dán"
+              >
+                <IoLogoPinterest />
               </button>
               <button
                 type="button"
                 id="emoji-btn"
-                className="w-30px size-15 mx-2 h-full"
+                className="w-30px size-15 mx-2 flex h-full items-center justify-center"
                 onClick={toggleShowEmojiList}
                 title="Chọn biểu tượng cảm xúc"
               >
-                🎃
+                <IoMdHappy />
               </button>
               <button
                 type="submit"
-                className="flex size-12 h-full items-center justify-center bg-blue-500 px-4 text-xl text-white transition-all hover:bg-blue-400"
+                className="flex size-12 h-full items-center justify-center rounded-full bg-blue-500 px-4 text-xl text-white transition-all hover:bg-blue-400"
+                title="Gửi Message"
               >
-                <IoMdSend />
+                <IoIosPaperPlane />
               </button>
             </form>
           </div>
@@ -563,7 +684,7 @@ function ChatBox(props) {
                   value={inputFilter}
                   onChange={handleInputChange}
                   className="w-full border-b border-gray-300 px-2 py-1 text-sm"
-                  placeholder="Tìm kiếm từ khóa..."
+                  placeholder="Tìm kiếm từ khóa Chat Bot..."
                 />
                 <ul>
                   {filteredOptions.map((option, index) => (
@@ -584,15 +705,15 @@ function ChatBox(props) {
                 style={{
                   top: '100%',
                   left: '0',
-                  maxHeight: '502px', // Adjust height as needed
+                  maxHeight: '502px',
                 }}
               >
                 <input
                   type="text"
                   value={inputFilter2}
                   onChange={handleInputChange2}
-                  className="w-full border-b border-gray-300 px-2 py-1"
-                  placeholder="Search..."
+                  className="w-full border-b border-gray-300 px-2 py-1 text-sm"
+                  placeholder="Tìm kiếm từ khóa sản phẩm..."
                 />
                 <ul>
                   {filteredOptions2.map((option, index) => (
@@ -627,6 +748,7 @@ function ChatBox(props) {
                 </ul>
               </div>
             )}
+
             {optionalListVisible3 && (
               <div
                 className="overflow-auto rounded border border-gray-300 bg-white shadow-lg"
@@ -643,12 +765,14 @@ function ChatBox(props) {
                     <li
                       key={index}
                       className="flex cursor-pointer flex-col items-center"
-                      onClick={() => handleOptionClick3(option)}
+                      onClick={() => {
+                        handleOptionClick3(option);
+                      }}
                     >
                       <img
-                        src={option.img_url} // Assuming option.imageUrl contains the image URL
+                        src={option.img_url}
                         alt="option image"
-                        className="h-full w-full rounded-sm object-cover" // Square images with rounded corners
+                        className="h-full w-full rounded-sm object-cover"
                       />
                     </li>
                   ))}
@@ -659,7 +783,7 @@ function ChatBox(props) {
               <div id="emoji-picker" className="absolute right-0">
                 <EmojiPicker
                   onEmojiClick={handleEmojiClick}
-                  height="41em"
+                  height="31.5em"
                   width="19.5em"
                 />
               </div>
