@@ -11,6 +11,9 @@ import {
   IoMdHappy,
   IoLogoPinterest,
   IoIosPaperPlane,
+  IoMdTrash,
+  IoMdCheckmarkCircle,
+  IoMdCloseCircle,
 } from 'react-icons/io';
 import { v4 as uuidv4 } from 'uuid';
 import './ChatBox.css';
@@ -36,7 +39,7 @@ let save_ReiverID_unreadMessages = '';
 function ChatBox(props) {
   const token = localStorage.getItem(StorageKeys.TOKEN) || '';
   const user = JSON.parse(localStorage.getItem(StorageKeys.USER)) || {};
-  const { id, name, userImgUrl } = user;
+  const { id, name, userImgUrl, role} = user;
   const [chatting, setChatting] = useState(false);
   const [receiverId, setReceiverId] = useState();
   const [receiversList, setReceiversList] = useState([]);
@@ -263,6 +266,107 @@ function ChatBox(props) {
   const guide = () => {
     window.location.href = 'http://localhost:8888/about';
   };
+   //--------------------------------------------------------------------------------------
+  const [editingMessageId, setEditingMessageId] = useState(null);
+  const [editContent, setEditContent] = useState('');
+  // const messagesEndRef = useRef(null);
+
+  const handleEditClick = (messageItem) => {
+    setEditingMessageId(messageItem.id);
+    setEditContent(messageItem.content);
+  };
+
+//   const handleDeleteClick = (messageItem) => {
+//     const isConfirmed = window.confirm("Are you sure you want to delete this message?");
+//     // Xử lý xóa tin nhắn
+//     if (isConfirmed) {
+//       fetch(`http://localhost:8080/api/v1/global/delete-message/${messageItem.id}`, {
+//           method: 'DELETE',
+//           headers: {
+//               'Content-Type': 'application/json'
+//           }
+//       })
+//       .then(response => response.json())
+//       .then(data => {
+//           console.log('Message deleted:', data.message);
+//           fetchAndDisplayUserChat();  // Cập nhật giao diện người dùng sau khi xóa tin nhắn
+//       })
+//       .catch(error => {
+//           console.error('Error deleting message:', error);
+//       });
+//   } else {
+//       console.log("Message deletion canceled.");
+//   }
+//     setEditingMessageId(null);
+//     fetchAndDisplayUserChat();
+// };
+
+// const handleConfirmClick = (messageItem) => {
+//     // Xử lý xác nhận chỉnh sửa tin nhắn
+//     console.log(editContent);
+//     fetch(`http://localhost:8080/api/v1/global/update-message/${messageItem.id}`, {
+//         method: 'PUT',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: editContent // Gửi nội dung tin nhắn đã chỉnh sửa
+//     })
+    
+//     .then(response => response.json())
+//     .then(data => {
+//         console.log('Message updated:', data);
+//         setEditingMessageId(null);  // Đặt lại ID của tin nhắn đang chỉnh sửa
+//         // Cập nhật giao diện người dùng sau khi chỉnh sửa tin nhắn
+//     })
+//     .catch(error => {
+//         console.error('Error updating message:', error);
+//     });
+//     setEditingMessageId(null);
+//     fetchAndDisplayUserChat();
+// };
+
+
+const handleDeleteClick = (messageItem) => {
+  const isConfirmed = window.confirm("Are you sure you want to delete this message?");
+  if (isConfirmed) {
+      const chatMessage = {
+          action: "DELETE",
+          id: messageItem.id,
+          senderId: messageItem.senderId,
+          recipientId: messageItem.recipientId,
+      };
+
+      stompClient.send('/app/chat', {}, JSON.stringify(chatMessage));
+
+      console.log("Message deletion initiated.");
+  } else {
+      console.log("Message deletion canceled.");
+  }
+  setEditingMessageId(null);
+  fetchAndDisplayUserChat();
+};
+
+const handleConfirmClick = (messageItem) => {
+  const chatMessage = {
+      action: "UPDATE",
+      id: messageItem.id,
+      senderId: messageItem.senderId,
+      recipientId: messageItem.recipientId,
+      content: editContent.trim(), // Gửi nội dung tin nhắn đã chỉnh sửa
+  };
+
+  stompClient.send('/app/chat', {}, JSON.stringify(chatMessage));
+
+  console.log("Message update initiated.");
+  setEditingMessageId(null);
+  fetchAndDisplayUserChat();
+};
+
+
+  const handleCancelEdit = () => {
+    setEditingMessageId(null);
+};
+
   //--------------------------------------------------------------------------------------
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({});
@@ -299,8 +403,8 @@ function ChatBox(props) {
       !optionalListVisible3 &&
       !showEmojiPicker
     ) {
-      fetchOptions3();
-      setOptionalListVisible3((prev) => !prev);
+      fetchOptions2();
+      setOptionalListVisible2((prev) => !prev);
     }
     findAndDisplayConnectedUsers();
   };
@@ -360,7 +464,6 @@ function ChatBox(props) {
       ).then((response) => response.json());
       setMessages(userChatResponse);
     }
-    // console.log(userChatResponse);
   };
 
   const onError = (err) => {
@@ -370,26 +473,42 @@ function ChatBox(props) {
   const onMessageReceived = async (payload) => {
     await findAndDisplayConnectedUsers();
     const payloadData = JSON.parse(payload.body);
-    console.log(payloadData);
     if (
       name === payloadData.recipientId &&
-      save_ReiverID === payloadData.senderId
+      save_ReiverID === payloadData.senderId && payloadData.action !== "UPDATE" && payloadData.action !== "DELETE"
     ) {
       setMessages((prev) => [...prev, payloadData]);
+    }else if(name === payloadData.recipientId &&
+      save_ReiverID === payloadData.senderId &&(payloadData.action === "UPDATE" || payloadData.action === "DELETE")){
+        const userChatResponse = await fetch(
+          `http://localhost:8080/api/v1/chat-box/messages/${save_ReiverID}/${name}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        ).then((response) => response.json());
+        setMessages(userChatResponse);
+    }else{
+
     }
     if (
       name === payloadData.senderId &&
-      save_ReiverID === payloadData.recipientId
+      save_ReiverID === payloadData.recipientId && payloadData.action !== "UPDATE" && payloadData.action !== "DELETE"
     ) {
       setMessages((prev) => [...prev, payloadData]);
+    }else if(name === payloadData.recipientId &&
+      save_ReiverID === payloadData.senderId && (payloadData.action === "UPDATE" || payloadData.action === "DELETE")){
+        const userChatResponse = await fetch(
+          `http://localhost:8080/api/v1/chat-box/messages/${name}/${save_ReiverID}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        ).then((response) => response.json());
+        setMessages(userChatResponse);
     }
-
-    // console.log(name);
-    // console.log(payloadData.recipientId);
-    // console.log(payloadData.senderId);
-    // console.log(save_ReiverID);
-    // console.log(save_ReiverID_unreadMessages);
-
     if (
       name === payloadData.recipientId &&
       save_ReiverID !== payloadData.senderId
@@ -413,6 +532,7 @@ function ChatBox(props) {
     if (!message.trim() || !stompClient) return;
 
     const chatMessage = {
+      action: "SEND",
       senderId: name,
       senderImage: userImgUrl,
       recipientId: save_ReiverID,
@@ -508,6 +628,28 @@ function ChatBox(props) {
 
         <div className="flex h-[calc(100%-48px)]">
           <div className="border-gray w-[320px] border-r border-solid">
+                {/* <div className="flex items-center flex cursor-pointer gap-2 px-12 py-0 text-[#2c2c2c] transition-all">
+                  <div className="flex size-10 items-center justify-center overflow-hidden rounded-full">
+                    <img
+                      src={
+                        userImgUrl ||
+                        'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
+                      }
+                      className="max-w-full object-cover"
+                      alt={name}
+                    />
+                  </div>
+                  <div className="flex flex-col justify-center">
+                    <h4 className="text-base">{name} </h4>
+                    <p className={'text-xs'}>
+                      {role === 'ADMIN' ? 'Manage' : 'Guest'}
+                    </p>
+                    <p
+                      className='text-emerald-500 text-xs'
+                    >online</p>
+                  </div>
+                </div>
+                <p className='text-xs px-14'>_________________</p> */}
             {receiversList.map((receiver) => (
               <article
                 key={receiver.id}
@@ -523,7 +665,7 @@ function ChatBox(props) {
                     save_ReiverID_unreadMessages = '';
                   }
                 }}
-                className={`${save_ReiverID === receiver.name ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'} flex cursor-pointer gap-2 px-5 py-2 text-[#2c2c2c] transition-all`}
+                className={`${save_ReiverID === receiver.name ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'} flex cursor-pointer gap-1 px-5 py-1 text-[#2c2c2c] transition-all`}
               >
                 <div className="mb-2 flex items-center gap-2">
                   <div className="flex size-10 items-center justify-center overflow-hidden rounded-full">
@@ -562,55 +704,102 @@ function ChatBox(props) {
           <div className="relative w-[calc(100%-200px)]">
             <div className="display: flex; relative h-[calc(100%-40px)] overflow-x-hidden px-4 py-2">
               <ul className="flex flex-col space-y-1">
-                {messages.map((messageItem, index) => {
-                  // console.log(index, messageItem);
-
-                  return (
-                    <li
-                      key={index}
-                      className={`flex items-start ${
-                        messageItem.senderId === name
-                          ? 'ml-auto flex-row-reverse'
-                          : 'mr-auto'
-                      } max-w-[80%] rounded-lg text-sm`}
-                    >
-                      <div className="flex flex-col items-start">
-                        <img
-                          src={
-                            messageItem.senderId === name
-                              ? userImgUrl ||
-                                'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
-                              : messageItem.senderImage ||
-                                'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
-                          }
-                          className="h-[60px] w-[60px] rounded-full"
-                          alt="Sender"
-                        />
+                {messages.map((messageItem) => (
+                  <li
+                    key={messageItem.id}
+                    className={`flex items-start ${
+                      messageItem.senderId === name
+                        ? 'ml-auto flex-row-reverse'
+                        : 'mr-auto'
+                    } max-w-[80%] rounded-lg text-sm`}
+                  >
+                    {/* <div className="flex flex-col items-start"> */}
+                      <img
+                        src={
+                          messageItem.senderId === name
+                            ? userImgUrl ||
+                              'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
+                            : messageItem.senderImage ||
+                              'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
+                        }
+                        className="h-[60px] w-[60px] rounded-full"
+                        alt="Sender"
+                      />
+                    {/* </div> */}
+                    {isImageUrl(messageItem.content) ? (
+                      
+                      <img
+                        src={messageItem.content}
+                        className={`max-w-[42%] ${
+                          messageItem.senderId === name
+                            ? 'mt-15 mr-2 bg-stone-400 text-right text-white'
+                            : 'mt-15 ml-2 bg-gray-200 text-left'
+                        } mt-2 rounded-lg`}
+                        alt="Message content"
+                      />
+                      
+                    ) : (
+                      
+                      <div>
+                        <p className={
+                          `flex items-start ${messageItem.senderId === name
+                                ? 'ml-auto flex-row-reverse'
+                                : 'mr-auto'
+                        } max-w-none px-4 mt-3 rounded-lg text-xs italic`}>{messageItem.senderId}</p>
+                        {editingMessageId === messageItem.id ? (
+                          <div className="flex flex-col">
+                            <textarea
+                              value={editContent}
+                              onChange={(e) => setEditContent(e.target.value)}
+                              className="w-[400px] h-[100px] bg-gray-200 p-2 rounded-lg"
+                            />
+                            <div className="flex space-x-2 mt-2">
+                            <button
+                                onClick={() => {
+                                  handleConfirmClick(messageItem)
+                                }}
+                                className="bg-blue-500 text-white px-2 py-1 rounded"
+                                title='Submit Chỉnh Sửa'
+                            >
+                                <IoMdCheckmarkCircle/>
+                            </button>
+                              <button
+                                onClick={handleCancelEdit}
+                                className="bg-gray-500 text-white px-2 py-1 rounded"
+                                title='Cancel Chỉnh Sửa'
+                              >
+                                <IoMdCloseCircle />
+                              </button>
+                              {messageItem.senderId === name && (
+                                <div className="flex space-x-2">
+                                  <button
+                                    onClick={() => handleDeleteClick(messageItem)}
+                                    className="bg-red-500 text-white px-2 py-1 rounded"
+                                    title='Thu Hồi'
+                                  >
+                                    <IoMdTrash />
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                        ) : (
+                          <p
+                            className={`${
+                              messageItem.senderId === name
+                                ? 'mt-15 mr-2 bg-stone-500  text-white'
+                                : 'mt-15 ml-2 bg-gray-200 '
+                            } mt-2 rounded-lg px-2 py-2 text-base max-w-max`}
+                            onClick={() => messageItem.senderId === name && fetchAndDisplayUserChat() && handleEditClick(messageItem)}
+                          >
+                            {messageItem.content}
+                          </p>
+                        )}
                       </div>
-                      {isImageUrl(messageItem.content) ? (
-                        <img
-                          src={messageItem.content}
-                          className={`max-w-[42%] ${
-                            messageItem.senderId === name
-                              ? 'mt-15 mr-2 bg-stone-700 text-right text-white'
-                              : 'mt-15 ml-2 bg-gray-200 text-left'
-                          } mt-2 rounded-lg`}
-                          alt="Message content"
-                        />
-                      ) : (
-                        <p
-                          className={`${
-                            messageItem.senderId === name
-                              ? 'mt-15 mr-4 bg-stone-700 text-right text-white'
-                              : 'mt-15 ml-4 bg-gray-200 text-left'
-                          } mt-2 max-w-[85%] whitespace-pre-wrap rounded-lg px-2 py-2 text-base`}
-                        >
-                          {messageItem.content}
-                        </p>
-                      )}
-                    </li>
-                  );
-                })}
+                    )}
+                  </li>
+                ))}
                 <div ref={messagesEndRef} />
               </ul>
             </div>
@@ -758,7 +947,7 @@ function ChatBox(props) {
                   maxHeight: '502px',
                 }}
               >
-                <ul className="grid grid-cols-3 gap-4 p-1">
+                <ul className="grid grid-cols-3 gap-2 p-1 bg-gray-800">
                   {' '}
                   {/* Use grid layout with 4 columns */}
                   {filteredOptions3.map((option, index) => (
@@ -772,7 +961,7 @@ function ChatBox(props) {
                       <img
                         src={option.img_url}
                         alt="option image"
-                        className="h-full w-full rounded-sm object-cover"
+                        className="h-full w-full rounded-lg object-cover"
                       />
                     </li>
                   ))}
