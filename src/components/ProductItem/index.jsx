@@ -3,13 +3,14 @@ import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { FiEye } from 'react-icons/fi';
 import NewTag from '../NewTag/NewTag';
 import SaleTag from '../SaleTag';
-import StarRating from '../StarRating';
 
 import { BsTrash3 } from 'react-icons/bs';
 import { Link, useNavigate } from 'react-router-dom';
 import { formatPrice } from '~/utils/formatPrice';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import { Rating } from '@mui/material';
+import favoriteApi from '~/apis/favoriteApi';
 
 export default function ProductItem({ product }) {
   const navigate = useNavigate();
@@ -23,6 +24,32 @@ export default function ProductItem({ product }) {
       return;
     }
     navigate(`/products/detail/${product.id}`);
+  };
+  const handleToggleFavorite = async () => {
+    if (!isAuthenticated) {
+      toast.info('Vui lòng đăng nhập để thêm sản phẩm vào danh sách yêu thích');
+      return;
+    }
+    try {
+      const params = {
+        use_id: user.id,
+        Product_name: product.name,
+      };
+      if (!isFavorite) {
+        await favoriteApi.add(params);
+        toast.success('Đã thêm vào danh sách yêu thích', {
+          autoClose: 1500,
+        });
+      } else {
+        await favoriteApi.delete(params);
+        toast.success('Đã xóa khỏi danh sách yêu thích', {
+          autoClose: 1500,
+        });
+      }
+      setIsFavorite((prev) => !prev);
+    } catch (error) {
+      throw new Error('Error in Product Item');
+    }
   };
 
   return (
@@ -62,7 +89,7 @@ export default function ProductItem({ product }) {
             <>
               <button
                 className={`mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-white transition-colors ${!isFavorite ? 'hover:bg-[#DB4444] hover:text-[#FAFAFA]' : 'hover:border-[#DB4444]'} border-2 border-solid border-transparent`}
-                onClick={() => setIsFavorite((prevStatus) => !prevStatus)}
+                onClick={handleToggleFavorite}
               >
                 {!isFavorite ? (
                   <FaRegHeart />
@@ -98,7 +125,13 @@ export default function ProductItem({ product }) {
           </span>
         </p>
         <div className="flex items-center gap-2 text-sm">
-          <StarRating productReviewRate={product.rating} />
+          <Rating
+            name="read-only"
+            value={product.rating}
+            precision={0.5}
+            size="small"
+            readOnly
+          />
           <span className="font-semibold text-[#A0A0A0]">
             ({product.nrating})
           </span>

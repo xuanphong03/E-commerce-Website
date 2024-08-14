@@ -2,15 +2,25 @@ import ProductItem from '~/components/ProductItem';
 import SectionTag from '~/components/SectionTag';
 import { useEffect, useState } from 'react';
 import { fakeProductsList } from '~/data/dataProduct';
+import productApi from '~/apis/productApi';
 
 ExploreProductSection.propTypes = {};
 
-function ExploreProductSection() {
+function ExploreProductSection({ userId }) {
   const [productsList, setProductsList] = useState([]);
 
   useEffect(() => {
     (async () => {
-      setProductsList(fakeProductsList);
+      try {
+        const params = { _limit: 8, _page: 1 };
+        if (userId) {
+          params._userId = userId;
+        }
+        const { data } = await productApi.getAll(params);
+        setProductsList(data);
+      } catch (error) {
+        throw new Error('Error in Explore Product');
+      }
     })();
   }, []);
 

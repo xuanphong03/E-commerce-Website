@@ -18,7 +18,10 @@ export default function SignInPage() {
       const user = unwrapResult(resultAction);
       navigate('/');
     } catch (error) {
-      enqueueSnackbar(error.message, { variant: 'error' });
+      enqueueSnackbar(
+        'Tài khoản hoặc mật khẩu chưa chính xác! Vui lòng kiểm tra lại',
+        { variant: 'error', autoHideDuration: 2000 },
+      );
     }
   };
 

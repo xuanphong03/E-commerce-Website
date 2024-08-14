@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { Link } from 'react-router-dom';
-import { set, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { FaSpinner } from 'react-icons/fa';
 import InputPayment from './customs/InputPayment';
 import { FaCheck } from 'react-icons/fa6';
-import TemplateImage01 from '~/assets/images/product01.png';
-import TemplateImage04 from '~/assets/images/product04.png';
-import { regex } from '~/constants/regex';
-import { use } from 'i18next';
-CheckOutPage.propTypes = {};
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import cartApi from '~/apis/cartApi';
+import { formatPrice } from '~/utils/formatPrice';
+import paymentApi from '~/apis/paymentApi';
+import { useNavigate } from 'react-router-dom';
+import { setPaymentInfo } from '../Auth/userSlice';
+import orderApi from '~/apis/orderApi';
 
-function CheckOutPage(props) {
+function CheckOutPage() {
   const schema = yup.object().shape({
     name: yup
       .string()
@@ -32,10 +33,21 @@ function CheckOutPage(props) {
     phoneNumber: yup.string().required('Vui lòng nhập số điện thoại'),
     address: yup.string().required('Vui lòng nhập địa chỉ giao hàng'),
   });
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { id } = useSelector((state) => state.user.current);
+  const { name, email, phoneNumber, address } = useSelector(
+    (state) => state.user.paymentInfo,
+  );
 
   const [saveInfoStatus, setSaveInfoStatus] = useState(true);
-  const [methodPayment, setMethodPayment] = useState('');
-  const [infoBuyer, setInfoBuyer] = useState({});
+  const [paymentMethod, setMethodPayment] = useState('');
+  const [cartData, setCartData] = useState({
+    cartItemsList: [],
+    totalProductPrice: 0,
+    totalPayment: 0,
+    deliveryFee: 0,
+  });
   const handleChangeMethodPayment = (e) => {
     let newMethodPayment = e.target.value;
     setMethodPayment(newMethodPayment);
@@ -46,15 +58,72 @@ function CheckOutPage(props) {
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: {
+      name,
+      email,
+      phoneNumber,
+      address,
+    },
   });
 
-  const formSubmit = async (data) => {
-    setInfoBuyer(data);
-    console.log(data);
+  useEffect(() => {
+    try {
+      (async () => {
+        const response = await cartApi.getAll({ user_id: id });
+        const { cart_items, totalPayment } = response;
+        setCartData({
+          cartItemsList: cart_items,
+          totalPayment: totalPayment,
+          totalProductPrice: totalPayment,
+          deliveryFee: totalPayment > 2000000 ? 0 : 500000,
+        });
+      })();
+    } catch (error) {
+      toast.error('API GET ALL CART LỖI');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
-    if (!methodPayment) {
-      alert('vui lòng chọn phương thức thanh toán');
+  const formSubmit = async (data) => {
+    if (!paymentMethod) {
+      alert('Vui lòng chọn phương thức thanh toán');
       return;
+    }
+    const { name, email, phoneNumber, address } = data;
+    dispatch(setPaymentInfo({ name, email, phoneNumber, address }));
+
+    if (paymentMethod === 'vnpay') {
+      try {
+        const paymentInfo = {
+          amount: cartData.totalPayment,
+          bankCode: 'NCB',
+        };
+
+        const {
+          data: { paymentUrl },
+        } = await paymentApi.get(paymentInfo);
+        window.location.href = paymentUrl;
+      } catch (error) {
+        toast.error('Lỗi khi xử lý thanh toán với VNPay');
+      }
+    } else {
+      try {
+        await orderApi.create({
+          user_id: id,
+          orderDetails: cartData.cartItemsList,
+          address: address,
+          phoneNumber: phoneNumber,
+          emailAddress: email,
+          paymentMethods: 'COD',
+          shippingFee: cartData.totalPayment > 2000000 ? 0 : 500000,
+          paymentStatus: 0,
+          percentDiscount: 0,
+          orderStatus: 2,
+        });
+        navigate('/payment/cod');
+      } catch (error) {
+        throw new Error('Có lỗi ở thanh toán COD');
+      }
     }
   };
 
@@ -78,19 +147,19 @@ function CheckOutPage(props) {
           />
 
           <InputPayment
-            id="payment-phoneNumber"
-            label="Số điện thoại"
-            required
-            register={{ ...register('phoneNumber') }}
-            errorMessage={errors.phoneNumber?.message}
-          />
-
-          <InputPayment
             id="payment-email"
             label="Email"
             required
             register={{ ...register('email') }}
             errorMessage={errors.email?.message}
+          />
+
+          <InputPayment
+            id="payment-phoneNumber"
+            label="Số điện thoại"
+            required
+            register={{ ...register('phoneNumber') }}
+            errorMessage={errors.phoneNumber?.message}
           />
 
           <InputPayment
@@ -124,87 +193,61 @@ function CheckOutPage(props) {
         </div>
         <div className="flex w-[500px] flex-col gap-8">
           <ul className="flex flex-col gap-6">
-            <li>
-              <article className="flex gap-6">
-                <div className="size-12">
-                  <img
-                    className="max-h-full"
-                    alt="product"
-                    src={TemplateImage01}
-                  />
-                </div>
-                <div className="flex flex-1 items-center justify-between">
-                  <h3>
-                    LCD Monitor <span>x1</span>
-                  </h3>
-                  <p>$650</p>
-                </div>
-              </article>
-            </li>
-            <li>
-              <article className="flex gap-6">
-                <div className="size-12">
-                  <img
-                    className="max-h-full"
-                    alt="product"
-                    src={TemplateImage04}
-                  />
-                </div>
-                <div className="flex flex-1 items-center justify-between">
-                  <h3>
-                    H1 Gamepad <span>x1</span>
-                  </h3>
-                  <p>$650</p>
-                </div>
-              </article>
-            </li>
+            {cartData.cartItemsList.map(
+              ({
+                itemDetail_id,
+                name,
+                image,
+                totalPrice,
+                quantity,
+                size,
+                color,
+              }) => {
+                return (
+                  <li key={itemDetail_id}>
+                    <article className="flex gap-2">
+                      <div className="size-12">
+                        <img className="max-h-full" alt="product" src={image} />
+                      </div>
+                      <div className="flex flex-1 items-center justify-between">
+                        <div>
+                          <h3>
+                            {name}
+                            <span className="ml-2 text-sm">
+                              | Màu: {color} | Size: {size}
+                            </span>
+                          </h3>
+                          <p className="text-sm">Số lượng: {quantity}</p>
+                        </div>
+                        <p>{formatPrice(totalPrice, 'VNĐ')}</p>
+                      </div>
+                    </article>
+                  </li>
+                );
+              },
+            )}
           </ul>
           <div className="flex flex-col gap-4">
             <p className="flex justify-between">
-              Tổng tiền sản phẩm <span>$1750</span>
+              Tổng tiền sản phẩm{' '}
+              <span>{formatPrice(cartData.totalProductPrice, 'VNĐ')}</span>
             </p>
             <hr></hr>
             <p className="flex justify-between">
-              Tiền vận chuyển <span>Free</span>
+              Tiền vận chuyển{' '}
+              <span>
+                {cartData.deliveryFee !== 0
+                  ? formatPrice(cartData.deliveryFee, 'VNĐ')
+                  : 'Free'}
+              </span>
             </p>
             <hr></hr>
             <p className="flex justify-between">
-              Tổng hóa đơn <span>$1750</span>
+              Tổng hóa đơn{' '}
+              <span>{formatPrice(cartData.totalPayment, 'VNĐ')}</span>
             </p>
           </div>
           <div className="flex flex-wrap justify-between">
-            <div className="mb-2 max-w-[50%] basis-1/2">
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  onChange={handleChangeMethodPayment}
-                  name="methods-payment"
-                  value="mbbank"
-                />
-                MB Bank
-                <img
-                  className="h-5 rounded"
-                  alt="logo"
-                  src="https://mir-s3-cdn-cf.behance.net/projects/404/7ace1c174097505.Y3JvcCwxMDEwLDc5MCwwLDA.jpg"
-                />
-              </label>
-            </div>
-            <div className="mb-2 max-w-[50%] basis-1/2">
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  onChange={handleChangeMethodPayment}
-                  name="methods-payment"
-                  value="paypal"
-                />
-                Paypal
-                <img
-                  className="h-5 rounded"
-                  alt="logo"
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRaAH7WEIC38EYtYpjJ504pJKHKt021pdRYiQ&s"
-                />
-              </label>
-            </div>
             <div className="mb-2 max-w-[50%] basis-1/2">
               <label className="flex items-center gap-2">
                 <input
@@ -223,23 +266,16 @@ function CheckOutPage(props) {
             </div>
             <div className="mb-2 max-w-[50%] basis-1/2">
               <label className="flex items-center gap-2">
-                <input type="radio" name="methods-payment" value="cod" />
+                <input
+                  onChange={handleChangeMethodPayment}
+                  type="radio"
+                  name="methods-payment"
+                  value="cod"
+                />
                 Thanh toán bằng tiền mặt
               </label>
             </div>
           </div>
-          {/* <div className="flex justify-between">
-            <input
-              placeholder="Mã giảm giá..."
-              className="h-10 w-3/5 rounded border border-solid border-[#2c2c2c] px-2 px-4 outline-none"
-            />
-            <button
-              type="submit"
-              className={`flex items-center justify-center gap-4 rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-2 py-1 font-medium text-[#FAFAFA] transition-all hover:bg-[#FAFAFA] hover:text-[#DB4444]`}
-            >
-              Dùng mã giảm giá
-            </button>
-          </div> */}
           <div>
             <button
               type="submit"

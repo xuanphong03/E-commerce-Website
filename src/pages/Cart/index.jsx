@@ -1,29 +1,29 @@
 import { useEffect, useState } from 'react';
 import CartItem from './components/CartItem';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { formatPrice } from '~/utils/formatPrice';
 import { toast } from 'react-toastify';
 import cartApi from '~/apis/cartApi';
+import { updateCart } from './cartSlice';
 
 export default function CartPage() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.current);
   const { id } = user;
-  const [cart_items, setCart_items] = useState([]);
+  const [cartItemsList, setCartItemsList] = useState([]);
   const [totalPayment, setTotalPayment] = useState(0);
-  const [totalQuantity, setTotalQuantity] = useState(0);
   const [discountPrice, setDiscountPrice] = useState(0);
   const [discountCouponCode, setDiscountCouponCode] = useState('');
-  const shippingFee = totalPayment > 2000000 ? 0 : 500000;
-
+  const shippingFee = totalPayment > 2000000 ? 'Miễn phí' : 500000;
   useEffect(() => {
     try {
       (async () => {
         const response = await cartApi.getAll({ user_id: id });
-        const { cart_items, totalPayment, totalQuantity } = response;
-        setCart_items(cart_items);
+        const { cart_items, totalPayment } = response;
+        setCartItemsList(cart_items);
         setTotalPayment(totalPayment);
-        setTotalQuantity(totalQuantity);
       })();
     } catch (error) {
       toast.error('API GET ALL CART LỖI');
@@ -41,6 +41,47 @@ export default function CartPage() {
     // Call api lấy coupon code ở đây
   };
 
+  const handleChangeQuantity = ({ itemDetail_id, quantity }) => {
+    const newCartItemsList = cartItemsList.map((cartItem) => {
+      if (cartItem.itemDetail_id === itemDetail_id) {
+        return { ...cartItem, quantity };
+      }
+      return cartItem;
+    });
+    setCartItemsList(newCartItemsList);
+  };
+
+  const handleUpdateCart = async () => {
+    try {
+      const response = await cartApi.update({
+        user_id: id,
+        cart_items: cartItemsList,
+      });
+      setCartItemsList(response.cart_items);
+
+      const newTotalQuantity = cartItemsList.reduce((total, { quantity }) => {
+        return total + quantity;
+      }, 0);
+      dispatch(updateCart({ quantity: newTotalQuantity }));
+      toast.success('Cập nhật giỏ hàng thành công', {
+        autoClose: 2000,
+      });
+    } catch (error) {
+      toast.error('Cập nhật thất bại', {
+        autoClose: 2000,
+      });
+    }
+  };
+
+  const handleBackStore = () => {
+    navigate('/products/all_products');
+  };
+
+  const handleCartPayment = () => {
+    if (!cartItemsList.length) return;
+    navigate('/checkout');
+  };
+
   return (
     <main className="mx-auto mb-[140px] max-w-[1300px] pt-[50px]">
       <div className="mb-[80px]">
@@ -53,10 +94,10 @@ export default function CartPage() {
             <h3 className={`max-w-[20%] basis-[20%] text-center`}>Số lượng</h3>
             <h3 className={`max-w-[15%] basis-[15%] text-center`}>Tổng tiền</h3>
           </div>
-          {cart_items.length ? (
-            cart_items.map((cart) => (
+          {cartItemsList.length ? (
+            cartItemsList.map((cart) => (
               <div key={cart.itemDetail_id}>
-                <CartItem data={cart} />
+                <CartItem onChange={handleChangeQuantity} data={cart} />
               </div>
             ))
           ) : (
@@ -76,10 +117,16 @@ export default function CartPage() {
           )}
         </div>
         <div className="flex justify-between">
-          <button className="border-[#b3b3b3 flex items-center justify-center rounded border border-solid px-12 py-4 font-medium text-black transition-colors hover:bg-[#DB4444] hover:text-[#fafafa]">
+          <button
+            onClick={handleBackStore}
+            className="border-[#b3b3b3 flex items-center justify-center rounded border border-solid px-12 py-4 font-medium text-black transition-colors hover:bg-[#DB4444] hover:text-[#fafafa]"
+          >
             Quay lại cửa hàng
           </button>
-          <button className="border-[#b3b3b3 flex items-center justify-center rounded border border-solid px-12 py-4 font-medium text-black transition-colors hover:bg-[#DB4444] hover:text-[#fafafa]">
+          <button
+            onClick={handleUpdateCart}
+            className="border-[#b3b3b3 flex items-center justify-center rounded border border-solid px-12 py-4 font-medium text-black transition-colors hover:bg-[#DB4444] hover:text-[#fafafa]"
+          >
             Cập nhật giỏ hàng
           </button>
         </div>
@@ -117,7 +164,9 @@ export default function CartPage() {
             <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
               <h3>Tiền vận chuyển</h3>
               <span>
-                {shippingFee > 0 ? formatPrice(shippingFee, 'VNĐ') : 'Miễn phí'}
+                {totalPayment !== 0
+                  ? formatPrice(shippingFee, 'VNĐ')
+                  : formatPrice(0, 'VNĐ')}
               </span>
             </div>
             <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
@@ -125,11 +174,13 @@ export default function CartPage() {
               <span>{formatPrice(totalPayment - discountPrice, 'VNĐ')}</span>
             </div>
           </div>
-          <Link to="/checkout">
-            <button className="mx-auto flex h-14 items-center justify-center rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-12 py-4 font-medium text-[#fafafa] transition-colors hover:bg-[#fafafa] hover:text-[#DB4444]">
-              Thanh toán hóa đơn
-            </button>
-          </Link>
+
+          <button
+            onClick={handleCartPayment}
+            className={`${cartItemsList.length > 0 ? 'cursor-pointer border-[#DB4444] bg-[#DB4444] text-[#fafafa] hover:bg-[#fafafa] hover:text-[#DB4444]' : 'cursor-not-allowed bg-gray-200 text-gray-400'} mx-auto flex h-14 items-center justify-center rounded border-2 border-solid px-12 py-4 font-medium transition-colors`}
+          >
+            Thanh toán hóa đơn
+          </button>
         </div>
       </div>
     </main>

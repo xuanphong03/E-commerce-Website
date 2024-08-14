@@ -18,7 +18,6 @@ function ContactForm({ onSubmit }) {
     name: yup
       .string()
       .required('Vui lòng nhập họ và tên')
-      .matches(regex.fullName, 'Tên không hợp lệ')
       .test(
         'Họ và tên phải có ít nhất 2 từ',
         'Họ và tên phải chứa ít nhất 2 từ.',

@@ -24,8 +24,6 @@ function ProductsList() {
       _page: Number.parseInt(params._page) || 1,
       _limit: Number.parseInt(params._limit) || 20,
       _sort: params._sort || 'ASC',
-      isPromotion: params.isPromotion === 'true',
-      isReleased: params.isReleased === 'true',
     };
   }, [location.search]);
 
@@ -53,21 +51,6 @@ function ProductsList() {
       setLoading(false);
     }, 500);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        // const { data } = await productApi.getAll(queryParams);
-        // setProductsList(data);
-        // const response = await productApi.getAll(queryParams);
-        // console.log(response);
-        //  setProductsList(productsList)
-        // console.log(fakeProductsList);
-      } catch (error) {
-        // console.log('Error: ', error);
-      }
-    })();
   }, [queryParams]);
 
   const handlePageChange = (event, page) => {
@@ -103,8 +86,8 @@ function ProductsList() {
           </h3>
           <FilterBySort onChange={handleFiltersChange} />
           <FilterByPrice onChange={handleFiltersChange} />
-          <FilterByColor onChange={handleFiltersChange} />
-          <FilterBySize onChange={handleFiltersChange} />
+          {/* <FilterByColor onChange={handleFiltersChange} />
+          <FilterBySize onChange={handleFiltersChange} /> */}
         </div>
 
         <div className="mt-5">

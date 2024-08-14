@@ -7,18 +7,48 @@ import { placeholder30x40 } from '~/constants/placeholder';
 
 CartItem.propTypes = {
   data: PropTypes.object.isRequired,
+  onChange: PropTypes.func,
 };
 
-function CartItem({ data }) {
+function CartItem({ data, onChange }) {
   const [quantity, setQuantity] = useState(() => data.quantity);
 
   const handleChangeQuantity = (e) => {
     let newQuantity = Number(e.target.value);
-    if (newQuantity % 1 === 0 && newQuantity < 1000) {
-      setQuantity(newQuantity);
+
+    if (newQuantity % 1 === 0) {
+      if (newQuantity <= 100) {
+        setQuantity(newQuantity);
+      } else {
+        setQuantity(100);
+      }
+
+      if (onChange) {
+        onChange({ ...data, quantity: newQuantity });
+      }
     }
   };
 
+  const increaseQuantity = () => {
+    if (quantity < 100) {
+      const newQuantity = quantity + 1;
+      setQuantity(newQuantity);
+
+      if (onChange) {
+        onChange({ ...data, quantity: quantity + 1 });
+      }
+    }
+  };
+  const decreaseQuantity = () => {
+    if (quantity >= 1) {
+      const newQuantity = quantity - 1;
+      setQuantity(newQuantity);
+
+      if (onChange) {
+        onChange({ ...data, quantity: quantity - 1 });
+      }
+    }
+  };
   return (
     <div className="mt-10 flex w-full px-10 py-5 shadow-table">
       <div className="flex basis-[30%] items-center gap-5">
@@ -52,15 +82,11 @@ function CartItem({ data }) {
 
           <div className="flex flex-col">
             <IoIosArrowUp
-              onClick={() => setQuantity((prevValue) => prevValue + 1)}
+              onClick={increaseQuantity}
               className="cursor-pointer rounded-sm transition-all hover:bg-slate-400 hover:text-[#FAFAFA]"
             />
             <IoIosArrowDown
-              onClick={() => {
-                if (quantity - 1 >= 0) {
-                  setQuantity((prevValue) => prevValue - 1);
-                }
-              }}
+              onClick={decreaseQuantity}
               className="cursor-pointer rounded-sm transition-all hover:bg-slate-400 hover:text-[#FAFAFA]"
             />
           </div>
