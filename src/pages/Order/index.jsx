@@ -6,6 +6,8 @@ import AllOrders from './components/AllOrders';
 import UnpaidOrder from './components/UnpaidOrders';
 import { IoSearchOutline } from 'react-icons/io5';
 import { set } from 'react-hook-form';
+import orderApi from '~/apis/orderApi';
+import { useSelector } from 'react-redux';
 
 OrdersPage.propTypes = {};
 
@@ -17,7 +19,11 @@ function OrdersPage(props) {
     },
     {
       path: '/my-orders/unpaid',
-      name: 'Chờ thanh toán',
+      name: 'Chưa thanh toán',
+    },
+    {
+      path: '/my-orders/paid',
+      name: 'Đã thanh toán',
     },
     {
       path: '/my-orders/delivering',
@@ -31,60 +37,26 @@ function OrdersPage(props) {
       path: '/my-orders/cancelled',
       name: 'Đã hủy',
     },
-    {
-      path: '/my-orders/return',
-      name: 'Trả hàng/ Hoàn tiền',
-    },
   ];
 
   const { orderStatus } = useParams();
   const [searchValue, setSearchValue] = useState('');
-  const [orders, setOrders] = useState([
-    {
-      orderCode: '240725FM46SMR7',
-      totalCost: '50000',
-      status: 'Đơn đã hủy',
-      requestBy: 'Người mua',
-      paymentMethod: 'COD',
-      data: [
-        {
-          productName:
-            'Tất thể thao Nike, vớ Adidas cổ ngắn, trung, dài cho nam, nữ thể thao. Tất cổ cao dệt kim 3 kích cỡ 5cm, 12cm, 16cm',
-          productType: 'Nike trắng 16cm',
-          productQuantity: '1',
-          productPrice: 50000,
-        },
-        {
-          productName:
-            'Camera WIFI XOAY 360 IMOU Ranger 2 A52P 5MP 3K - A42P 4MP - A32EP 3MP - A22EP 2MP Trong Nhà Còi Hú Báo Động, chính hãng',
-          productType: 'A52P 5MP 3K Siêu nét',
-          productQuantity: '1',
-          productPrice: 100000,
-        },
-      ],
-    },
-    {
-      orderCode: '240725FM46SMR7',
-      totalCost: '50000',
-      status: 'Đơn đã thanh toán',
-      requestBy: 'Người mua',
-      paymentMethod: 'Payment',
-      data: [
-        {
-          productName:
-            'Tất thể thao Nike, vớ Adidas cổ ngắn, trung, dài cho nam, nữ thể thao. Tất cổ cao dệt kim 3 kích cỡ 5cm, 12cm, 16cm',
-          productType: 'Nike trắng 16cm',
-          productQuantity: '1',
-          productPrice: 50000,
-        },
-      ],
-    },
-  ]);
-
+  const [orders, setOrders] = useState([]);
+  const { id } = useSelector((state) => state.user.current);
   const handleSearchValueChange = (e) => {
     let newSearchValue = e.target.value;
     setSearchValue(newSearchValue);
   };
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await orderApi.getAll();
+        console.log('Order: ', response);
+      } catch (error) {
+        throw new Error('Có lỗi API Order');
+      }
+    })();
+  }, []);
 
   return (
     <main className="bg-[#F5F5F5] pb-10 pt-5">

@@ -1,4 +1,4 @@
-import StarRating from '../StarRating';
+import { Rating } from '@mui/material';
 
 function ProductSkeletonItem() {
   return (
@@ -14,7 +14,7 @@ function ProductSkeletonItem() {
         <h3 className="mb-2 line-clamp-1 h-3 w-52 rounded bg-[#e8e7e7] font-medium"></h3>
         <p className="mb-2 h-3 w-20 rounded bg-[#e8e7e7]"></p>
         <div className="flex items-center gap-2 text-sm">
-          <StarRating productReviewRate={0} />
+          <Rating name="read-only" value={0} readOnly />
           <span className="font-semibold text-[#A0A0A0]">(0)</span>
         </div>
       </div>

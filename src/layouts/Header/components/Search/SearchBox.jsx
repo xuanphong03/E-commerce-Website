@@ -26,16 +26,24 @@ function SearchBox() {
     };
   }, []);
   useEffect(() => {
-    setLoading(true);
-
     (async () => {
       if (!searchTerm.trim()) return;
       try {
-        const res = await productApi.getAll({ q: debounced });
-        setSearchResult(res.products.slice(0, 5));
-        setLoading(false);
+        setLoading(true);
+        const params = {
+          _limit: 5,
+          _page: 1,
+          _sort: 'ASC',
+          productName: debounced,
+        };
+        const { data } = await productApi.getAll(params);
+        setSearchResult(data);
       } catch (error) {
         setLoading(false);
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,29 +103,28 @@ function SearchBox() {
       </label>
       {showRecommendedSearch && (
         <div className="search-box absolute left-0 right-0 top-[calc(100%+12px)] w-full rounded bg-white p-2">
-          <h3 className="mb-4 text-lg font-medium text-gray-700">
-            Tìm kiếm sản phẩm
-          </h3>
+          <h3 className="mb-4 font-medium text-gray-700">Tìm kiếm sản phẩm</h3>
           <div className="flex flex-col gap-4">
             {!loading &&
               searchResult.length > 0 &&
               searchResult.map((product, index) => {
                 return (
                   <Link
-                    to={`products-detail/${product.id}`}
+                    to={`/products/detail/${product.id}`}
                     key={index}
                     className="block cursor-pointer rounded bg-white p-1 transition-colors hover:bg-slate-200"
                     onClick={handleOnClickRecommendedProduct}
                   >
                     <SearchedProductItem
                       searchTerm={searchTerm}
-                      productName={product.name}
-                      productCategory={product.category}
+                      product={product}
                     />
                   </Link>
                 );
               })}
-            {!loading && !searchResult.length && <p>Không tìm thấy sản phẩm</p>}
+            {!loading && !searchResult.length && (
+              <p className="text-sm">Không tìm thấy sản phẩm</p>
+            )}
             {loading &&
               [...Array(5)].map((_, index) => {
                 return <SearchedSkeletonItem key={index} />;

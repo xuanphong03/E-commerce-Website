@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import StarRating from '~/components/StarRating';
 import { formatPrice } from '~/utils/formatPrice';
 import { FiMinus, FiPlus } from 'react-icons/fi';
 import { FaCartPlus, FaHeart, FaRegHeart } from 'react-icons/fa';
@@ -9,20 +8,25 @@ import './CustomizedScrollbar.css';
 import FeedbackList from './components/FeedbackList';
 import productApi from '~/apis/productApi';
 import { placeholder80x80, placeholder500x500 } from '~/constants/placeholder';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import cartApi from '~/apis/cartApi';
+import { addToCart } from '~/pages/Cart/cartSlice';
+import { Rating } from '@mui/material';
+import favoriteApi from '~/apis/favoriteApi';
 
 function ProductDetail() {
-  const user = useSelector((state) => state.user.current);
-  const isAuthenticated = !!user.id;
-  let { id } = useParams();
+  const dispatch = useDispatch();
+  const { id } = useSelector((state) => state.user.current);
+  const isAuthenticated = !!id;
+  let { productId } = useParams();
   const [checkedColor, setCheckedColor] = useState(null);
   const [checkedSize, setCheckedSize] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [productDetail, setProductDetail] = useState({});
   const [quantityProduct, setQuantityProduct] = useState(1);
   const [outStockSizeList, setOutStockSizeList] = useState([]);
+  const [rating, setRating] = useState(0);
 
   useEffect(() => {
     window.scrollTo({
@@ -32,8 +36,14 @@ function ProductDetail() {
 
     (async () => {
       try {
-        const response = await productApi.getDetail({ id });
+        const params = { id: productId };
+        if (isAuthenticated) {
+          params._userId = id;
+        }
+        const response = await productApi.getDetail(params);
+        console.log(response);
         setProductDetail(response);
+        setRating(response.rating);
       } catch (error) {
         throw new Error(error);
       }
@@ -45,33 +55,40 @@ function ProductDetail() {
     if (quantityProduct >= 100) return;
     setQuantityProduct((prev) => prev + 1);
   };
-
   const decreaseQuantityProduct = () => {
     if (quantityProduct <= 0) return;
     setQuantityProduct((prev) => prev - 1);
   };
-
   const changeQuantityProduct = (e) => {
     let newQuantity = Number(e.target.value);
-    if (newQuantity % 1 === 0 && newQuantity >= 0 && newQuantity <= 100) {
-      setQuantityProduct(newQuantity);
+    if (newQuantity % 1 === 0 && newQuantity >= 0) {
+      if (newQuantity <= 100) {
+        setQuantityProduct(newQuantity);
+      } else {
+        setQuantityProduct(100);
+      }
     }
   };
-
   const handleAddProductToCart = () => {
     if (!isAuthenticated) {
-      toast.info('Vui lòng đăng nhập để thực hiện yêu cầu');
+      toast.info('Vui lòng đăng nhập để thực hiện yêu cầu', {
+        autoClose: 2000,
+      });
       return;
     } else if (checkedColor === null) {
-      toast.info('Vui lòng chọn màu sắc của sản phẩm');
+      toast.info('Vui lòng chọn màu sắc của sản phẩm', {
+        autoClose: 2000,
+      });
       return;
     } else if (checkedSize === null) {
-      toast.info('Vui lòng chọn kích cỡ của sản phẩm');
+      toast.info('Vui lòng chọn kích cỡ của sản phẩm', {
+        autoClose: 2000,
+      });
       return;
     }
 
     const requestData = {
-      user_id: user.id,
+      user_id: id,
       cart_item: {
         itemDetail_id: productDetail.id,
         name: productDetail.name,
@@ -88,10 +105,16 @@ function ProductDetail() {
       (async () => {
         // Call API thêm sản phẩm vào giỏ hàng
         await cartApi.create(requestData);
+        // Dispatch action để cập nhật giỏ hàng trong Redux
+        dispatch(addToCart({ quantity: quantityProduct }));
       })();
-      toast.success('Đã thêm sản phẩm vào giỏ hàng!');
+      toast.success('Đã thêm sản phẩm vào giỏ hàng!', {
+        autoClose: 2000,
+      });
     } catch (error) {
-      toast.success('Thêm sản phẩm vào giỏ hàng thất bại!');
+      toast.success('Thêm sản phẩm vào giỏ hàng thất bại!', {
+        autoClose: 2000,
+      });
     }
   };
   const getOutStockSizeList = (color) => {
@@ -120,7 +143,6 @@ function ProductDetail() {
       setCheckedSize(null);
     }
   };
-
   const handleChangeSize = (size) => {
     if (outStockSizeList.includes(size)) {
       return;
@@ -143,7 +165,26 @@ function ProductDetail() {
     return _color.totalQuantity === 0;
   };
 
-  // const checkQuantityBySize = (size) => {};
+  const handleToggleFavoriteProduct = async () => {
+    if (!isAuthenticated) {
+      toast.info('Vui lòng đăng nhập để thêm sản phẩm vào danh sách yêu thích');
+      return;
+    }
+    try {
+      const params = {
+        Product_name: productDetail.name,
+        use_id: id,
+      };
+      if (!isFavorite) {
+        await favoriteApi.add(params);
+      } else {
+        await favoriteApi.delete(params);
+      }
+      setIsFavorite((prevStatus) => !prevStatus);
+    } catch (error) {
+      throw new Error('Error toggle favorite product detail!');
+    }
+  };
 
   return (
     <main className="pb-36 pt-10">
@@ -183,8 +224,16 @@ function ProductDetail() {
               </h1>
               <div className="mb-4 flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-2">
-                  <StarRating productReviewRate={0} />
-                  <p className="text-[#808080]">(0 Đánh giá)</p>
+                  <Rating
+                    name="read-only"
+                    value={rating}
+                    precision={0.5}
+                    size="small"
+                    readOnly
+                  />
+                  <p className="text-[#808080]">
+                    ({productDetail.nrating} Đánh giá)
+                  </p>
                 </div>
                 <div className="h-4 w-[1px] bg-[#808080]"></div>
                 <p className="flex items-center gap-2">
@@ -197,6 +246,8 @@ function ProductDetail() {
                     <span className="text-red-500">Hết hàng</span>
                   )}
                 </p>
+                <div className="h-4 w-[1px] bg-[#808080]"></div>
+                <p>Đã bán: {productDetail.quantitySold}</p>
               </div>
               <div className="mb-4 flex items-end gap-5 text-3xl">
                 {productDetail.saleDiscountPercent > 0 && (
@@ -213,14 +264,15 @@ function ProductDetail() {
                   )}
                 </h4>
               </div>
-              <p className="mb-6 w-4/5 break-words text-sm">
+              <p className="mb-2 w-4/5 break-words text-sm">
                 Mô tả: {productDetail.description}
               </p>
-
-              <div className="mb-4 flex items-center gap-4">
-                <h4 className="min-w-20 text-base tracking-[0.6px]">
-                  Màu sắc:
-                </h4>
+              <p className="mb-2 text-sm">
+                Chất liệu: {productDetail.material}
+              </p>
+              <p className="mb-6 text-sm">Phong cách: {productDetail.style}</p>
+              <div className="mb-4 flex items-center gap-4 text-sm">
+                <h4 className="min-w-20 tracking-[0.6px]">Màu sắc:</h4>
                 <div className="flex items-center gap-4">
                   {productDetail.colours?.map((color) => {
                     const isOutOfStock = checkOutOfStock(color);
@@ -243,10 +295,8 @@ function ProductDetail() {
                 </div>
               </div>
 
-              <div className="mb-4 flex items-center gap-4">
-                <h4 className="min-w-20 text-base tracking-[0.6px]">
-                  Kích cỡ:
-                </h4>
+              <div className="mb-4 flex items-center gap-4 text-sm">
+                <h4 className="min-w-20 tracking-[0.6px]">Kích cỡ:</h4>
                 <div className="flex items-center gap-4">
                   {productDetail.sizes?.map((size) => {
                     const isOutOfStock = outStockSizeList.includes(size);
@@ -299,7 +349,7 @@ function ProductDetail() {
                   Thêm giỏ hàng
                 </button>
                 <button
-                  onClick={() => setIsFavorite((prev) => !prev)}
+                  onClick={handleToggleFavoriteProduct}
                   className="flex size-10 items-center justify-center rounded border border-solid border-black text-xl"
                 >
                   {isFavorite ? (

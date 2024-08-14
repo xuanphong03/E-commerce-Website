@@ -6,7 +6,7 @@ import productApi from '~/apis/productApi';
 import { useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
 
-export default function FlashSalesSection() {
+export default function FlashSalesSection({ userId }) {
   const navigate = useNavigate();
   const [timer, setTimer] = useState(() => {
     const countdownDate = new Date('July 30, 2024 00:00:00').getTime();
@@ -31,10 +31,23 @@ export default function FlashSalesSection() {
   useEffect(() => {
     setLoading(true);
     (async () => {
-      const { data } = await productApi.getAll({ isPromotion: true });
-      setProductsList(data);
+      try {
+        const params = {
+          _limit: 4,
+          _page: 1,
+          _isPromotion: true,
+        };
+        if (userId) {
+          params._userId = userId;
+        }
+        const { data } = await productApi.getAll(params);
+        setProductsList(data);
+      } catch (error) {
+        throw new Error('Error in Flash Sale');
+      }
     })();
     setLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const interval = useRef();
@@ -122,7 +135,7 @@ export default function FlashSalesSection() {
       </div>
       <div className="grid grid-cols-12 gap-16">
         {!loading &&
-          productsList.slice(0, 4).map((product) => (
+          productsList.map((product) => (
             <div className="col-span-3" key={product.id}>
               <ProductItem product={product} />
             </div>

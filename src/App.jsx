@@ -17,6 +17,8 @@ import CheckOutPage from './pages/CheckOut/CheckOutPage';
 import Product from './pages/Products';
 import ChatBox from './components/Chat';
 import { useSelector } from 'react-redux';
+import PaymentByVNPay from './pages/CheckOut/PaymentByVNPay';
+import PaymentByCOD from './pages/CheckOut/PaymentByCOD';
 
 function App() {
   const infoUser = useSelector((state) => state.user.current);
@@ -31,6 +33,8 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckOutPage />} />
+          <Route path="/payment/result" element={<PaymentByVNPay />} />
+          <Route path="/payment/cod" element={<PaymentByCOD />} />
           <Route path="/my-orders/:orderStatus/*" element={<OrdersPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />

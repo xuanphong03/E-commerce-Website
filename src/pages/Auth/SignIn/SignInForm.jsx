@@ -19,10 +19,7 @@ export default function SignInForm({ onSubmit }) {
       .string()
       .required('Vui lòng nhập email.')
       .email('Vui lòng nhập email hợp lệ.'),
-    password: yup
-      .string()
-      .required('Vui lòng nhập mật khẩu.')
-      .min(6, 'Mật khẩu phải chứa ít nhất 6 ký tự.'),
+    password: yup.string().required('Vui lòng nhập mật khẩu.'),
   });
 
   const {

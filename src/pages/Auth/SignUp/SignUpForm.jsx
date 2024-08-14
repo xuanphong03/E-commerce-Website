@@ -8,7 +8,6 @@ import InputField from '~/components/form-controls/InputField/InputField';
 import GoogleIcon from '~/assets/images/icon-google.png';
 import { FaSpinner } from 'react-icons/fa6';
 import PasswordField from '~/components/form-controls/PasswordField/PasswordField';
-import { regex } from '~/constants/regex';
 
 SignUpForm.propTypes = {
   onSubmit: PropTypes.func,
@@ -19,7 +18,6 @@ export default function SignUpForm({ onSubmit }) {
     name: yup
       .string()
       .required('Vui lòng nhập tên của bạn.')
-      .matches(regex.fullName, 'Tên không hợp lệ')
       .test(
         'Họ và tên phải có ít nhất 2 từ',
         'Họ và tên phải chứa ít nhất 2 từ.',

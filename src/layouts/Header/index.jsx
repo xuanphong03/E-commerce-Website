@@ -8,15 +8,17 @@ import Tooltip from '~/components/Tooltip';
 import AccountDropdown from './components/Dropdown/AccountDropdown';
 import Navigation from './components/Navigation/Navigation';
 import SearchBox from './components/Search/SearchBox';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import cartApi from '~/apis/cartApi';
 import { toast } from 'react-toastify';
+import { initializeCart } from '~/pages/Cart/cartSlice';
 
 export default function Header() {
+  const dispatch = useDispatch();
+  const totalQuantityCart = useSelector((state) => state.cart.totalQuantity);
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const user = useSelector((state) => state.user.current);
   const isAuthenticated = !!user.id;
-  const [totalQuantityCart, setTotalQuantityCart] = useState(0);
   const accountDropdownRef = useRef(null);
   const [openProductMenu, setOpenProductMenu] = useState(false);
 
@@ -26,7 +28,7 @@ export default function Header() {
         (async () => {
           const response = await cartApi.getAll({ user_id: user.id });
           const { cart_items } = response;
-          setTotalQuantityCart(cart_items.length);
+          // setTotalQuantityCart(cart_items.length);
         })();
       } catch (error) {
         toast.error('API GET ALL CART LỖI');
@@ -35,6 +37,16 @@ export default function Header() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(initializeCart())
+        .unwrap()
+        .catch((error) => {
+          toast.error(error.message);
+        });
+    }
+  }, [dispatch, isAuthenticated]);
 
   useEffect(() => {
     let handler = (e) => {

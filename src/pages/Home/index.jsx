@@ -3,8 +3,10 @@ import BestSellingSection from './components/BestSellingSection';
 import ExploreProductSection from './components/ExploreProductSection';
 import FlashSalesSection from './components/FlashSalesSection';
 import IntroduceSection from './components/IntroduceSection';
+import { useSelector } from 'react-redux';
 
 export default function HomePage() {
+  const { id } = useSelector((state) => state.user.current);
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -16,9 +18,9 @@ export default function HomePage() {
     <main className="bg-white">
       <IntroduceSection />
       <div className="mx-auto max-w-[1300px] py-20">
-        <FlashSalesSection />
-        <BestSellingSection />
-        <ExploreProductSection />
+        <FlashSalesSection userId={id} />
+        <BestSellingSection userId={id} />
+        <ExploreProductSection userId={id} />
       </div>
     </main>
   );

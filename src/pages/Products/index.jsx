@@ -11,7 +11,7 @@ function Product() {
     <div>
       <Routes>
         <Route path="/:category" element={<ProductsList />} />
-        <Route path="/detail/:id" element={<ProductDetail />} />
+        <Route path="/detail/:productId" element={<ProductDetail />} />
       </Routes>
     </div>
   );

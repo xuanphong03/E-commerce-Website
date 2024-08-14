@@ -4,10 +4,7 @@ import StorageKeys from '~/constants/storage-key';
 
 // First, create the thunk
 export const register = createAsyncThunk('user/register', async (payload) => {
-  console.log('register payload', payload);
   const data = await userApi.register(payload);
-  console.log('response data', data);
-
   // save data to local storage
   localStorage.setItem(StorageKeys.TOKEN, data.jwt);
   localStorage.setItem(StorageKeys.USER, JSON.stringify(data.user));
@@ -30,6 +27,12 @@ const userSlice = createSlice({
   initialState: {
     current: JSON.parse(localStorage.getItem(StorageKeys.USER)) || {},
     setting: {},
+    paymentInfo: JSON.parse(localStorage.getItem(StorageKeys.PAYMENT_INFO)) || {
+      name: '',
+      email: '',
+      phoneNumber: '',
+      address: '',
+    },
   },
   reducers: {
     logout(state) {
@@ -45,6 +48,17 @@ const userSlice = createSlice({
         items: [],
       };
     },
+    setPaymentInfo: (state, action) => {
+      const { name, email, phoneNumber, address } = action.payload;
+      state.paymentInfo.name = name;
+      state.paymentInfo.email = email;
+      state.paymentInfo.phoneNumber = phoneNumber;
+      state.paymentInfo.address = address;
+      localStorage.setItem(
+        StorageKeys.PAYMENT_INFO,
+        JSON.stringify(state.paymentInfo),
+      );
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
@@ -59,4 +73,4 @@ const userSlice = createSlice({
 
 const { actions, reducer } = userSlice;
 export default reducer;
-export const { logout, addProductToCart } = actions;
+export const { logout, setPaymentInfo } = actions;

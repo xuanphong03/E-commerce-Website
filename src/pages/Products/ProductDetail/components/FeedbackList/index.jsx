@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import StarRating from '~/components/StarRating';
 import SectionTag from '~/components/SectionTag';
 import { MdOutlineFeedback } from 'react-icons/md';
+import { Rating } from '@mui/material';
 
 FeedbackList.propTypes = {};
 
@@ -30,7 +30,12 @@ function FeedbackList(props) {
                   <div>
                     <h3 className="mb-2">Nguyễn Xuân Phong</h3>
                     <div className="text-sm">
-                      <StarRating />
+                      <Rating
+                        name="read-only"
+                        value={0}
+                        precision={0.5}
+                        readOnly
+                      />
                     </div>
                   </div>
                 </div>

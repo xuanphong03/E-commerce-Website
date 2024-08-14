@@ -3,28 +3,23 @@ import { FiEye } from 'react-icons/fi';
 import { BsTrash3 } from 'react-icons/bs';
 import SaleTag from '~/components/SaleTag';
 import NewTag from '~/components/NewTag/NewTag';
-import StarRating from '~/components/StarRating';
+import { Rating } from '@mui/material';
+import { formatPrice } from '~/utils/formatPrice';
 
-export default function ProductItem(props) {
-  const {
-    productImage,
-    productName,
-    productPrice,
-    productSalePercent,
-    productSalePrice,
-    productReviewNumber,
-    productReviewRate,
-    isNewProduct = false,
-    isInWishList = false,
-  } = props;
+export default function ProductItem({ product }) {
+  console.log(product);
 
   return (
     <article className="flex flex-col gap-4">
       <div className="relative flex h-[250px] items-center justify-center rounded bg-[#F5F5F5]">
-        <img alt="product image" src={productImage} className="max-h[80%]" />
+        <img
+          alt="product image"
+          src={product.imageMain}
+          className="max-h-[80%]"
+        />
         <div className="absolute left-3 top-3">
-          <SaleTag salePercent={productSalePercent} />
-          {isNewProduct && (
+          <SaleTag salePercent={product.saleDiscountPercent} />
+          {product.newStatus && (
             <div className="mt-1">
               <NewTag />
             </div>
@@ -34,7 +29,7 @@ export default function ProductItem(props) {
           <p className="py-2">Thêm vào giỏ hàng</p>
         </div>
         <div className="absolute right-3 top-3">
-          {!isInWishList ? (
+          {!product.isFavorite ? (
             <button className="flex h-8 w-8 items-center justify-center rounded-full bg-white transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]">
               <FiEye />
             </button>
@@ -47,24 +42,29 @@ export default function ProductItem(props) {
       </div>
       <div>
         <h3 className="mb-2 line-clamp-1 font-medium text-black">
-          {productName}
+          {product.name}
         </h3>
         <p className="mb-2 font-medium text-[#DB4444]">
-          ${productSalePercent > 0 ? productSalePrice : productPrice}
+          {formatPrice(product.finalPrice, 'VNĐ')}
           <span
-            className={`ml-3 text-[#808080] line-through ${productSalePercent <= 0 ? 'hidden' : ''}`}
+            className={`ml-3 text-[#808080] line-through ${product.saleDiscountPercent <= 0 ? 'hidden' : ''}`}
           >
-            ${productPrice}
+            {formatPrice(product.originalPrice, 'VNĐ')}
           </span>
         </p>
-        {!isInWishList && (
-          <div className="flex items-center gap-2">
-            <StarRating productReviewRate={productReviewRate} />
-            <span className="text-sm font-semibold text-[#A0A0A0]">
-              ({productReviewNumber})
-            </span>
-          </div>
-        )}
+
+        <div className="flex items-center gap-2 text-sm">
+          <Rating
+            name="read-only"
+            value={product.rating}
+            precision={0.5}
+            size="small"
+            readOnly
+          />
+          <span className="font-semibold text-[#A0A0A0]">
+            ({product.nrating})
+          </span>
+        </div>
       </div>
     </article>
   );

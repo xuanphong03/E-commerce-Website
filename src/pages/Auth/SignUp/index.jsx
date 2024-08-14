@@ -25,7 +25,7 @@ export default function SignUpPage() {
       // Chuyển hướng về trang Home
       navigate('/');
     } catch (error) {
-      enqueueSnackbar(error.message, { variant: 'error' });
+      enqueueSnackbar('Đã có lỗi xảy ra!', { variant: 'error' });
     }
   };
 
