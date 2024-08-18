@@ -9,32 +9,30 @@ import AccountDropdown from './components/Dropdown/AccountDropdown';
 import Navigation from './components/Navigation/Navigation';
 import SearchBox from './components/Search/SearchBox';
 import { useDispatch, useSelector } from 'react-redux';
-import cartApi from '~/apis/cartApi';
 import { toast } from 'react-toastify';
 import { initializeCart } from '~/pages/Cart/cartSlice';
+import categoryApi from '~/apis/categoryApi';
 
 export default function Header() {
   const dispatch = useDispatch();
-  const totalQuantityCart = useSelector((state) => state.cart.totalQuantity);
-  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const user = useSelector((state) => state.user.current);
   const isAuthenticated = !!user.id;
+  const totalQuantityCart = useSelector((state) => state.cart.totalQuantity);
+  const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const accountDropdownRef = useRef(null);
   const [openProductMenu, setOpenProductMenu] = useState(false);
+  const [categoriesList, setCategoriesList] = useState([]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      try {
-        (async () => {
-          const response = await cartApi.getAll({ user_id: user.id });
-          const { cart_items } = response;
-          // setTotalQuantityCart(cart_items.length);
-        })();
-      } catch (error) {
-        toast.error('API GET ALL CART LỖI');
-      }
+    try {
+      (async () => {
+        const response = await categoryApi.getAll();
+        const availableCategories = response.filter(({ status }) => status);
+        setCategoriesList(availableCategories);
+      })();
+    } catch (error) {
+      toast.error('API GET ALL CART LỖI');
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -158,24 +156,14 @@ export default function Header() {
         className={`${openProductMenu ? 'h-20' : 'h-0'} absolute left-0 right-0 top-full z-20 flex items-center justify-center overflow-hidden bg-white transition-all`}
       >
         <ul className="mx-auto flex max-w-[1300px] justify-center gap-20 uppercase">
-          <li className="cursor-pointer px-4 py-2 text-[#2c2c2c] transition-colors hover:text-[#DB4444]">
-            <Link to={'products/jacket'}>Jacket</Link>
-          </li>
-          <li className="cursor-pointer px-4 py-2 text-[#2c2c2c] transition-colors hover:text-[#DB4444]">
-            <Link to={'products/hoodie'}>Hoodie</Link>
-          </li>
-          <li className="cursor-pointer px-4 py-2 text-[#2c2c2c] transition-colors hover:text-[#DB4444]">
-            <Link to={'products/sleepwear'}>Đồ ngủ</Link>
-          </li>
-          <li className="cursor-pointer px-4 py-2 text-[#2c2c2c] transition-colors hover:text-[#DB4444]">
-            <Link to={'products/shirt'}>Áo</Link>
-          </li>
-          <li className="cursor-pointer px-4 py-2 text-[#2c2c2c] transition-colors hover:text-[#DB4444]">
-            <Link to={'products/pants'}>Quần</Link>
-          </li>
-          <li className="cursor-pointer px-4 py-2 text-[#2c2c2c] transition-colors hover:text-[#DB4444]">
-            <Link to={'products/dress'}>Váy</Link>
-          </li>
+          {categoriesList.map(({ id, name }) => (
+            <li
+              key={id}
+              className="cursor-pointer px-4 py-2 text-[#2c2c2c] transition-colors hover:text-[#DB4444]"
+            >
+              <Link to={`products/${name}`}>{name}</Link>
+            </li>
+          ))}
         </ul>
       </div>
     </header>

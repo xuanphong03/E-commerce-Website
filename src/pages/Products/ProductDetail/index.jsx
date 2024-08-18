@@ -41,8 +41,9 @@ function ProductDetail() {
           params._userId = id;
         }
         const response = await productApi.getDetail(params);
-        console.log(response);
+        console.log('Product Detail: ', response);
         setProductDetail(response);
+        setIsFavorite(response.isFavorite);
         setRating(response.rating);
       } catch (error) {
         throw new Error(error);
