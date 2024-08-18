@@ -19,13 +19,16 @@ function ProductsList() {
   const { category } = useParams();
   const queryParams = useMemo(() => {
     const params = queryString.parse(location.search);
+    const categoryParam =
+      category !== 'all_products' ? { categoryName: category } : {};
     return {
       ...params,
+      ...categoryParam,
       _page: Number.parseInt(params._page) || 1,
       _limit: Number.parseInt(params._limit) || 20,
       _sort: params._sort || 'ASC',
     };
-  }, [location.search]);
+  }, [location.search, category]);
 
   const [productsList, setProductsList] = useState([]);
   const [loading, setLoading] = useState(null);
@@ -33,7 +36,7 @@ function ProductsList() {
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
-    total: 10,
+    total: 0,
   });
 
   useEffect(() => {
@@ -43,14 +46,24 @@ function ProductsList() {
     });
     setLoading(true);
     (async () => {
-      const { data } = await productApi.getAll(queryParams);
-      setProductsList(data);
-      setPagination((prev) => ({ ...prev, total: data.length }));
+      try {
+        console.log(queryString.stringify(queryParams));
+
+        const { data, pagination } = await productApi.getAll(queryParams);
+        setProductsList(data);
+        setPagination((prev) => ({
+          ...prev,
+          total: pagination._total,
+          page: queryParams._page || 1,
+        }));
+      } catch (error) {
+        throw new Error('Error in Products List');
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
+      }
     })();
-    setTimeout(() => {
-      setLoading(false);
-    }, 500);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryParams]);
 
   const handlePageChange = (event, page) => {
@@ -101,21 +114,13 @@ function ProductsList() {
                 );
               })}
             {!loading &&
-              productsList
-                .slice(
-                  pagination.limit * (pagination.page - 1),
-                  pagination.limit * pagination.page,
-                )
-                .map((product) => {
-                  return (
-                    <div
-                      className="col-span-2 rounded bg-white"
-                      key={product.id}
-                    >
-                      <ProductItem product={product} />
-                    </div>
-                  );
-                })}
+              productsList.map((product) => {
+                return (
+                  <div className="col-span-2 rounded bg-white" key={product.id}>
+                    <ProductItem product={product} />
+                  </div>
+                );
+              })}
           </section>
           <div className="m-10 flex justify-center">
             <Pagination

@@ -23,7 +23,18 @@ function WishListSection() {
         throw new Error('Error in Get All Favorite Product');
       }
     })();
-  }, []);
+  }, [id]);
+
+  const handleDeleteAllFavoriteProduct = async () => {
+    try {
+      if (id) {
+        const params = { use_id: id };
+        await favoriteApi.deleteAll(params);
+      }
+    } catch (error) {
+      throw new Error('Error in Delete All Favorite Product');
+    }
+  };
 
   return (
     <section className="flex flex-col gap-10">
@@ -31,7 +42,10 @@ function WishListSection() {
         <h2 className="text-xl leading-snug text-black">
           Danh sách yêu thích <span>({favoriteProductsList.length})</span>
         </h2>
-        <button className="border-[rgba(0, 0, 0, 0.50)] flex items-center justify-center rounded border border-solid px-12 py-4 font-medium capitalize transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]">
+        <button
+          onClick={handleDeleteAllFavoriteProduct}
+          className="border-[rgba(0, 0, 0, 0.50)] flex items-center justify-center rounded border border-solid px-12 py-4 font-medium capitalize transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]"
+        >
           Xóa tất cả
         </button>
       </div>

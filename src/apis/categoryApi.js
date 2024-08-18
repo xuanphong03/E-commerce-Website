@@ -2,7 +2,8 @@ import axiosClient from './axiosClient';
 
 const categoryApi = {
   getAll() {
-    // đang làm phần chat
+    const url = '/global/categories';
+    return axiosClient.get(url);
   },
 };
 

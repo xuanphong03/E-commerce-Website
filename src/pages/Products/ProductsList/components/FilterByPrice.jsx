@@ -15,8 +15,8 @@ function FilterByPrice({ onChange }) {
     setPriceRange(value);
     if (onChange) {
       onChange({
-        priceGte,
-        priceLte,
+        price_gte: priceGte,
+        price_lte: priceLte,
       });
     }
   };
@@ -37,12 +37,27 @@ function FilterByPrice({ onChange }) {
               onChange={handlePriceChange}
               type="radio"
               data-price-gte={0}
-              data-price-lte={1000000}
+              data-price-lte={500000}
               value="price-range-1"
               name="price-range"
             />
-            Dưới 1.000.000đ
+            Dưới 500.000đ
             {priceRange === 'price-range-1' && <IoMdCheckmark />}
+          </label>
+        </div>
+        <div>
+          <label className="flex cursor-pointer items-center gap-2 hover:text-[#DB4444]">
+            <input
+              hidden
+              onChange={handlePriceChange}
+              type="radio"
+              data-price-gte={500000}
+              data-price-lte={1000000}
+              value="price-range-2"
+              name="price-range"
+            />
+            500.000đ - 1.000.000đ
+            {priceRange === 'price-range-2' && <IoMdCheckmark />}
           </label>
         </div>
         <div>
@@ -53,11 +68,11 @@ function FilterByPrice({ onChange }) {
               type="radio"
               data-price-gte={1000000}
               data-price-lte={2000000}
-              value="price-range-2"
+              value="price-range-3"
               name="price-range"
             />
             1.000.000đ - 2.000.000đ
-            {priceRange === 'price-range-2' && <IoMdCheckmark />}
+            {priceRange === 'price-range-3' && <IoMdCheckmark />}
           </label>
         </div>
         <div>
@@ -68,25 +83,10 @@ function FilterByPrice({ onChange }) {
               type="radio"
               data-price-gte={2000000}
               data-price-lte={3000000}
-              value="price-range-3"
-              name="price-range"
-            />
-            2.000.000đ - 3.000.000đ
-            {priceRange === 'price-range-3' && <IoMdCheckmark />}
-          </label>
-        </div>
-        <div>
-          <label className="flex cursor-pointer items-center gap-2 hover:text-[#DB4444]">
-            <input
-              hidden
-              onChange={handlePriceChange}
-              type="radio"
-              data-price-gte={3000000}
-              data-price-lte={4000000}
               value="price-range-4"
               name="price-range"
             />
-            3.000.000đ - 4.000.000đ
+            2.000.000đ - 3.000.000đ
             {priceRange === 'price-range-4' && <IoMdCheckmark />}
           </label>
         </div>
@@ -96,12 +96,12 @@ function FilterByPrice({ onChange }) {
               hidden
               onChange={handlePriceChange}
               type="radio"
-              data-price-gte={4000000}
+              data-price-gte={3000000}
               data-price-lte={100000000}
               value="price-range-5"
               name="price-range"
             />
-            Trên 4.000.000đ
+            Trên 3.000.000đ
             {priceRange === 'price-range-5' && <IoMdCheckmark />}
           </label>
         </div>

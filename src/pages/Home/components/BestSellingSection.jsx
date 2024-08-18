@@ -1,9 +1,9 @@
 import queryString from 'query-string';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import productApi from '~/apis/productApi';
 import ProductItem from '~/components/ProductItem';
 import SectionTag from '~/components/SectionTag';
-import { fakeProductsList } from '~/data/dataProduct';
 
 BestSellingSection.propTypes = {};
 
@@ -70,7 +70,19 @@ function BestSellingSection() {
   }, []);
 
   useEffect(() => {
-    setBestSellingProductsList(fakeProductsList);
+    (async () => {
+      try {
+        const params = {
+          _limit: 4,
+          _page: 1,
+          _isBestSelling: true,
+        };
+        const { data } = await productApi.getAll(params);
+        setBestSellingProductsList(data);
+      } catch (error) {
+        throw new Error('Error in Get All Best Selling Product');
+      }
+    })();
   }, []);
 
   return (
