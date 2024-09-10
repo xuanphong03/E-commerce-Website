@@ -9,7 +9,7 @@ import queryString from 'query-string';
 export default function FlashSalesSection({ userId }) {
   const navigate = useNavigate();
   const [timer, setTimer] = useState(() => {
-    const countdownDate = new Date('July 30, 2024 00:00:00').getTime();
+    const countdownDate = new Date('September 30, 2024 00:00:00').getTime();
     const now = new Date().getTime();
     const distance = countdownDate - now;
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -25,6 +25,7 @@ export default function FlashSalesSection({ userId }) {
       seconds,
     };
   });
+
   const [productsList, setProductsList] = useState([]);
   const [loading, setLoading] = useState(null);
 
@@ -44,16 +45,17 @@ export default function FlashSalesSection({ userId }) {
         setProductsList(data);
       } catch (error) {
         throw new Error('Error in Flash Sale');
+      } finally {
+        setLoading(false);
       }
     })();
-    setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const interval = useRef();
 
   const startTimer = () => {
-    const countdownDate = new Date('August 30, 2024 00:00:00').getTime();
+    const countdownDate = new Date('September 30, 2024 00:00:00').getTime();
 
     interval.current = setInterval(() => {
       const now = new Date().getTime();
@@ -95,6 +97,7 @@ export default function FlashSalesSection({ userId }) {
     };
     navigate(`/products/all_products?${queryString.stringify(filters)}`);
   };
+  console.log(timer);
 
   return (
     <section className="border-b border-solid border-[#b2b2b2]">
@@ -134,12 +137,6 @@ export default function FlashSalesSection({ userId }) {
         </div>
       </div>
       <div className="grid grid-cols-12 gap-16">
-        {!loading &&
-          productsList.map((product) => (
-            <div className="col-span-3" key={product.id}>
-              <ProductItem product={product} />
-            </div>
-          ))}
         {loading &&
           [...Array(4)].map((_, index) => {
             return (
@@ -148,6 +145,12 @@ export default function FlashSalesSection({ userId }) {
               </div>
             );
           })}
+        {!loading &&
+          productsList.map((product) => (
+            <div className="col-span-3" key={product.id}>
+              <ProductItem product={product} />
+            </div>
+          ))}
       </div>
       <button
         onClick={handleViewAllProducts}

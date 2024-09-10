@@ -7,13 +7,9 @@ const favoriteApi = {
       params,
     });
   },
-  add(params) {
-    console.log('params: ', params);
-
+  add(data) {
     const url = '/global/add-favorite';
-    return axiosClient.post(url, {
-      params,
-    });
+    return axiosClient.post(url, data);
   },
   delete(params) {
     const url = '/global/delete-favorite';
