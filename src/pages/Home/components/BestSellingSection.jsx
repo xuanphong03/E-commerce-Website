@@ -1,9 +1,10 @@
-import queryString from 'query-string';
 import { useEffect, useRef, useState } from 'react';
+import queryString from 'query-string';
 import { Link } from 'react-router-dom';
 import productApi from '~/apis/productApi';
 import ProductItem from '~/components/ProductItem';
 import SectionTag from '~/components/SectionTag';
+import Skeleton from '~/components/Skeleton/Skeleton';
 
 BestSellingSection.propTypes = {};
 
@@ -15,6 +16,7 @@ function BestSellingSection() {
     isBestSelling: true,
   };
   const [bestSellingProductsList, setBestSellingProductsList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [timer, setTimer] = useState(() => {
     const countdownDate = new Date('August 30, 2024 00:00:00').getTime();
     const now = new Date().getTime();
@@ -72,12 +74,14 @@ function BestSellingSection() {
   useEffect(() => {
     (async () => {
       try {
+        setIsLoading(true);
         const params = {
           _limit: 4,
           _page: 1,
           _isBestSelling: true,
         };
         const { data } = await productApi.getAll(params);
+        setIsLoading(false);
         setBestSellingProductsList(data);
       } catch (error) {
         throw new Error('Error in Get All Best Selling Product');
@@ -104,13 +108,22 @@ function BestSellingSection() {
         </button>
       </div>
       <div className="grid grid-cols-12 gap-16 pb-[100px]">
-        {bestSellingProductsList.slice(0, 4).map((product, index) => {
-          return (
-            <div className="col-span-3" key={index}>
-              <ProductItem product={product} />
-            </div>
-          );
-        })}
+        {isLoading &&
+          [...Array(4)].map((_, index) => {
+            return (
+              <div className="col-span-3" key={index}>
+                <Skeleton />
+              </div>
+            );
+          })}
+        {!isLoading &&
+          bestSellingProductsList.map((product, index) => {
+            return (
+              <div className="col-span-3" key={index}>
+                <ProductItem product={product} />
+              </div>
+            );
+          })}
       </div>
       <div className="relative flex h-[500px] w-full items-center overflow-hidden px-16">
         <div

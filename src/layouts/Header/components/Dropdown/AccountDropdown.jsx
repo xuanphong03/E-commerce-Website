@@ -12,7 +12,7 @@ export default function AccountDropdown() {
 
   const DropdownMenu = [
     {
-      to: '/account',
+      to: '/account/information',
       pathIcon: UserIcon,
       name: 'Quản lý tài khoản',
     },
@@ -22,7 +22,7 @@ export default function AccountDropdown() {
       name: 'Đơn hàng',
     },
     {
-      to: '/my-reviews',
+      to: '/my-reviews/reviews-list',
       pathIcon: StarIcon,
       name: 'Đánh giá',
     },

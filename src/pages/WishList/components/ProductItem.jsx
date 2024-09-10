@@ -1,13 +1,26 @@
+import { useSelector } from 'react-redux';
+import { Rating } from '@mui/material';
 import { FiEye } from 'react-icons/fi';
-
 import { BsTrash3 } from 'react-icons/bs';
+import { formatPrice } from '~/utils/formatPrice';
 import SaleTag from '~/components/SaleTag';
 import NewTag from '~/components/NewTag/NewTag';
-import { Rating } from '@mui/material';
-import { formatPrice } from '~/utils/formatPrice';
 
-export default function ProductItem({ product }) {
-  console.log(product);
+export default function ProductItem({ product, onDelete }) {
+  const { id } = useSelector((state) => state.user.current);
+  const handleDelete = () => {
+    try {
+      const data = {
+        use_id: id,
+        product_name: product.name,
+      };
+      if (onDelete) {
+        onDelete(data);
+      }
+    } catch (error) {
+      throw new Error('Error delete product from wish list');
+    }
+  };
 
   return (
     <article className="flex flex-col gap-4">
@@ -34,7 +47,10 @@ export default function ProductItem({ product }) {
               <FiEye />
             </button>
           ) : (
-            <button className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-xl transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]">
+            <button
+              onClick={handleDelete}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-xl transition-colors hover:bg-[#DB4444] hover:text-[#FAFAFA]"
+            >
               <BsTrash3 />
             </button>
           )}
@@ -56,7 +72,7 @@ export default function ProductItem({ product }) {
         <div className="flex items-center gap-2 text-sm">
           <Rating
             name="read-only"
-            value={product.rating}
+            value={Number(product.rating)}
             precision={0.5}
             size="small"
             readOnly

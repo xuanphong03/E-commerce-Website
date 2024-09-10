@@ -19,6 +19,8 @@ import ChatBox from './components/Chat';
 import { useSelector } from 'react-redux';
 import PaymentByVNPay from './pages/CheckOut/PaymentByVNPay';
 import PaymentByCOD from './pages/CheckOut/PaymentByCOD';
+import AccountManagement from './pages/Account';
+import ReviewPage from './pages/Review';
 
 function App() {
   const infoUser = useSelector((state) => state.user.current);
@@ -41,6 +43,8 @@ function App() {
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/wishlist" element={<WishListPage />} />
           <Route path="/products/*" element={<Product />} />
+          <Route path="/account/*" element={<AccountManagement />} />
+          <Route path="/my-reviews/*" element={<ReviewPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Routes>
         <ToastContainer />

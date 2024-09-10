@@ -10,7 +10,14 @@ InputField.propTypes = {
   autofocus: PropTypes.bool,
 };
 
-function InputField({ id, label, errorMessage, register, autofocus = false }) {
+function InputField({
+  id,
+  label,
+  errorMessage,
+  register,
+  autofocus = false,
+  readOnly = false,
+}) {
   return (
     <div className="relative h-10 w-full border-b-2 border-solid border-[#C0C0C0] focus-within:border-[#315CEA]">
       <input
@@ -21,6 +28,7 @@ function InputField({ id, label, errorMessage, register, autofocus = false }) {
         type="text"
         placeholder=""
         autoFocus={autofocus}
+        readOnly={readOnly}
       />
       <label
         htmlFor={id}
@@ -29,7 +37,7 @@ function InputField({ id, label, errorMessage, register, autofocus = false }) {
         {label}
       </label>
       {errorMessage && (
-        <span className="absolute left-0 top-[calc(100%+4px)] px-1 text-xs text-red-500">
+        <span className="absolute left-0 top-[calc(100%+4px)] px-1 text-sm text-red-500">
           {errorMessage}
         </span>
       )}

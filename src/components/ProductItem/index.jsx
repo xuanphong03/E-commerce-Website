@@ -17,7 +17,7 @@ export default function ProductItem({ product }) {
   const user = useSelector((state) => state.user.current);
   const isAuthenticated = !!user.id;
   const [showAddToCart, setShowAddToCart] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(product.favorite);
+  const [isFavorite, setIsFavorite] = useState(product.isFavorite);
   const handleAddToCart = () => {
     if (!isAuthenticated) {
       toast.info('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');
@@ -31,22 +31,23 @@ export default function ProductItem({ product }) {
       return;
     }
     try {
-      const params = {
+      const data = {
         use_id: user.id,
-        Product_name: product.name,
+        product_name: product.name,
       };
       if (!isFavorite) {
-        await favoriteApi.add(params);
+        await favoriteApi.add(data);
+        setIsFavorite(true);
         toast.success('Đã thêm vào danh sách yêu thích', {
           autoClose: 1500,
         });
       } else {
-        await favoriteApi.delete(params);
+        await favoriteApi.delete(data);
+        setIsFavorite(false);
         toast.success('Đã xóa khỏi danh sách yêu thích', {
           autoClose: 1500,
         });
       }
-      setIsFavorite((prev) => !prev);
     } catch (error) {
       throw new Error('Error in Product Item');
     }

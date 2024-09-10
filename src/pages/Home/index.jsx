@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import BestSellingSection from './components/BestSellingSection';
 import ExploreProductSection from './components/ExploreProductSection';
 import FlashSalesSection from './components/FlashSalesSection';
 import IntroduceSection from './components/IntroduceSection';
-import { useSelector } from 'react-redux';
 
 export default function HomePage() {
   const { id } = useSelector((state) => state.user.current);
