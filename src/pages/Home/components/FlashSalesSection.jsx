@@ -5,11 +5,12 @@ import Skeleton from '~/components/Skeleton/Skeleton';
 import productApi from '~/apis/productApi';
 import { useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
+import { expirePromotionTime } from '~/constants/time';
 
 export default function FlashSalesSection({ userId }) {
   const navigate = useNavigate();
   const [timer, setTimer] = useState(() => {
-    const countdownDate = new Date('September 30, 2024 00:00:00').getTime();
+    const countdownDate = new Date(expirePromotionTime).getTime();
     const now = new Date().getTime();
     const distance = countdownDate - now;
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -55,7 +56,7 @@ export default function FlashSalesSection({ userId }) {
   const interval = useRef();
 
   const startTimer = () => {
-    const countdownDate = new Date('September 30, 2024 00:00:00').getTime();
+    const countdownDate = new Date(expirePromotionTime).getTime();
 
     interval.current = setInterval(() => {
       const now = new Date().getTime();
@@ -97,7 +98,6 @@ export default function FlashSalesSection({ userId }) {
     };
     navigate(`/products/all_products?${queryString.stringify(filters)}`);
   };
-  console.log(timer);
 
   return (
     <section className="border-b border-solid border-[#b2b2b2]">

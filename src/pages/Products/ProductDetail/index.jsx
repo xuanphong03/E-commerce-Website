@@ -174,15 +174,22 @@ function ProductDetail() {
     }
     try {
       const params = {
-        Product_name: productDetail.name,
+        product_name: productDetail.name,
         use_id: id,
       };
       if (!isFavorite) {
         await favoriteApi.add(params);
+        setIsFavorite(true);
+        toast.success('Đã thêm vào danh sách yêu thích', {
+          autoClose: 1500,
+        });
       } else {
         await favoriteApi.delete(params);
+        setIsFavorite(false);
+        toast.success('Đã xóa khỏi danh sách yêu thích', {
+          autoClose: 1500,
+        });
       }
-      setIsFavorite((prevStatus) => !prevStatus);
     } catch (error) {
       throw new Error('Error toggle favorite product detail!');
     }

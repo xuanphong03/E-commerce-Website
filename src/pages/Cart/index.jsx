@@ -6,6 +6,7 @@ import { formatPrice } from '~/utils/formatPrice';
 import { toast } from 'react-toastify';
 import cartApi from '~/apis/cartApi';
 import { updateCart } from './cartSlice';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ export default function CartPage() {
         setTotalPayment(totalPayment);
       })();
     } catch (error) {
-      toast.error('API GET ALL CART LỖI');
+      throw new Error('Error get cart');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -37,8 +38,11 @@ export default function CartPage() {
   };
 
   const handleGetDiscountCoupon = () => {
-    if (!discountCouponCode) return;
-    // Call api lấy coupon code ở đây
+    if (!discountCouponCode) {
+      toast.warning('Vui lòng nhập mã giảm giá!');
+      return;
+    }
+    console.log(discountCouponCode);
   };
 
   const handleChangeQuantity = ({ itemDetail_id, quantity }) => {
@@ -95,11 +99,14 @@ export default function CartPage() {
             <h3 className={`max-w-[15%] basis-[15%] text-center`}>Tổng tiền</h3>
           </div>
           {cartItemsList.length ? (
-            cartItemsList.map((cart) => (
-              <div key={cart.itemDetail_id}>
-                <CartItem onChange={handleChangeQuantity} data={cart} />
-              </div>
-            ))
+            cartItemsList.map((cart) => {
+              const _key = uuidv4();
+              return (
+                <div key={_key}>
+                  <CartItem onChange={handleChangeQuantity} data={cart} />
+                </div>
+              );
+            })
           ) : (
             <div className="mt-5 flex min-h-[300px] flex-col items-center justify-center gap-5 shadow-table">
               <div className="h-[100px]">

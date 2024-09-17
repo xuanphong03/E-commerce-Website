@@ -5,7 +5,7 @@ import productApi from '~/apis/productApi';
 import ProductItem from '~/components/ProductItem';
 import SectionTag from '~/components/SectionTag';
 import Skeleton from '~/components/Skeleton/Skeleton';
-
+import { expirePromotionTime } from '~/constants/time';
 BestSellingSection.propTypes = {};
 
 function BestSellingSection() {
@@ -18,7 +18,7 @@ function BestSellingSection() {
   const [bestSellingProductsList, setBestSellingProductsList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [timer, setTimer] = useState(() => {
-    const countdownDate = new Date('August 30, 2024 00:00:00').getTime();
+    const countdownDate = new Date(expirePromotionTime).getTime();
     const now = new Date().getTime();
     const distance = countdownDate - now;
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -38,7 +38,7 @@ function BestSellingSection() {
   const interval = useRef();
 
   const startTimer = () => {
-    const countdownDate = new Date('August 30, 2024 00:00:00').getTime();
+    const countdownDate = new Date(expirePromotionTime).getTime();
 
     interval.current = setInterval(() => {
       const now = new Date().getTime();

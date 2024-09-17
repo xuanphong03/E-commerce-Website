@@ -75,19 +75,23 @@ export default function SignInForm({ onSubmit }) {
           )}
         </button>
       </form>
-      <button className="mb-8 flex h-14 w-full items-center justify-center gap-4 rounded border-2 border-solid border-[#BFBFBF] bg-[#FFFFFF] py-4 font-medium text-[#000000] transition-all">
-        <img alt="icon" src={GoogleIcon} />
-        Đăng nhập với Google
-      </button>
-      <p className="flex items-center justify-center gap-4 text-sm text-[#4c4c4c]">
-        Bạn chưa có tài khoản?
+      <div className="flex items-center justify-between text-sm">
         <Link
-          className="block border-b-2 border-solid border-[#4c4c4c] pb-1 font-medium transition-colors hover:border-[#DB4444] hover:text-[#DB4444]"
-          to="/sign-up"
+          to="/sign-in/identify"
+          className="cursor-pointer hover:text-[#DB4444]"
         >
-          Đăng ký ngay
+          Quên mật khẩu?
         </Link>
-      </p>
+        <p className="flex items-center justify-center gap-2 text-[#4c4c4c]">
+          Bạn chưa có tài khoản?
+          <Link
+            className="block font-medium underline transition-colors hover:border-[#DB4444] hover:text-[#DB4444]"
+            to="/sign-up"
+          >
+            Đăng ký ngay
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

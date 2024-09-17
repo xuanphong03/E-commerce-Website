@@ -1,5 +1,5 @@
-form input:not(:placeholder-shown) + label,
-form input:focus-within + label {
+form input.input-primary:not(:placeholder-shown) + label,
+form input.input-primary:focus-within + label {
   left: 0;
   top: -8px;
   font-size: 14px;

@@ -31,7 +31,7 @@ export default function Header() {
         setCategoriesList(availableCategories);
       })();
     } catch (error) {
-      toast.error('API GET ALL CART LỖI');
+      throw new Error('Error get categories');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -41,7 +41,7 @@ export default function Header() {
       dispatch(initializeCart())
         .unwrap()
         .catch((error) => {
-          toast.error(error.message);
+          // toast.error(error.message);
         });
     }
   }, [dispatch, isAuthenticated]);

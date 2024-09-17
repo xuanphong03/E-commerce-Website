@@ -21,6 +21,7 @@ import PaymentByVNPay from './pages/CheckOut/PaymentByVNPay';
 import PaymentByCOD from './pages/CheckOut/PaymentByCOD';
 import AccountManagement from './pages/Account';
 import ReviewPage from './pages/Review';
+import ForgotPasswordPage from './pages/Auth/ForgotPassword';
 
 function App() {
   const infoUser = useSelector((state) => state.user.current);
@@ -41,6 +42,7 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
           <Route path="/sign-in" element={<SignInPage />} />
+          <Route path="/sign-in/identify" element={<ForgotPasswordPage />} />
           <Route path="/wishlist" element={<WishListPage />} />
           <Route path="/products/*" element={<Product />} />
           <Route path="/account/*" element={<AccountManagement />} />
