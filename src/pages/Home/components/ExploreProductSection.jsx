@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import productApi from '~/apis/productApi';
 import ProductItem from '~/components/ProductItem';
 import SectionTag from '~/components/SectionTag';
@@ -55,8 +56,13 @@ function ExploreProductSection({ userId }) {
             })}
         </div>
       </div>
-      <button className="mx-auto flex items-center justify-center rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-10 py-2 font-medium text-[#FAFAFA] transition-colors hover:bg-[#FAFAFA] hover:text-[#DB4444]">
-        Xem tất cả sản phẩm
+      <button className="mx-auto flex w-fit justify-center">
+        <Link
+          to="/products/all_products"
+          className="mx-auto rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-10 py-2 font-medium text-[#FAFAFA] transition-colors hover:bg-[#FAFAFA] hover:text-[#DB4444]"
+        >
+          Xem tất cả sản phẩm
+        </Link>
       </button>
     </section>
   );

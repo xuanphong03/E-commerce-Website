@@ -47,8 +47,6 @@ function ProductsList() {
     setLoading(true);
     (async () => {
       try {
-        console.log(queryString.stringify(queryParams));
-
         const { data, pagination } = await productApi.getAll(queryParams);
         setProductsList(data);
         setPagination((prev) => ({

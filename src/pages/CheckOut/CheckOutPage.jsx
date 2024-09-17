@@ -79,7 +79,7 @@ function CheckOutPage() {
         });
       })();
     } catch (error) {
-      toast.error('API GET ALL CART LỖI');
+      throw new Error('Error in get cart api');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
@@ -104,7 +104,7 @@ function CheckOutPage() {
         } = await paymentApi.get(paymentInfo);
         window.location.href = paymentUrl;
       } catch (error) {
-        toast.error('Lỗi khi xử lý thanh toán với VNPay');
+        throw new Error('Lỗi khi xử lý thanh toán với VNPay');
       }
     } else {
       try {

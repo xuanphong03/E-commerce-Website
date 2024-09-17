@@ -23,7 +23,7 @@ function InputField({
       <input
         {...register}
         autoComplete="off"
-        className="h-full w-full px-1 outline-none"
+        className="input-primary h-full w-full px-1 outline-none"
         id={id}
         type="text"
         placeholder=""
