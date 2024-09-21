@@ -22,7 +22,7 @@ export default function Introduce() {
 
   return (
     <div className="text-[#FAFAFA]">
-      <h2 className="mb-6 text-2xl font-bold">Exclusive</h2>
+      <h2 className="mb-6 text-2xl font-bold">SOMEHOW</h2>
       <h3 className="mb-6 text-xl font-medium">Đăng ký</h3>
       <p className="mb-4 text-sm">Giảm giá 10% cho đơn hàng đầu tiên</p>
       <form

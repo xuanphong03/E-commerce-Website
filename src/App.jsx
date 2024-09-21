@@ -23,6 +23,7 @@ import AccountManagement from './pages/Account';
 import ReviewPage from './pages/Review';
 import ForgotPasswordPage from './pages/Auth/ForgotPassword';
 import ProtectedRoutes from './routers/ProtectedRoutes';
+import TermAndPolicy from './layouts/Footer/components/term-policy';
 
 function App() {
   const infoUser = useSelector((state) => state.user.current);
@@ -40,6 +41,7 @@ function App() {
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-in/identify" element={<ForgotPasswordPage />} />
           <Route path="/products/*" element={<Product />} />
+          <Route path="/term-and-policy/*" element={<TermAndPolicy />} />
           <Route element={<ProtectedRoutes />}>
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckOutPage />} />

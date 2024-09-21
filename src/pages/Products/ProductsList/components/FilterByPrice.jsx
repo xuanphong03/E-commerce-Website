@@ -105,6 +105,19 @@ function FilterByPrice({ onChange }) {
             {priceRange === 'price-range-5' && <IoMdCheckmark />}
           </label>
         </div>
+        <div>
+          <label className="flex cursor-pointer items-center gap-2 hover:text-[#DB4444]">
+            <input
+              hidden
+              onChange={handlePriceChange}
+              type="radio"
+              value="price-range-6"
+              name="price-range"
+            />
+            Tất cả mọi loại giá
+            {priceRange === 'price-range-6' && <IoMdCheckmark />}
+          </label>
+        </div>
       </div>
     </div>
   );
