@@ -5,12 +5,10 @@ import ProductItem from './ProductItem';
 import favoriteApi from '~/apis/favoriteApi';
 import ProductSkeletonItem from '~/components/ProductSkeletonItem';
 
-WishListSection.propTypes = {};
-
 function WishListSection() {
   const { id } = useSelector((state) => state.user.current);
-  const [favoriteProductsList, setFavoriteProductsList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [favoriteProductsList, setFavoriteProductsList] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -58,6 +56,10 @@ function WishListSection() {
   const handleDeleteAllFavoriteProduct = async () => {
     try {
       if (id) {
+        if (!favoriteProductsList.length)
+          return toast.error(
+            'Danh sách sản phẩm yêu thích đã rỗng. Không thể xóa thêm',
+          );
         const params = { use_id: id };
         await favoriteApi.deleteAll(params);
         reRenderFavoriteProductsList();
@@ -102,7 +104,11 @@ function WishListSection() {
             );
           })}
 
-        {!isLoading && favoriteProductsList.length === 0 && <div></div>}
+        {!isLoading && favoriteProductsList.length === 0 && (
+          <div className="col-span-12 rounded-md border border-solid border-gray-200 bg-white px-5 py-4">
+            Không có bất cứ sản phẩm yêu thích nào.
+          </div>
+        )}
       </div>
     </section>
   );

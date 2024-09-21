@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   IoIosArrowDown,
   IoMdSearch,
@@ -15,7 +17,6 @@ import {
   IoMdCheckmarkCircle,
   IoMdCloseCircle,
 } from 'react-icons/io';
-import { v4 as uuidv4 } from 'uuid';
 import './ChatBox.css';
 import EmojiPicker from 'emoji-picker-react';
 import { over } from 'stompjs';
@@ -659,56 +660,59 @@ function ChatBox(props) {
                   </div>
                 </div>
                 <p className='text-xs px-14'>_________________</p> */}
-            {receiversList.map((receiver) => (
-              <article
-                key={receiver.id}
-                onClick={() => {
-                  setReceiverId(receiver.name);
-                  if (save_ReiverID === receiver.name) {
-                    fetchAndDisplayUserChat();
-                  }
-                  save_ReiverID = receiver.name;
-                  save_Img = receiver.img_url;
-                  save_Role = receiver.role;
-                  if (save_ReiverID === save_ReiverID_unreadMessages) {
-                    unreadMessages = 0;
-                    save_ReiverID_unreadMessages = '';
-                  }
-                }}
-                className={`${save_ReiverID === receiver.name ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'} flex cursor-pointer gap-1 px-5 py-1 text-[#2c2c2c] transition-all`}
-              >
-                <div className="mb-2 flex items-center gap-2">
-                  <div className="flex size-10 items-center justify-center overflow-hidden rounded-full">
-                    <img
-                      src={
-                        receiver.img_url ||
-                        'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
-                      }
-                      className="max-w-full object-cover"
-                      alt={receiver.name}
-                    />
+            {receiversList.map((receiver) => {
+              const uniqueKey = uuidv4();
+              return (
+                <article
+                  key={uniqueKey}
+                  onClick={() => {
+                    setReceiverId(receiver.name);
+                    if (save_ReiverID === receiver.name) {
+                      fetchAndDisplayUserChat();
+                    }
+                    save_ReiverID = receiver.name;
+                    save_Img = receiver.img_url;
+                    save_Role = receiver.role;
+                    if (save_ReiverID === save_ReiverID_unreadMessages) {
+                      unreadMessages = 0;
+                      save_ReiverID_unreadMessages = '';
+                    }
+                  }}
+                  className={`${save_ReiverID === receiver.name ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'} flex cursor-pointer gap-1 px-5 py-1 text-[#2c2c2c] transition-all`}
+                >
+                  <div className="mb-2 flex items-center gap-2">
+                    <div className="flex size-10 items-center justify-center overflow-hidden rounded-full">
+                      <img
+                        src={
+                          receiver.img_url ||
+                          'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
+                        }
+                        className="max-w-full object-cover"
+                        alt={receiver.name}
+                      />
+                    </div>
+                    <div className="flex flex-col justify-center">
+                      <h4 className="text-base">{receiver.name} </h4>
+                      <p className={'text-xs'}>
+                        {receiver.role === 'ADMIN' ? 'Manage' : 'Guest'}
+                      </p>
+                      <p
+                        className={`${receiver.status === 'ONLINE' ? 'text-emerald-500' : 'text-slate-600'} text-xs`}
+                      >
+                        {receiver.status.toLowerCase()}
+                      </p>
+                    </div>
+                    <div className="flex h-[18px] w-[18px] flex-col items-center justify-center">
+                      <p
+                        className={`${unreadMessages >= 1 && save_ReiverID_unreadMessages === receiver.name && save_ReiverID !== receiver.name ? 'bg-red-600 text-gray-200' : 'hidden text-blue-600'} flex h-4 w-4 flex-col items-center justify-center rounded-full text-xs`}
+                      >
+                        {unreadMessages}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex flex-col justify-center">
-                    <h4 className="text-base">{receiver.name} </h4>
-                    <p className={'text-xs'}>
-                      {receiver.role === 'ADMIN' ? 'Manage' : 'Guest'}
-                    </p>
-                    <p
-                      className={`${receiver.status === 'ONLINE' ? 'text-emerald-500' : 'text-slate-600'} text-xs`}
-                    >
-                      {receiver.status.toLowerCase()}
-                    </p>
-                  </div>
-                  <div className="flex h-[18px] w-[18px] flex-col items-center justify-center">
-                    <p
-                      className={`${unreadMessages >= 1 && save_ReiverID_unreadMessages === receiver.name && save_ReiverID !== receiver.name ? 'bg-red-600 text-gray-200' : 'hidden text-blue-600'} flex h-4 w-4 flex-col items-center justify-center rounded-full text-xs`}
-                    >
-                      {unreadMessages}
-                    </p>
-                  </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
 
           <div className="relative w-[calc(100%-200px)]">
@@ -737,108 +741,111 @@ function ChatBox(props) {
                 </p>
               </div>
               <ul className="flex flex-col space-y-1">
-                {messages.map((messageItem) => (
-                  <li
-                    key={messageItem.id}
-                    className={`flex items-start ${
-                      messageItem.senderId === name
-                        ? 'ml-auto flex-row-reverse'
-                        : 'mr-auto'
-                    } max-w-[80%] rounded-lg text-sm`}
-                  >
-                    {/* <div className="flex flex-col items-start"> */}
-                    <img
-                      src={
+                {messages.map((messageItem) => {
+                  const uniqueKey = uuidv4();
+                  return (
+                    <li
+                      key={messageItem.id}
+                      className={`flex items-start ${
                         messageItem.senderId === name
-                          ? userImgUrl ||
-                            'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
-                          : messageItem.senderImage ||
-                            'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
-                      }
-                      className="h-[60px] w-[60px] rounded-full"
-                      alt="Sender"
-                    />
-                    {/* </div> */}
-                    {isImageUrl(messageItem.content) ? (
+                          ? 'ml-auto flex-row-reverse'
+                          : 'mr-auto'
+                      } max-w-[80%] rounded-lg text-sm`}
+                    >
+                      {/* <div className="flex flex-col items-start"> */}
                       <img
-                        src={messageItem.content}
-                        className={`max-w-[42%] ${
+                        src={
                           messageItem.senderId === name
-                            ? 'mt-15 mr-2 bg-stone-400 text-right text-white'
-                            : 'mt-15 ml-2 bg-gray-200 text-left'
-                        } mt-2 rounded-lg`}
-                        alt="Message content"
+                            ? userImgUrl ||
+                              'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
+                            : messageItem.senderImage ||
+                              'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
+                        }
+                        className="h-[60px] w-[60px] rounded-full"
+                        alt="Sender"
                       />
-                    ) : (
-                      <div>
-                        <p
-                          className={`flex items-start ${
+                      {/* </div> */}
+                      {isImageUrl(messageItem.content) ? (
+                        <img
+                          src={messageItem.content}
+                          className={`max-w-[42%] ${
                             messageItem.senderId === name
-                              ? 'ml-auto flex-row-reverse'
-                              : 'mr-auto'
-                          } mt-3 max-w-none rounded-lg px-4 text-xs italic`}
-                        >
-                          {messageItem.senderId}
-                        </p>
-                        {editingMessageId === messageItem.id ? (
-                          <div className="flex flex-col">
-                            <textarea
-                              value={editContent}
-                              onChange={(e) => setEditContent(e.target.value)}
-                              className="h-[100px] w-[400px] rounded-lg bg-gray-200 p-2"
-                            />
-                            <div className="mt-2 flex space-x-2">
-                              <button
-                                onClick={() => {
-                                  handleConfirmClick(messageItem);
-                                }}
-                                className="rounded bg-blue-500 px-2 py-1 text-white"
-                                title="Submit Chỉnh Sửa"
-                              >
-                                <IoMdCheckmarkCircle />
-                              </button>
-                              <button
-                                onClick={handleCancelEdit}
-                                className="rounded bg-gray-500 px-2 py-1 text-white"
-                                title="Cancel Chỉnh Sửa"
-                              >
-                                <IoMdCloseCircle />
-                              </button>
-                              {messageItem.senderId === name && (
-                                <div className="flex space-x-2">
-                                  <button
-                                    onClick={() =>
-                                      handleDeleteClick(messageItem)
-                                    }
-                                    className="rounded bg-red-500 px-2 py-1 text-white"
-                                    title="Thu Hồi"
-                                  >
-                                    <IoMdTrash />
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ) : (
+                              ? 'mt-15 mr-2 bg-stone-400 text-right text-white'
+                              : 'mt-15 ml-2 bg-gray-200 text-left'
+                          } mt-2 rounded-lg`}
+                          alt="Message content"
+                        />
+                      ) : (
+                        <div>
                           <p
-                            className={`${
+                            className={`flex items-start ${
                               messageItem.senderId === name
-                                ? 'mt-15 mr-2 bg-stone-500 text-white'
-                                : 'mt-15 ml-2 bg-gray-200'
-                            } mt-2 max-w-max rounded-lg px-2 py-2 text-base`}
-                            onClick={() =>
-                              messageItem.senderId === name &&
-                              fetchAndDisplayUserChat() &&
-                              handleEditClick(messageItem)
-                            }
+                                ? 'ml-auto flex-row-reverse'
+                                : 'mr-auto'
+                            } mt-3 max-w-none rounded-lg px-4 text-xs italic`}
                           >
-                            {messageItem.content}
+                            {messageItem.senderId}
                           </p>
-                        )}
-                      </div>
-                    )}
-                  </li>
-                ))}
+                          {editingMessageId === messageItem.id ? (
+                            <div className="flex flex-col">
+                              <textarea
+                                value={editContent}
+                                onChange={(e) => setEditContent(e.target.value)}
+                                className="h-[100px] w-[400px] rounded-lg bg-gray-200 p-2"
+                              />
+                              <div className="mt-2 flex space-x-2">
+                                <button
+                                  onClick={() => {
+                                    handleConfirmClick(messageItem);
+                                  }}
+                                  className="rounded bg-blue-500 px-2 py-1 text-white"
+                                  title="Submit Chỉnh Sửa"
+                                >
+                                  <IoMdCheckmarkCircle />
+                                </button>
+                                <button
+                                  onClick={handleCancelEdit}
+                                  className="rounded bg-gray-500 px-2 py-1 text-white"
+                                  title="Cancel Chỉnh Sửa"
+                                >
+                                  <IoMdCloseCircle />
+                                </button>
+                                {messageItem.senderId === name && (
+                                  <div className="flex space-x-2">
+                                    <button
+                                      onClick={() =>
+                                        handleDeleteClick(messageItem)
+                                      }
+                                      className="rounded bg-red-500 px-2 py-1 text-white"
+                                      title="Thu Hồi"
+                                    >
+                                      <IoMdTrash />
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <p
+                              className={`${
+                                messageItem.senderId === name
+                                  ? 'mt-15 mr-2 bg-stone-500 text-white'
+                                  : 'mt-15 ml-2 bg-gray-200'
+                              } mt-2 max-w-max rounded-lg px-2 py-2 text-base`}
+                              onClick={() =>
+                                messageItem.senderId === name &&
+                                fetchAndDisplayUserChat() &&
+                                handleEditClick(messageItem)
+                              }
+                            >
+                              {messageItem.content}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
                 <div ref={messagesEndRef} />
               </ul>
             </div>
@@ -915,15 +922,18 @@ function ChatBox(props) {
                   placeholder="Tìm kiếm từ khóa Chat Bot..."
                 />
                 <ul>
-                  {filteredOptions.map((option, index) => (
-                    <li
-                      key={index}
-                      className="cursor-pointer px-4 py-2 text-sm hover:bg-gray-300"
-                      onClick={() => handleOptionClick(option)}
-                    >
-                      {option}
-                    </li>
-                  ))}
+                  {filteredOptions.map((option) => {
+                    const uniqueKey = uuidv4();
+                    return (
+                      <li
+                        key={uniqueKey}
+                        className="cursor-pointer px-4 py-2 text-sm hover:bg-gray-300"
+                        onClick={() => handleOptionClick(option)}
+                      >
+                        {option}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}
@@ -944,35 +954,38 @@ function ChatBox(props) {
                   placeholder="Tìm kiếm từ khóa sản phẩm..."
                 />
                 <ul>
-                  {filteredOptions2.map((option, index) => (
-                    <li
-                      key={index}
-                      className="flex cursor-pointer items-center gap-4 px-4 py-2 hover:bg-gray-300"
-                      onClick={() => handleOptionClick2(option)}
-                    >
-                      <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full">
-                        <img
-                          src={option.imageMain}
-                          className="h-full w-full object-cover"
-                          alt={`Option ${index}`}
-                        />
-                      </div>
-                      <div className="ml-4 flex flex-col">
-                        <p className="hidden text-sm font-medium">
-                          {option.sku}
-                        </p>
-                        <p className="font-family: ui-serif bold text-sm font-medium">
-                          {option.name}
-                        </p>
-                        <p className="text-xs line-through">
-                          OriginalPrice: {option.originalPrice} VND
-                        </p>
-                        <p className="text-xs text-red-700">
-                          Sale Price: {option.finalPrice} VND
-                        </p>
-                      </div>
-                    </li>
-                  ))}
+                  {filteredOptions2.map((option, index) => {
+                    const uniqueKey = uuidv4();
+                    return (
+                      <li
+                        key={uniqueKey}
+                        className="flex cursor-pointer items-center gap-4 px-4 py-2 hover:bg-gray-300"
+                        onClick={() => handleOptionClick2(option)}
+                      >
+                        <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full">
+                          <img
+                            src={option.imageMain}
+                            className="h-full w-full object-cover"
+                            alt={`Option ${index}`}
+                          />
+                        </div>
+                        <div className="ml-4 flex flex-col">
+                          <p className="hidden text-sm font-medium">
+                            {option.sku}
+                          </p>
+                          <p className="font-family: ui-serif bold text-sm font-medium">
+                            {option.name}
+                          </p>
+                          <p className="text-xs line-through">
+                            OriginalPrice: {option.originalPrice} VND
+                          </p>
+                          <p className="text-xs text-red-700">
+                            Sale Price: {option.finalPrice} VND
+                          </p>
+                        </div>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}
@@ -989,21 +1002,24 @@ function ChatBox(props) {
                 <ul className="grid grid-cols-3 gap-2 bg-gray-800 p-1">
                   {' '}
                   {/* Use grid layout with 4 columns */}
-                  {filteredOptions3.map((option, index) => (
-                    <li
-                      key={index}
-                      className="flex cursor-pointer flex-col items-center"
-                      onClick={() => {
-                        handleOptionClick3(option);
-                      }}
-                    >
-                      <img
-                        src={option.img_url}
-                        alt="option image"
-                        className="h-full w-full rounded-lg object-cover"
-                      />
-                    </li>
-                  ))}
+                  {filteredOptions3.map((option, index) => {
+                    const uniqueKey = uuidv4();
+                    return (
+                      <li
+                        key={uniqueKey}
+                        className="flex cursor-pointer flex-col items-center"
+                        onClick={() => {
+                          handleOptionClick3(option);
+                        }}
+                      >
+                        <img
+                          src={option.img_url}
+                          alt="option image"
+                          className="h-full w-full rounded-lg object-cover"
+                        />
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}

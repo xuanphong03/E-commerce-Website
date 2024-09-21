@@ -13,6 +13,9 @@ export default function SignUpPage() {
 
   const handleSubmitSignUpForm = async (data) => {
     try {
+      if (data.name) {
+        data.name = data.name.trim();
+      }
       const action = register(data);
       const resultAction = await dispatch(action);
       const user = unwrapResult(resultAction);

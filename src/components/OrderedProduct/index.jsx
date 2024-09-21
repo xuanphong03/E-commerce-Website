@@ -7,7 +7,8 @@ OrderedProduct.propTypes = {};
 
 function OrderedProduct({
   productName,
-  productType,
+  productSize,
+  productColor,
   productQuantity,
   productPrice,
   productImage,
@@ -16,7 +17,7 @@ function OrderedProduct({
     <article className="border-gray mb-4 border-b border-solid pb-4">
       <Link className="group flex justify-between">
         <div className="flex w-[70%] gap-10">
-          <div className="size-24 shrink-0 bg-black">
+          <div className="flex size-24 shrink-0 items-center justify-center">
             <img alt="product" className="max-h-full" src={productImage} />
           </div>
           <div className="flex flex-col justify-between">
@@ -25,7 +26,10 @@ function OrderedProduct({
             </h3>
             <div className="text-sm text-[#0000008a]">
               <p>
-                Loại sản phẩm: <span>{productType}</span>
+                Loại sản phẩm:{' '}
+                <span>
+                  Màu: {productColor}. Size: {productSize}
+                </span>
               </p>
               <p>
                 Số lượng: <span>x{productQuantity}</span>

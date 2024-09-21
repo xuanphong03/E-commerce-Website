@@ -50,7 +50,7 @@ function PasswordField({
         {!showPassword ? <FaEye /> : <FaEyeSlash />}
       </span>
       {errorMessage && (
-        <span className="absolute left-0 top-[calc(100%+4px)] px-1 text-xs text-red-500">
+        <span className="absolute left-0 top-[calc(100%+4px)] px-1 text-sm text-red-500">
           {errorMessage}
         </span>
       )}

@@ -3,16 +3,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { FaSpinner } from 'react-icons/fa';
-import InputPayment from './customs/InputPayment';
 import { FaCheck } from 'react-icons/fa6';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
-import cartApi from '~/apis/cartApi';
-import { formatPrice } from '~/utils/formatPrice';
-import paymentApi from '~/apis/paymentApi';
 import { useNavigate } from 'react-router-dom';
-import { setPaymentInfo } from '../Auth/userSlice';
+import cartApi from '~/apis/cartApi';
 import orderApi from '~/apis/orderApi';
+import paymentApi from '~/apis/paymentApi';
+import { formatPrice } from '~/utils/formatPrice';
+import { setPaymentInfo } from '../Auth/userSlice';
+import InputPayment from './customs/InputPayment';
 
 function CheckOutPage() {
   const schema = yup.object().shape({
@@ -75,7 +74,7 @@ function CheckOutPage() {
           cartItemsList: cart_items,
           totalPayment: totalPayment,
           totalProductPrice: totalPayment,
-          deliveryFee: totalPayment > 2000000 ? 0 : 500000,
+          deliveryFee: totalPayment > 2000000 ? 0 : 100000,
         });
       })();
     } catch (error) {
@@ -98,11 +97,12 @@ function CheckOutPage() {
           amount: cartData.totalPayment,
           bankCode: 'NCB',
         };
-
         const {
-          data: { paymentUrl },
+          data: { code, paymentUrl },
         } = await paymentApi.get(paymentInfo);
-        window.location.href = paymentUrl;
+        if (code === 'ok' && paymentUrl) {
+          window.location.href = paymentUrl;
+        }
       } catch (error) {
         throw new Error('Lỗi khi xử lý thanh toán với VNPay');
       }
@@ -115,7 +115,7 @@ function CheckOutPage() {
           phoneNumber: phoneNumber,
           emailAddress: email,
           paymentMethods: 'COD',
-          shippingFee: cartData.totalPayment > 2000000 ? 0 : 500000,
+          shippingFee: cartData.totalPayment > 2000000 ? 0 : 100000,
           paymentStatus: 0,
           percentDiscount: 0,
           orderStatus: 2,

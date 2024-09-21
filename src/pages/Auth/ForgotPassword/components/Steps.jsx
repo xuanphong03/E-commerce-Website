@@ -1,11 +1,11 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 
-Steps.propTypes = {};
+Steps.propTypes = {
+  steps: PropTypes.array.isRequired,
+  currentStep: PropTypes.number.isRequired,
+};
 
 function Steps({ steps, currentStep }) {
-  console.log(currentStep);
-
   return (
     <div className="flex items-center">
       {steps.map(({ id, name }, index) => {

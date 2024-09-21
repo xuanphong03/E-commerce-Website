@@ -4,17 +4,17 @@ import { useForm } from 'react-hook-form';
 import PropTypes from 'prop-types';
 import InputField from './form-controls/InputField';
 import { Fragment } from 'react';
+import Spinner from '~/components/Animations/Spinner';
+import userApi from '~/apis/userApi';
 
 UpdateForgetAccount.propTypes = {
   onSubmit: PropTypes.func,
+  userEmail: PropTypes.string,
 };
 
-function UpdateForgetAccount({ onSubmit }) {
+function UpdateForgetAccount({ onSubmit, userEmail }) {
   const schema = yup.object().shape({
-    email: yup
-      .string()
-      .required('Vui lòng nhập email.')
-      .email('Vui lòng nhập email hợp lệ.'),
+    OTPCode: yup.string().required('Vui lòng nhập mã OTP.'),
     new_password: yup
       .string()
       .required('Vui lòng nhập mật khẩu mới.')
@@ -39,35 +39,39 @@ function UpdateForgetAccount({ onSubmit }) {
     }
   };
 
+  const handleResendOTPCode = async (e) => {
+    if (!userEmail) return;
+    e.preventDefault();
+    try {
+      const response = await userApi.checkAccount({ email: userEmail });
+      if (response.status !== 200) {
+        throw new Error('Failed to resend OTP');
+      }
+    } catch (error) {
+      // console.log(error);
+    }
+  };
+
   return (
     <Fragment>
       <div
         className={`fixed inset-0 !z-[9999] flex items-center justify-center bg-black transition-all duration-300 ${!isSubmitting ? 'invisible bg-opacity-0' : 'visible bg-opacity-30'}`}
       >
-        <div className="lds-roller">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
+        <Spinner />
       </div>
       <form
-        className="flex w-full flex-col gap-5"
+        className="flex w-full flex-col gap-10"
         onSubmit={handleSubmit(formSubmit)}
       >
         <div>
           <InputField
-            id="email"
-            label="Email"
-            placeholder="Nhập email người dùng"
-            register={{ ...register('email') }}
-            errorMessage={errors.email?.message}
+            id="otp-code"
+            label="Mã OTP"
+            placeholder="Nhập mã OTP"
+            register={{ ...register('OTPCode') }}
+            errorMessage={errors.OTPCode?.message}
             autofocus={true}
-            type="email"
+            type="text"
           />
         </div>
         <div>
@@ -90,8 +94,18 @@ function UpdateForgetAccount({ onSubmit }) {
             type="password"
           />
         </div>
-        <div className="flex justify-end">
-          <button className="rounded-md bg-blue-500 px-6 py-2 text-sm text-white">
+        <div className="flex justify-end gap-5">
+          <button
+            type="button"
+            onClick={handleResendOTPCode}
+            className="rounded-md bg-green-500 px-6 py-2 text-sm text-white hover:bg-opacity-80"
+          >
+            Gửi lại mã OTP
+          </button>
+          <button
+            type="submit"
+            className="rounded-md bg-blue-500 px-6 py-2 text-sm text-white hover:bg-opacity-80"
+          >
             Xác nhận
           </button>
         </div>

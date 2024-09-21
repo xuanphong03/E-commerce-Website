@@ -1,13 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import NavLinksList from './components/NavLinksList';
-import { Outlet, Route, Routes, useParams } from 'react-router-dom';
-import AllOrders from './components/AllOrders';
-import UnpaidOrder from './components/UnpaidOrders';
+import { useState } from 'react';
 import { IoSearchOutline } from 'react-icons/io5';
-import { set } from 'react-hook-form';
-import orderApi from '~/apis/orderApi';
-import { useSelector } from 'react-redux';
+import { Outlet, Route, Routes } from 'react-router-dom';
+import AllOrders from './components/AllOrders';
+import NavLinksList from './components/NavLinksList';
+import UnpaidOrder from './components/UnpaidOrders';
 
 OrdersPage.propTypes = {};
 
@@ -39,24 +35,11 @@ function OrdersPage(props) {
     },
   ];
 
-  const { orderStatus } = useParams();
   const [searchValue, setSearchValue] = useState('');
-  const [orders, setOrders] = useState([]);
-  const { id } = useSelector((state) => state.user.current);
   const handleSearchValueChange = (e) => {
     let newSearchValue = e.target.value;
     setSearchValue(newSearchValue);
   };
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await orderApi.getAll();
-        console.log('Order: ', response);
-      } catch (error) {
-        throw new Error('Có lỗi API Order');
-      }
-    })();
-  }, []);
 
   return (
     <main className="bg-[#F5F5F5] pb-10 pt-5">
@@ -82,8 +65,8 @@ function OrdersPage(props) {
         <div>
           <Routes>
             <Route path="/" element={<Outlet />}>
-              <Route index element={<AllOrders data={orders} />} />
-              <Route path="unpaid" element={<UnpaidOrder data={orders} />} />
+              <Route index element={<AllOrders />} />
+              <Route path="unpaid" element={<UnpaidOrder />} />
             </Route>
           </Routes>
         </div>
