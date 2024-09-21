@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_ROOT } from '~/constants/api-root';
+import StorageKeys from '~/constants/storage-key';
 
 const axiosClient = axios.create({
   baseURL: `${API_ROOT}`,
@@ -12,6 +13,10 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   function (config) {
     // Do something before request is sent
+    if (localStorage.getItem(StorageKeys.TOKEN)) {
+      const accessToken = localStorage.getItem(StorageKeys.TOKEN);
+      config.headers['Authorization'] = `Bearer ${accessToken}`;
+    }
     return config;
   },
   function (error) {
@@ -30,7 +35,15 @@ axiosClient.interceptors.response.use(
   function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
+    // const { status } = error.response;
 
+    // if (status === 403) {
+    //   localStorage.removeItem(StorageKeys.USER);
+    //   localStorage.removeItem(StorageKeys.TOKEN);
+    //   if (window.confirm('Đã có lỗi xảy ra. Vui lòng tải lại trang')) {
+    //     location.reload();
+    //   }
+    // }
     return Promise.reject(error);
   },
 );

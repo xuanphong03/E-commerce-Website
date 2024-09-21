@@ -22,6 +22,7 @@ import PaymentByCOD from './pages/CheckOut/PaymentByCOD';
 import AccountManagement from './pages/Account';
 import ReviewPage from './pages/Review';
 import ForgotPasswordPage from './pages/Auth/ForgotPassword';
+import ProtectedRoutes from './routers/ProtectedRoutes';
 
 function App() {
   const infoUser = useSelector((state) => state.user.current);
@@ -34,19 +35,21 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckOutPage />} />
-          <Route path="/payment/result" element={<PaymentByVNPay />} />
-          <Route path="/payment/cod" element={<PaymentByCOD />} />
-          <Route path="/my-orders/:orderStatus/*" element={<OrdersPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/sign-up" element={<SignUpPage />} />
           <Route path="/sign-in" element={<SignInPage />} />
           <Route path="/sign-in/identify" element={<ForgotPasswordPage />} />
-          <Route path="/wishlist" element={<WishListPage />} />
           <Route path="/products/*" element={<Product />} />
-          <Route path="/account/*" element={<AccountManagement />} />
-          <Route path="/my-reviews/*" element={<ReviewPage />} />
+          <Route element={<ProtectedRoutes />}>
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckOutPage />} />
+            <Route path="/payment/result" element={<PaymentByVNPay />} />
+            <Route path="/payment/cod" element={<PaymentByCOD />} />
+            <Route path="/my-orders/:orderStatus/*" element={<OrdersPage />} />
+            <Route path="/account/*" element={<AccountManagement />} />
+            <Route path="/wishlist" element={<WishListPage />} />
+            <Route path="/my-reviews/*" element={<ReviewPage />} />
+          </Route>
           <Route path="*" element={<ErrorPage />} />
         </Routes>
         <ToastContainer />
