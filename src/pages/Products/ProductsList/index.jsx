@@ -6,10 +6,10 @@ import queryString from 'query-string';
 import productApi from '~/apis/productApi';
 import ProductItem from '~/components/ProductItem';
 import FilterByPrice from './components/FilterByPrice';
-import FilterByColor from './components/FilterByColor';
-import FilterBySize from './components/FilterBySize';
 import FilterBySort from './components/FilterBySort';
 import ProductSkeletonItem from '~/components/ProductSkeletonItem';
+import FilterByStyle from './components/FilterByStyle';
+import FilterByMaterial from './components/FilterByMaterial';
 
 ProductsList.propTypes = {};
 
@@ -97,8 +97,8 @@ function ProductsList() {
           </h3>
           <FilterBySort onChange={handleFiltersChange} />
           <FilterByPrice onChange={handleFiltersChange} />
-          {/* <FilterByColor onChange={handleFiltersChange} />
-          <FilterBySize onChange={handleFiltersChange} /> */}
+          <FilterByStyle />
+          <FilterByMaterial />
         </div>
 
         <div className="mt-5">
@@ -112,6 +112,7 @@ function ProductsList() {
                 );
               })}
             {!loading &&
+              productsList.length > 0 &&
               productsList.map((product) => {
                 return (
                   <div className="col-span-2 rounded bg-white" key={product.id}>
@@ -119,17 +120,24 @@ function ProductsList() {
                   </div>
                 );
               })}
+            {!loading && productsList.length === 0 && (
+              <div className="col-span-12 flex justify-center rounded-md border border-solid border-gray-200 bg-white">
+                <img src="https://xe2banh.com.vn/img/no-products.png" />
+              </div>
+            )}
           </section>
-          <div className="m-10 flex justify-center">
-            <Pagination
-              count={Math.ceil(pagination.total / pagination.limit)}
-              page={pagination.page}
-              onChange={handlePageChange}
-              variant="outlined"
-              shape="rounded"
-              color="primary"
-            />
-          </div>
+          {productsList.length > 0 && (
+            <div className="m-10 flex justify-center">
+              <Pagination
+                count={Math.ceil(pagination.total / pagination.limit)}
+                page={pagination.page}
+                onChange={handlePageChange}
+                variant="outlined"
+                shape="rounded"
+                color="primary"
+              />
+            </div>
+          )}
         </div>
       </div>
     </main>

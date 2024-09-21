@@ -1,30 +1,19 @@
-import Breadcrumbs from '~/components/Breadcrumbs/Breadcrumbs';
 import Introduce from './components/Introduce';
-import Service from './components/Service';
-import { useTranslation } from 'react-i18next';
-
+import AboutBanner from '~/assets/images/about.webp';
+import Mission from './components/Mission';
+import CoreValues from './components/CoreValues';
 export default function AboutPage() {
-  const { t } = useTranslation('about');
-  const BREAD_CRUMBS = [
-    {
-      to: '/',
-      name: `${t('Breadcrumbs Home')}`,
-    },
-    {
-      to: '/about',
-      name: `${t('Breadcrumbs About')}`,
-    },
-  ];
   return (
-    <main className="pb-[140px] pt-10">
-      <div className="mx-auto max-w-[1300px]">
-        <Breadcrumbs pathList={BREAD_CRUMBS} />
+    <main className="pb-[140px]">
+      <div className="h-[600px] w-full">
+        <img src={AboutBanner} className="h-full w-full object-cover" />
       </div>
-      <div className="mt-10 2xl:ml-[calc((100%-1300px)/2)]">
+      <div className="mx-auto mt-10 flex max-w-[1300px] flex-col gap-5 pt-10">
         <Introduce />
+        <Mission />
       </div>
       <div className="mx-auto mt-20 max-w-[1300px]">
-        <Service />
+        <CoreValues />
       </div>
     </main>
   );

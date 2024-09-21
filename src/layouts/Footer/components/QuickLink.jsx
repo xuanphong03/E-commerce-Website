@@ -4,17 +4,14 @@ export default function QuickLink() {
   return (
     <div className="w-48 text-[#FAFAFA]">
       <h2 className="mb-6 text-xl font-medium">Quick Link</h2>
-      <ul className="text-sm">
-        <li className="mb-4">
-          <Link to="/privacy-policy">Chính sách bảo mật</Link>
+      <ul className="flex flex-col gap-4 text-sm">
+        <li>
+          <Link to="/term-and-policy/privacy-policy">Chính sách bảo mật</Link>
         </li>
-        <li className="mb-4">
-          <Link to="/term">Điều khoản sử dụng</Link>
+        <li>
+          <Link to="/term-and-policy/term-of-service">Điều khoản dịch vụ</Link>
         </li>
-        <li className="mb-4">
-          <Link to="/faq">FQA</Link>
-        </li>
-        <li className="">
+        <li>
           <Link to="/contact">Liên hệ</Link>
         </li>
       </ul>

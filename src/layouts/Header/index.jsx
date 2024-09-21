@@ -9,9 +9,9 @@ import AccountDropdown from './components/Dropdown/AccountDropdown';
 import Navigation from './components/Navigation/Navigation';
 import SearchBox from './components/Search/SearchBox';
 import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
 import { initializeCart } from '~/pages/Cart/cartSlice';
 import categoryApi from '~/apis/categoryApi';
+import Logo from '~/assets/logo/logo.webp';
 
 export default function Header() {
   const dispatch = useDispatch();
@@ -87,11 +87,8 @@ export default function Header() {
       </div>
       <div className="mx-auto flex max-w-[1300px] items-center lg:justify-between">
         <div className="flex items-center justify-center py-6">
-          <Link
-            className="text-xl font-bold leading-none -tracking-[0.72px] text-black lg:text-2xl"
-            to="/"
-          >
-            Exclusive
+          <Link className="w-40" to="/">
+            <img alt="SOMEHOW" className="max-w-full" src={Logo} />
           </Link>
         </div>
         <Navigation onToggleMenu={handleToggleProductMenu} />
