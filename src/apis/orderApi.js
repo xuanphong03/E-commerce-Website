@@ -1,30 +1,17 @@
-import StorageKeys from '~/constants/storage-key';
 import axiosClient from './axiosClient';
 
 const orderApi = {
-  getAll(id) {
+  getAll() {
     const url = `/orders`;
-    return axiosClient.get(url, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem(StorageKeys.TOKEN)}`,
-      },
-    });
+    return axiosClient.get(url);
   },
   getDetail(id) {
     const url = `/orders/${id}`;
-    return axiosClient.get(url, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem(StorageKeys.TOKEN)}`,
-      },
-    });
+    return axiosClient.get(url);
   },
   create(data) {
     const url = '/orders';
-    return axiosClient.post(url, data, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem(StorageKeys.TOKEN)}`,
-      },
-    });
+    return axiosClient.post(url, data);
   },
 };
 
