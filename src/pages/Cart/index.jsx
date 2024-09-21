@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import CartItem from './components/CartItem';
-import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { formatPrice } from '~/utils/formatPrice';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import cartApi from '~/apis/cartApi';
-import { updateCart } from './cartSlice';
 import { v4 as uuidv4 } from 'uuid';
+import cartApi from '~/apis/cartApi';
+import { formatPrice } from '~/utils/formatPrice';
+import { updateCart } from './cartSlice';
+import CartItem from './components/CartItem';
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -14,17 +14,28 @@ export default function CartPage() {
   const user = useSelector((state) => state.user.current);
   const { id } = user;
   const [cartItemsList, setCartItemsList] = useState([]);
-  const [totalPayment, setTotalPayment] = useState(0);
-  const [discountPrice, setDiscountPrice] = useState(0);
+  // const [totalPayment, setTotalPayment] = useState(0);
+  // const [discountPrice, setDiscountPrice] = useState(0);
+  const [paymentInfo, setPaymentInfo] = useState({
+    total: 0,
+    discountFee: 0,
+    shippingFee: 0,
+    subtotal: 0,
+  });
   const [discountCouponCode, setDiscountCouponCode] = useState('');
-  const shippingFee = totalPayment > 2000000 ? 'Miễn phí' : 500000;
+
   useEffect(() => {
     try {
       (async () => {
         const response = await cartApi.getAll({ user_id: id });
         const { cart_items, totalPayment } = response;
+        const shippingFee = totalPayment > 2000000 ? 0 : 100000;
         setCartItemsList(cart_items);
-        setTotalPayment(totalPayment);
+        setPaymentInfo({
+          total: totalPayment,
+          shippingFee: shippingFee,
+          subtotal: totalPayment + shippingFee,
+        });
       })();
     } catch (error) {
       throw new Error('Error get cart');
@@ -42,7 +53,6 @@ export default function CartPage() {
       toast.warning('Vui lòng nhập mã giảm giá!');
       return;
     }
-    console.log(discountCouponCode);
   };
 
   const handleChangeQuantity = ({ itemDetail_id, quantity }) => {
@@ -62,10 +72,26 @@ export default function CartPage() {
         cart_items: cartItemsList,
       });
       setCartItemsList(response.cart_items);
-
       const newTotalQuantity = cartItemsList.reduce((total, { quantity }) => {
         return total + quantity;
       }, 0);
+
+      // Tính toán lại tổng tiền
+      const newTotalPayment = response.cart_items.reduce(
+        (total, { totalPrice }) => {
+          return total + totalPrice; // Giả sử `price` là giá sản phẩm
+        },
+        0,
+      );
+      const newShippingFee = newTotalPayment > 2000000 ? 0 : 100000;
+
+      setPaymentInfo((prev) => ({
+        ...prev,
+        total: newTotalPayment,
+        shippingFee: newShippingFee,
+        subtotal: newTotalPayment + newShippingFee,
+      }));
+
       dispatch(updateCart({ quantity: newTotalQuantity }));
       toast.success('Cập nhật giỏ hàng thành công', {
         autoClose: 2000,
@@ -162,23 +188,23 @@ export default function CartPage() {
           <div className="mb-4">
             <div className="flex justify-between py-4">
               <h3>Tổng tiền đơn hàng</h3>
-              <span>{formatPrice(totalPayment, 'VNĐ')}</span>
+              <span>{formatPrice(paymentInfo.total, 'VNĐ')}</span>
             </div>
-            <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
+            {/* <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
               <h3>Giảm giá</h3>
-              <span>{formatPrice(discountPrice, 'VNĐ')}</span>
-            </div>
+              <span>{formatPrice(paymentInfo.discountFee, 'VNĐ')}</span>
+            </div> */}
             <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
               <h3>Tiền vận chuyển</h3>
               <span>
-                {totalPayment !== 0
-                  ? formatPrice(shippingFee, 'VNĐ')
-                  : formatPrice(0, 'VNĐ')}
+                {paymentInfo.shippingFee !== 0
+                  ? formatPrice(paymentInfo.shippingFee, 'VNĐ')
+                  : 'Miễn phí'}
               </span>
             </div>
             <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
               <h3>Tổng hóa đơn</h3>
-              <span>{formatPrice(totalPayment - discountPrice, 'VNĐ')}</span>
+              <span>{formatPrice(paymentInfo.subtotal, 'VNĐ')}</span>
             </div>
           </div>
 

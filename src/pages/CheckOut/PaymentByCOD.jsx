@@ -3,15 +3,11 @@ import { FaSpinner } from 'react-icons/fa';
 import { FaRegCircleCheck } from 'react-icons/fa6';
 import { useDispatch, useSelector } from 'react-redux';
 import cartApi from '~/apis/cartApi';
-import orderApi from '~/apis/orderApi';
 import { updateCart } from '../Cart/cartSlice';
 
 function PaymentByCOD() {
   const dispatch = useDispatch();
   const { id } = useSelector((state) => state.user.current);
-  const { email, phoneNumber, address } = useSelector(
-    (state) => state.user.paymentInfo,
-  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

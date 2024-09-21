@@ -54,7 +54,7 @@ function App() {
           </Route>
           <Route path="*" element={<ErrorPage />} />
         </Routes>
-        <ToastContainer />
+        <ToastContainer autoClose={2000} closeOnClick={true} />
       </div>
       <Footer />
       {isAuthenticated && <ChatBox />}

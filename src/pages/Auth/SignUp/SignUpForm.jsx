@@ -8,6 +8,7 @@ import InputField from '~/components/form-controls/InputField/InputField';
 import GoogleIcon from '~/assets/images/icon-google.png';
 import { FaSpinner } from 'react-icons/fa6';
 import PasswordField from '~/components/form-controls/PasswordField/PasswordField';
+import { regex } from '~/constants/regex';
 
 SignUpForm.propTypes = {
   onSubmit: PropTypes.func,
@@ -18,13 +19,14 @@ export default function SignUpForm({ onSubmit }) {
     name: yup
       .string()
       .required('Vui lòng nhập tên của bạn.')
-      .test(
-        'Họ và tên phải có ít nhất 2 từ',
-        'Họ và tên phải chứa ít nhất 2 từ.',
-        (value) => {
-          return value.trim().split(' ').length >= 2;
-        },
-      ),
+      .test('min 2 words', 'Họ và tên phải chứa ít nhất 2 từ.', (value) => {
+        return value.trim().split(' ').length >= 2;
+      })
+      .test('invalid name', 'Tên không được chứa chữ số', (name) => {
+        const namePattern = /\d/;
+        return !namePattern.test(name);
+      }),
+
     email: yup
       .string()
       .required('Vui lòng nhập email.')
@@ -94,10 +96,10 @@ export default function SignUpForm({ onSubmit }) {
           )}
         </button>
       </form>
-      <button className="mb-8 flex h-14 w-full items-center justify-center gap-4 rounded border-2 border-solid border-[#BFBFBF] bg-[#FFFFFF] py-4 font-medium text-[#000000] transition-all">
+      {/* <button className="mb-8 flex h-14 w-full items-center justify-center gap-4 rounded border-2 border-solid border-[#BFBFBF] bg-[#FFFFFF] py-4 font-medium text-[#000000] transition-all">
         <img alt="icon" src={GoogleIcon} />
         Đăng nhập với Google
-      </button>
+      </button> */}
       <p className="flex items-center justify-center gap-4 text-sm text-[#4c4c4c]">
         Bạn đã có tài khoản?
         <Link

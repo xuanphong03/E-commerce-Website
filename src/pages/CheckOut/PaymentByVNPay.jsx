@@ -26,71 +26,75 @@ function PaymentByVNPay() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // (async () => {
+    //   const { cart_items, totalPayment } = await cartApi.getAll({
+    //     user_id: id,
+    //   });
+    //   if (cart_items.length > 0) {
+    //     await orderApi.create({
+    //       user_id: id,
+    //       orderDetails: cart_items,
+    //       address: address,
+    //       phoneNumber: phoneNumber,
+    //       emailAddress: email,
+    //       paymentMethods: 'VNP',
+    //       shippingFee: totalPayment > 2000000 ? 0 : 100000,
+    //       paymentStatus: 1,
+    //       percentDiscount: 0,
+    //       orderStatus: 2,
+    //     });
+    //     await cartApi.delete(id, {
+    //       user_id: id,
+    //       cart_item: cart_items,
+    //     });
+    //     dispatch(updateCart({ quantity: 0 }));
+    //   }
+    // })();
     (async () => {
-      const { cart_items, totalPayment } = await cartApi.getAll({
-        user_id: id,
-      });
-      if (cart_items.length > 0) {
-        await orderApi.create({
-          user_id: id,
-          orderDetails: cart_items,
-          address: address,
-          phoneNumber: phoneNumber,
-          emailAddress: email,
-          paymentMethods: 'VNP',
-          shippingFee: totalPayment > 2000000 ? 0 : 500000,
-          paymentStatus: 1,
-          percentDiscount: 0,
-          orderStatus: 2,
-        });
-        await cartApi.delete(id, {
-          user_id: id,
-          cart_item: cart_items,
-        });
-        dispatch(updateCart({ quantity: 0 }));
+      if (isOrderCreated) return;
+      try {
+        setLoading(true);
+        const queryParams = queryString.parse(location.search);
+        // Gửi dữ liệu về API của bạn để xác nhận kết quả thanh toán
+        const response = await paymentApi.verify(queryParams);
+
+        if (response.message === 'Success') {
+          const { cart_items, totalPayment } = await cartApi.getAll({
+            user_id: id,
+          });
+          if (cart_items.length > 0) {
+            (async () => {
+              await orderApi.create({
+                user_id: id,
+                // name: name,
+                orderDetails: cart_items,
+                address: address,
+                phoneNumber: phoneNumber,
+                emailAddress: email,
+                paymentMethods: 'VNP',
+                shippingFee: totalPayment > 2000000 ? 0 : 500000,
+                paymentStatus: 1,
+                percentDiscount: 0,
+                orderStatus: 2,
+              });
+              await cartApi.delete(id, {
+                user_id: id,
+                cart_item: cart_items,
+              });
+              dispatch(updateCart({ quantity: 0 }));
+              setIsOrderCreated(true);
+            })();
+          }
+          setPaymentResult(RESULT.success);
+        } else {
+          setPaymentResult(RESULT.failure);
+        }
+      } catch (error) {
+        setPaymentResult(RESULT.failure);
+      } finally {
+        setLoading(false);
       }
     })();
-    // (async () => {
-    //   if (isOrderCreated) return;
-    //   try {
-    //     setLoading(true);
-    //     const queryParams = queryString.parse(location.search);
-    //     // Gửi dữ liệu về API của bạn để xác nhận kết quả thanh toán
-    //     const response = await paymentApi.verify(queryParams);
-    //     if (response.message === 'Success') {
-    //       const { cart_items, totalPayment } = await cartApi.getAll({
-    //         user_id: id,
-    //       });
-    //       if (cart_items.length > 0) {
-    //         (async () => {
-    //           await orderApi.create({
-    //             user_id: id,
-    //             // name: name,
-    //             orderDetails: cart_items,
-    //             address: address,
-    //             phoneNumber: phoneNumber,
-    //             emailAddress: email,
-    //             paymentMethods: 'VNP',
-    //             shippingFee: totalPayment > 2000000 ? 0 : 500000,
-    //             paymentStatus: 1,
-    //             percentDiscount: 0,
-    //             orderStatus: 2,
-    //           });
-    //           await cartApi.delete(id, {
-    //             user_id: id,
-    //             cart_item: cart_items,
-    //           });
-    //           dispatch(updateCart({ quantity: 0 }));
-    //           setIsOrderCreated(true);
-    //         })();
-    //       }
-    //     }
-    //     setPaymentResult(RESULT.success);
-    //   } catch (error) {
-    //     setPaymentResult(RESULT.failure);
-    //   }
-    //   setTimeout(() => setLoading(false), 1500);
-    // })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

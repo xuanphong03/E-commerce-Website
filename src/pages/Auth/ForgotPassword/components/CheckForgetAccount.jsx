@@ -11,7 +11,6 @@ CheckForgetAccount.propTypes = {
 
 function CheckForgetAccount({ onSubmit }) {
   const schema = yup.object().shape({
-    name: yup.string().required('Vui lòng nhập tên người dùng'),
     email: yup
       .string()
       .required('Vui lòng nhập email.')
@@ -52,17 +51,6 @@ function CheckForgetAccount({ onSubmit }) {
         className="flex w-full flex-col gap-5"
         onSubmit={handleSubmit(formSubmit)}
       >
-        <div>
-          <InputField
-            id="forgot-password-name"
-            label="Tên người dùng"
-            placeholder="Nhập tên người dùng"
-            register={{ ...register('name') }}
-            errorMessage={errors.name?.message}
-            autofocus={true}
-            type="text"
-          />
-        </div>
         <div>
           <InputField
             id="forgot-password-email"

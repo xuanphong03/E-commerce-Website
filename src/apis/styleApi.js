@@ -2,7 +2,7 @@ import axiosClient from './axiosClient';
 
 const styleApi = {
   getAll() {
-    const path = '/admin/styles';
+    const path = '/global/styles';
     return axiosClient.get(path);
   },
 };

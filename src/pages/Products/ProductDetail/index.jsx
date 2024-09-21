@@ -73,20 +73,24 @@ function ProductDetail() {
   };
   const handleAddProductToCart = () => {
     if (!isAuthenticated) {
-      toast.info('Vui lòng đăng nhập để thực hiện yêu cầu', {
-        autoClose: 2000,
-      });
-      return;
+      return toast.info('Vui lòng đăng nhập để thực hiện yêu cầu');
     } else if (checkedColor === null) {
-      toast.info('Vui lòng chọn màu sắc của sản phẩm', {
-        autoClose: 2000,
-      });
-      return;
+      return toast.warning('Vui lòng chọn màu sắc của sản phẩm');
     } else if (checkedSize === null) {
-      toast.info('Vui lòng chọn kích cỡ của sản phẩm', {
-        autoClose: 2000,
-      });
-      return;
+      return toast.warning('Vui lòng chọn kích cỡ của sản phẩm');
+    } else if (quantityProduct <= 0) {
+      return toast.warning('Số lượng sản phẩm phải lớn hơn 0');
+    }
+
+    // Kiểm tra số lượng sản phẩm thêm vào giỏ hàng với số lượng trong kho
+    const quantityInStock = productDetail.quantityDetails
+      ?.find(({ color }) => color === checkedColor)
+      .sizes.find(({ size }) => size === checkedSize).quantity;
+
+    if (quantityProduct > quantityInStock) {
+      return toast.error(
+        'Số lượng sản phẩm đã vượt quá số lượng trong giỏ hàng',
+      );
     }
 
     const requestData = {
@@ -110,13 +114,10 @@ function ProductDetail() {
         // Dispatch action để cập nhật giỏ hàng trong Redux
         dispatch(addToCart({ quantity: quantityProduct }));
       })();
-      toast.success('Đã thêm sản phẩm vào giỏ hàng!', {
-        autoClose: 2000,
-      });
+      setQuantityProduct(1);
+      toast.success('Đã thêm sản phẩm vào giỏ hàng!');
     } catch (error) {
-      toast.success('Thêm sản phẩm vào giỏ hàng thất bại!', {
-        autoClose: 2000,
-      });
+      toast.error('Thêm sản phẩm vào giỏ hàng thất bại!');
     }
   };
   const getOutStockSizeList = (color) => {
@@ -201,7 +202,7 @@ function ProductDetail() {
         <section className="flex gap-10">
           <div className="flex max-h-[500px] basis-3/5 gap-2">
             <div className="flex basis-1/4 flex-col items-center justify-between gap-4">
-              {[...Array(4)].map((_, index) => {
+              {productDetail.images.map((image, index) => {
                 return (
                   <div
                     key={index}
@@ -210,7 +211,7 @@ function ProductDetail() {
                     <img
                       alt="product image"
                       className="max-h-full max-w-full object-cover"
-                      src={placeholder80x80}
+                      src={image || placeholder80x80}
                     />
                   </div>
                 );

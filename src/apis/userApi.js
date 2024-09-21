@@ -1,3 +1,4 @@
+import { check } from 'prettier';
 import axiosClient from './axiosClient';
 
 const userApi = {
@@ -11,12 +12,12 @@ const userApi = {
     return axiosClient.post(url, data);
   },
 
-  verifyAccount(data) {
-    const url = '/global/check-forget-password';
-    // return axiosClient.get
+  checkAccount(data) {
+    const url = '/global/check-fp';
+    return axiosClient.post(url, data);
   },
   resetAccount(data) {
-    const url = '/global/update-forget-password';
+    const url = '/global/change-fp';
     return axiosClient.patch(url, data);
   },
 };

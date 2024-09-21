@@ -2,7 +2,7 @@ import axiosClient from './axiosClient';
 
 const materialApi = {
   getAll() {
-    const path = '/admin/material';
+    const path = '/global/material';
     return axiosClient.get(path);
   },
 };
