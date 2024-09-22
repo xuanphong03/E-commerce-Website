@@ -10,6 +10,11 @@ const orderApi = {
     const url = '/orders';
     return axiosClient.post(url, data);
   },
+
+  getOrderListByPaymentStatus(userId, paymentStatus) {
+    const url = `/orders/user/classify?userId=${userId}&orderStatus=${paymentStatus}`;
+    return axiosClient.get(url);
+  },
 };
 
 export default orderApi;
