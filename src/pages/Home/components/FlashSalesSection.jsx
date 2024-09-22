@@ -44,10 +44,9 @@ export default function FlashSalesSection({ userId }) {
         }
         const { data } = await productApi.getAll(params);
         setProductsList(data);
+        setLoading(false);
       } catch (error) {
         throw new Error('Error in Flash Sale');
-      } finally {
-        setLoading(false);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps

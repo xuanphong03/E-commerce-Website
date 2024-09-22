@@ -14,12 +14,17 @@ import cartApi from '~/apis/cartApi';
 import { addToCart } from '~/pages/Cart/cartSlice';
 import { Rating } from '@mui/material';
 import favoriteApi from '~/apis/favoriteApi';
+import reviewApi from '~/apis/reviewApi';
+import { v4 as uuidv4 } from 'uuid';
+import ProductItem from '~/components/ProductItem';
 
 function ProductDetail() {
   const dispatch = useDispatch();
   const { id } = useSelector((state) => state.user.current);
   const isAuthenticated = !!id;
   let { productId } = useParams();
+  const [relatedProductList, setRelatedProductList] = useState([]);
+  const [feedbacksList, setFeedbackList] = useState([]);
   const [checkedColor, setCheckedColor] = useState(null);
   const [checkedSize, setCheckedSize] = useState(null);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -27,6 +32,27 @@ function ProductDetail() {
   const [quantityProduct, setQuantityProduct] = useState(1);
   const [outStockSizeList, setOutStockSizeList] = useState([]);
   const [rating, setRating] = useState(0);
+
+  const getAllReviewByProduct = async (productName) => {
+    try {
+      const response = await reviewApi.getAllReviewsByProduct(productName);
+      setFeedbackList(response);
+    } catch (error) {
+      throw new Error('Err');
+    }
+  };
+  const getAllRelatedProductList = async (subCategory) => {
+    try {
+      const response = await productApi.getRelatedProduct(subCategory, {
+        _userId: id,
+        _limit: 10,
+        _page: 1,
+      });
+      setRelatedProductList(response.data.slice(0, 4));
+    } catch (error) {
+      throw new Error('Err');
+    }
+  };
 
   useEffect(() => {
     window.scrollTo({
@@ -42,16 +68,15 @@ function ProductDetail() {
         }
         const response = await productApi.getDetail(params);
         setProductDetail(response);
-        console.log('Product details: ', response);
-
+        await getAllReviewByProduct(response.name);
+        await getAllRelatedProductList(response.subCategory);
         setIsFavorite(response.isFavorite);
         setRating(response.rating);
       } catch (error) {
         throw new Error(error);
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [productId, id]);
 
   const increaseQuantityProduct = () => {
     if (quantityProduct >= 100) return;
@@ -202,7 +227,22 @@ function ProductDetail() {
         <section className="flex gap-10">
           <div className="flex max-h-[500px] basis-3/5 gap-2">
             <div className="flex basis-1/4 flex-col items-center justify-between gap-4">
-              {productDetail.images.map((image, index) => {
+              {productDetail?.images &&
+                [...Array(4)].map((_, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4"
+                    >
+                      <img
+                        alt="product image"
+                        className="max-h-full max-w-full object-cover"
+                        src={placeholder80x80}
+                      />
+                    </div>
+                  );
+                })}
+              {productDetail.images?.map((image, index) => {
                 return (
                   <div
                     key={index}
@@ -381,13 +421,25 @@ function ProductDetail() {
           </article>
         </section>
         <section className="my-20">
-          <FeedbackList />
+          <FeedbackList feedbacksList={feedbacksList} />
         </section>
-        <section>
-          <div>
-            <SectionTag content="Sản phẩm liên quan" />
-          </div>
-        </section>
+        {relatedProductList.length > 0 && (
+          <section>
+            <div>
+              <SectionTag content="Sản phẩm liên quan" />
+              <div className="mt-10 grid grid-cols-12 gap-10">
+                {relatedProductList.map((relatedProduct) => {
+                  const uniqueKey = uuidv4();
+                  return (
+                    <div key={uniqueKey} className="col-span-3">
+                      <ProductItem product={relatedProduct} />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
       </div>
     </main>
   );

@@ -1,24 +1,24 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
-import PropTypes from 'prop-types';
+import * as yup from 'yup';
 import PasswordField from '~/components/form-controls/PasswordField/PasswordField';
 
+import PropTypes from 'prop-types';
 PasswordManagement.propTypes = {
   onSubmit: PropTypes.func,
 };
 
 function PasswordManagement({ onSubmit }) {
   const schema = yup.object().shape({
-    currentPassword: yup.string().required('Vui lòng nhập mật khẩu hiện tại.'),
-    newPassword: yup
+    old_password: yup.string().required('Vui lòng nhập mật khẩu hiện tại.'),
+    new_password: yup
       .string()
       .required('Vui lòng nhập mật khẩu mới.')
       .min(6, 'Mật khẩu phải chứa ít nhất 6 ký tự.'),
-    retypeNewPassword: yup
+    renew_password: yup
       .string()
       .required('Vui lòng nhập lại mật khẩu mới.')
-      .oneOf([yup.ref('newPassword')], 'Mật khẩu không khớp'),
+      .oneOf([yup.ref('new_password')], 'Mật khẩu không khớp'),
   });
 
   const {
@@ -32,7 +32,7 @@ function PasswordManagement({ onSubmit }) {
   });
 
   const formSubmit = async (data) => {
-    if (onSubmit) {
+    if (onSubmit && !isSubmitting) {
       await onSubmit(data);
       reset();
     }
@@ -44,24 +44,27 @@ function PasswordManagement({ onSubmit }) {
     >
       <div className="w-3/5">
         <PasswordField
+          id="old_password"
           label="Mật khẩu hiện tại"
-          register={{ ...register('currentPassword') }}
-          errorMessage={errors.currentPassword?.message}
+          register={{ ...register('old_password') }}
+          errorMessage={errors.old_password?.message}
           autofocus
         />
       </div>
       <div className="w-3/5">
         <PasswordField
+          id="new_password"
           label="Mật khẩu mới"
-          register={{ ...register('newPassword') }}
-          errorMessage={errors.newPassword?.message}
+          register={{ ...register('new_password') }}
+          errorMessage={errors.new_password?.message}
         />
       </div>
       <div className="w-3/5">
         <PasswordField
+          id="renew_password"
           label="Nhập lại mật khẩu mới"
-          register={{ ...register('retypeNewPassword') }}
-          errorMessage={errors.retypeNewPassword?.message}
+          register={{ ...register('renew_password') }}
+          errorMessage={errors.renew_password?.message}
         />
       </div>
       <div className="flex w-3/5 justify-end">

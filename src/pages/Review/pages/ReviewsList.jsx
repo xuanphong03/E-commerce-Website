@@ -1,40 +1,54 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import reviewApi from '~/apis/reviewApi';
 import PurchasedProduct from '../components/PurchasedProduct';
 import ReviewProductForm from '../components/ReviewProductForm';
 
 function ReviewsList() {
-  const [isReviewing, setIsReviewing] = useState(false);
-  const FAKE_DATA = {
-    name: 'Áo hoodie',
-    image: 'https://img.ws.mms.shopee.vn/afea95f5aa3866c013dcc57f791744cf',
-    color: 'Trắng',
-    size: 'XL',
-    rate_status: false,
-    order_date: '20/11/2024',
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const { name } = useSelector((state) => state.user.current);
+
+  const [reviewList, setReviewList] = useState([]);
+  useEffect(() => {
+    fetchListReview();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchListReview = async () => {
+    try {
+      const response = await reviewApi.getAllReviewUnfinished(name);
+      setReviewList(response);
+    } catch (error) {
+      throw new Error('Failed to fetch unfinished all reviews');
+    }
   };
-  const reviewProduct = (data) => {
-    setIsReviewing(true);
-    console.log('123');
+
+  const reviewProduct = (product) => {
+    setSelectedProduct(product);
   };
 
   const handleCancel = () => {
-    setIsReviewing(false);
+    setSelectedProduct(null);
   };
-  const handleSubmit = async (data) => {
+
+  const handleSubmit = async (reviewData) => {
     try {
-      console.log(data);
-      setIsReviewing(false);
+      console.log('Submitted review data:', reviewData);
+      setSelectedProduct(null);
     } catch (error) {
-      throw new Error('Đánh giá sản phẩm thất bại');
+      throw new Error('Failed to submit review');
     }
   };
+
   return (
     <>
       <div>
         <div className="flex justify-between pb-5">
-          <h2 className="max-w-[20%] basis-1/5 font-medium">Ảnh</h2>
-          <h2 className="max-w-[20%] basis-1/5 font-medium">Tên sản phẩm</h2>
-          <h2 className="max-w-[10%] basis-[10%] font-medium">Phân loại</h2>
+          <h2 className="max-w-[10%] basis-1/5 font-medium">Ảnh</h2>
+          <h2 className="max-w-[30%] basis-1/5 font-medium">Tên sản phẩm</h2>
+          <h2 className="max-w-[10%] basis-[10%] text-center font-medium">
+            Phân loại
+          </h2>
           <h2 className="max-w-[10%] basis-[10%] text-center font-medium">
             Ngày mua hàng
           </h2>
@@ -45,19 +59,29 @@ function ReviewsList() {
             Đánh giá
           </h2>
         </div>
-        <hr></hr>
+        <hr />
+
         <div>
-          {[...Array(10)].map((_, index) => (
-            <PurchasedProduct
-              key={index}
-              product={FAKE_DATA}
-              onReview={reviewProduct}
-            />
-          ))}
+          {reviewList.length > 0 ? (
+            reviewList.map((product, index) => (
+              <PurchasedProduct
+                key={index}
+                product={product}
+                onReview={() => reviewProduct(product)}
+              />
+            ))
+          ) : (
+            <p className="py-5">Không có đánh giá nào.</p>
+          )}
         </div>
       </div>
-      {isReviewing && (
-        <ReviewProductForm onCancel={handleCancel} onSubmit={handleSubmit} />
+
+      {selectedProduct && (
+        <ReviewProductForm
+          product={selectedProduct}
+          onCancel={handleCancel}
+          onSubmit={handleSubmit}
+        />
       )}
     </>
   );

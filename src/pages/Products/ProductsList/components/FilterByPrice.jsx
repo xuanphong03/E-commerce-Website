@@ -22,7 +22,7 @@ function FilterByPrice({ onChange }) {
   };
 
   return (
-    <div className="group relative w-[250px] cursor-pointer text-sm">
+    <div className="group relative w-[200px] cursor-pointer text-sm">
       <h4 className="flex items-center justify-between rounded border border-solid border-gray-300 px-4 py-2 font-medium">
         Lọc giá
         <span className="text-2xl transition-all duration-300 group-hover:rotate-180">
@@ -103,19 +103,6 @@ function FilterByPrice({ onChange }) {
             />
             Trên 3.000.000đ
             {priceRange === 'price-range-5' && <IoMdCheckmark />}
-          </label>
-        </div>
-        <div>
-          <label className="flex cursor-pointer items-center gap-2 hover:text-[#DB4444]">
-            <input
-              hidden
-              onChange={handlePriceChange}
-              type="radio"
-              value="price-range-6"
-              name="price-range"
-            />
-            Tất cả mọi loại giá
-            {priceRange === 'price-range-6' && <IoMdCheckmark />}
           </label>
         </div>
       </div>

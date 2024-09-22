@@ -16,8 +16,23 @@ const userApi = {
     const url = '/global/check-fp';
     return axiosClient.post(url, data);
   },
+
   resetAccount(data) {
     const url = '/global/change-fp';
+    return axiosClient.patch(url, data);
+  },
+
+  changePassword(data) {
+    const url = '/user/update-password';
+    return axiosClient.patch(url, data);
+  },
+
+  getInfo() {
+    const url = '/user/detail-profile';
+    return axiosClient.get(url);
+  },
+  updateInfo(data) {
+    const url = '/user/update-profile';
     return axiosClient.patch(url, data);
   },
 };

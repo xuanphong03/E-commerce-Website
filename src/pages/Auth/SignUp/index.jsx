@@ -5,40 +5,76 @@ import signupBackground from '~/assets/images/signup-bg.png';
 import { register } from '../userSlice';
 import SignUpForm from './SignUpForm';
 import { useNavigate } from 'react-router-dom';
+import { Fragment, useState } from 'react';
+import SignUpByEmail from './SignUpByEmail';
+import { toast } from 'react-toastify';
+import Spinner from '~/components/Animations/Spinner';
 
 export default function SignUpPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [userInfo, setUserInfo] = useState({});
 
-  const handleSubmitSignUpForm = async (data) => {
+  const verifyEmail = async (data) => {
     try {
-      if (data.name) {
-        data.name = data.name.trim();
-      }
-      const action = register(data);
-      const resultAction = await dispatch(action);
-      const user = unwrapResult(resultAction);
-      console.log(user);
-
-      // do something here when register successfully
-      enqueueSnackbar('Đăng ký thành công!', {
-        variant: 'success',
-      });
-      // Chuyển hướng về trang Home
-      navigate('/');
+      setUserInfo((prev) => ({ ...prev, ...data }));
+      setCurrentStep(currentStep + 1);
     } catch (error) {
-      enqueueSnackbar('Đã có lỗi xảy ra!', { variant: 'error' });
+      throw new Error('Failed verify email when register');
     }
   };
 
+  const handleRegisterAccount = async (data) => {
+    try {
+      const { password, otpCode } = data;
+      const registerData = { ...userInfo, password, otpCode };
+      if (registerData.name) {
+        registerData.name = registerData.name.trim();
+      }
+      console.log(registerData);
+
+      // const action = register(registerData);
+      // const resultAction = await dispatch(action);
+      // const user = unwrapResult(resultAction);
+      // console.log(user);
+
+      // do something here when register successfully
+      // toast.success('Đăng ký tài khoản thành công');
+      // Chuyển hướng về trang Home
+      // navigate('/');
+    } catch (error) {
+      toast.error('Đã có lỗi xảy ra. Vui lòng thử lại');
+      throw new Error('Failed register email when register');
+    }
+  };
+
+  const STEPS = [
+    {
+      step: 1,
+      name: 'Register by email',
+      page: <SignUpByEmail onSubmit={verifyEmail} />,
+    },
+    {
+      step: 2,
+      name: 'Setup password',
+      page: (
+        <SignUpForm
+          emailUser={userInfo.email ?? null}
+          onSubmit={handleRegisterAccount}
+        />
+      ),
+    },
+  ];
+
   return (
     <main className="mx-auto grid max-w-[1300px] grid-cols-12 pb-[60px] pt-5">
-      <div className="hidden h-[550px] lg:col-span-7 lg:block">
+      <div className="col-span-7 h-[550px]">
         <img alt="background" className="max-h-full" src={signupBackground} />
       </div>
-      <section className="col-span-12 mx-auto flex items-center lg:col-span-5">
-        <SignUpForm onSubmit={handleSubmitSignUpForm} />
+      <section className="col-span-5 flex items-center">
+        {STEPS.find(({ step }) => step === currentStep).page}
+        {/* <SignUpForm onSubmit={handleSubmitSignUpForm} /> */}
       </section>
     </main>
   );
