@@ -42,6 +42,7 @@ const userSlice = createSlice({
       localStorage.clear(StorageKeys.CART);
 
       state.current = {};
+      state.paymentInfo = {};
       state.cart = {
         totalItem: 0,
         totalCost: 0,
@@ -59,6 +60,12 @@ const userSlice = createSlice({
         JSON.stringify(state.paymentInfo),
       );
     },
+    updateUserInfo: (state, action) => {
+      const prevData = state.current;
+      const updatedData = action.payload;
+      state.current = { ...prevData, ...updatedData };
+      localStorage.setItem(StorageKeys.USER, JSON.stringify(state.current));
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(login.fulfilled, (state, action) => {
@@ -73,4 +80,4 @@ const userSlice = createSlice({
 
 const { actions, reducer } = userSlice;
 export default reducer;
-export const { logout, setPaymentInfo } = actions;
+export const { logout, setPaymentInfo, updateUserInfo } = actions;

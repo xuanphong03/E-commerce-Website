@@ -1,40 +1,55 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import reviewApi from '~/apis/reviewApi';
 import ReviewItem from '../components/ReviewItem';
 
-ReviewsProduct.propTypes = {};
+function ReviewsProduct() {
+  const { name } = useSelector((state) => state.user.current);
+  const [reviewList, setReviewList] = useState([]);
 
-function ReviewsProduct(props) {
-  const FAKE = {
-    name: 'Áo hoodie',
-    mainImage: 'https://img.ws.mms.shopee.vn/afea95f5aa3866c013dcc57f791744cf',
-    color: 'Đỏ',
-    size: 'M',
-    rating: 3,
-    order_date: '09/10/2024',
-    comment:
-      'In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before the final copy is available',
+  const getReviewList = async () => {
+    try {
+      const response = await reviewApi.getAllReviewComplete(name);
+      setReviewList(response);
+    } catch (error) {
+      throw new Error('Failed to get all reviews');
+    }
   };
+
+  useEffect(() => {
+    getReviewList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div>
       <div className="flex pb-5">
         <h2 className="max-w-[10%] basis-[10%] font-medium">Ảnh</h2>
-        <h2 className="max-w-[20%] basis-1/5 font-medium">Tên sản phẩm</h2>
-        <h2 className="max-w-[10%] basis-[10%] font-medium">Phân loại</h2>
-        <h2 className="max-w-[10%] basis-[10%] font-medium">Điểm đánh giá</h2>
+        <h2 className="max-w-[30%] basis-1/5 text-center font-medium">
+          Tên sản phẩm
+        </h2>
+        <h2 className="max-w-[10%] basis-[10%] text-center font-medium">
+          Phân loại
+        </h2>
+        <h2 className="max-w-[10%] basis-[10%] text-center font-medium">
+          Điểm đánh giá
+        </h2>
         <h2 className="max-w-[40%] basis-2/5 text-center font-medium">
           Nội dung đánh giá
         </h2>
-        <h2 className="max-w-[10%] basis-[10%] text-right font-medium">
+        <h2 className="max-w-[10%] basis-[10%] text-center font-medium">
           Thời gian
         </h2>
       </div>
       <hr></hr>
       <div>
-        {[...Array(10)].map((_, index) => (
-          <ReviewItem key={index} product={FAKE} />
-        ))}
+        {reviewList.length > 0 ? (
+          reviewList.map((product, index) => (
+            <ReviewItem key={index} product={product} />
+          ))
+        ) : (
+          <p className="py-5">Không có đánh giá nào.</p>
+        )}
       </div>
     </div>
   );

@@ -39,7 +39,7 @@ function ExploreProductSection({ userId }) {
       <div className="my-[60px]">
         <div className="grid grid-cols-12 gap-16">
           {isLoading &&
-            [...Array(4)].map((_, index) => {
+            [...Array(8)].map((_, index) => {
               return (
                 <div className="col-span-3" key={index}>
                   <Skeleton />

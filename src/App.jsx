@@ -24,6 +24,7 @@ import ReviewPage from './pages/Review';
 import ForgotPasswordPage from './pages/Auth/ForgotPassword';
 import ProtectedRoutes from './routers/ProtectedRoutes';
 import TermAndPolicy from './layouts/Footer/components/term-policy';
+import ProtectedCheckoutRoutes from './routers/ProtectedCheckoutRoutes';
 
 function App() {
   const infoUser = useSelector((state) => state.user.current);
@@ -32,7 +33,7 @@ function App() {
   return (
     <div className="relative font-roboto">
       <Header />
-      <div className="mt-[124px]">
+      <div className="mt-[130px]">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/contact" element={<ContactPage />} />
@@ -44,9 +45,11 @@ function App() {
           <Route path="/term-and-policy/*" element={<TermAndPolicy />} />
           <Route element={<ProtectedRoutes />}>
             <Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckOutPage />} />
             <Route path="/payment/result" element={<PaymentByVNPay />} />
             <Route path="/payment/cod" element={<PaymentByCOD />} />
+            <Route element={<ProtectedCheckoutRoutes />}>
+              <Route path="/checkout" element={<CheckOutPage />} />
+            </Route>
             <Route path="/my-orders/:orderStatus/*" element={<OrdersPage />} />
             <Route path="/account/*" element={<AccountManagement />} />
             <Route path="/wishlist" element={<WishListPage />} />

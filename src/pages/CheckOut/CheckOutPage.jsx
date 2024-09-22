@@ -35,9 +35,8 @@ function CheckOutPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useSelector((state) => state.user.current);
-  const { name, email, phoneNumber, address } = useSelector(
-    (state) => state.user.paymentInfo,
-  );
+  const user = useSelector((state) => state.user.current);
+  const paymentInfo = useSelector((state) => state.user.paymentInfo);
 
   const [saveInfoStatus, setSaveInfoStatus] = useState(true);
   const [paymentMethod, setMethodPayment] = useState('');
@@ -58,10 +57,10 @@ function CheckOutPage() {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      name,
-      email,
-      phoneNumber,
-      address,
+      name: paymentInfo.name || user.name,
+      email: paymentInfo.email || user.email,
+      phoneNumber: paymentInfo.phoneNumber || user.phoneNumber,
+      address: paymentInfo.address || user.address,
     },
   });
 
@@ -89,7 +88,9 @@ function CheckOutPage() {
       return;
     }
     const { name, email, phoneNumber, address } = data;
-    dispatch(setPaymentInfo({ name, email, phoneNumber, address }));
+    if (saveInfoStatus) {
+      dispatch(setPaymentInfo({ name, email, phoneNumber, address }));
+    }
 
     if (paymentMethod === 'vnpay') {
       try {

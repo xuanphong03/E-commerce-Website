@@ -16,25 +16,17 @@ SignUpForm.propTypes = {
 
 export default function SignUpForm({ onSubmit }) {
   const schema = yup.object().shape({
-    name: yup
+    otpCode: yup
       .string()
-      .required('Vui lòng nhập tên của bạn.')
-      .test('min 2 words', 'Họ và tên phải chứa ít nhất 2 từ.', (value) => {
-        return value.trim().split(' ').length >= 2;
-      })
-      .test('invalid name', 'Tên không được chứa chữ số', (name) => {
-        const namePattern = /\d/;
-        return !namePattern.test(name);
-      }),
-
-    email: yup
-      .string()
-      .required('Vui lòng nhập email.')
-      .email('Vui lòng nhập email hợp lệ.'),
+      .required('Vui lòng nhập mã OTP đã được gửi về email của bạn.'),
     password: yup
       .string()
       .required('Vui lòng nhập mật khẩu.')
       .min(6, 'Mật khẩu phải chứa ít nhất 6 ký tự.'),
+    retypePassword: yup
+      .string()
+      .required('Vui lòng nhập lại mật khẩu.')
+      .oneOf([yup.ref('password')], 'Mật khẩu không khớp'),
   });
 
   const {
@@ -51,34 +43,40 @@ export default function SignUpForm({ onSubmit }) {
     }
   };
 
+  const handleResendOTP = async () => {
+    // Gửi lại mã OTP
+  };
+
   return (
     <div>
-      <h2 className="mb-6 text-3xl font-medium leading-[30px] tracking-[1.44px]">
+      <h2 className="mb-5 text-3xl font-medium leading-[30px] tracking-[1.44px]">
         Tạo tài khoản
       </h2>
-      <p className="mb-10 text-sm">Nhập thông tin chi tiết của bạn dưới đây</p>
+      <p className="mb-10 text-base text-gray-600">
+        Bước 2: Nhập mã OTP được gửi về email và mật khẩu
+      </p>
       <form
         className="mb-4 flex w-[400px] flex-col gap-10"
         onSubmit={handleSubmit(formSubmit)}
       >
         <InputField
-          id="signup-name"
-          label="Họ và tên"
+          id="signup-otp-code"
+          label="Mã số OTP"
           autofocus={true}
-          register={{ ...register('name') }}
-          errorMessage={errors.name?.message}
-        />
-        <InputField
-          id="signup-email"
-          label="Email"
-          register={{ ...register('email') }}
-          errorMessage={errors.email?.message}
+          register={{ ...register('otpCode') }}
+          errorMessage={errors.otpCode?.message}
         />
         <PasswordField
           id="signup-password"
           label="Mật khẩu"
           register={{ ...register('password') }}
           errorMessage={errors.password?.message}
+        />
+        <PasswordField
+          id="signup-retypePassword"
+          label="Nhập lại mật khẩu"
+          register={{ ...register('retypePassword') }}
+          errorMessage={errors.retypePassword?.message}
         />
         <button
           type="submit"
@@ -96,19 +94,20 @@ export default function SignUpForm({ onSubmit }) {
           )}
         </button>
       </form>
-      {/* <button className="mb-8 flex h-14 w-full items-center justify-center gap-4 rounded border-2 border-solid border-[#BFBFBF] bg-[#FFFFFF] py-4 font-medium text-[#000000] transition-all">
-        <img alt="icon" src={GoogleIcon} />
-        Đăng nhập với Google
-      </button> */}
-      <p className="flex items-center justify-center gap-4 text-sm text-[#4c4c4c]">
-        Bạn đã có tài khoản?
-        <Link
-          className="block border-b-2 border-solid border-[#4c4c4c] pb-1 font-medium transition-colors hover:border-[#DB4444] hover:text-[#DB4444]"
-          to="/sign-in"
-        >
-          Đăng nhập ngay
-        </Link>
-      </p>
+      <div className="flex items-center justify-between text-sm">
+        <button onClick={handleResendOTP} className="hover:text-[#DB4444]">
+          Gửi lại mã OTP
+        </button>
+        <p className="flex items-center justify-center gap-2 text-[#4c4c4c]">
+          Bạn đã có tài khoản?
+          <Link
+            className="font-medium underline hover:text-[#DB4444]"
+            to="/sign-in"
+          >
+            Đăng nhập ngay
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

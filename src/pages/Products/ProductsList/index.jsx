@@ -95,10 +95,19 @@ function ProductsList() {
             </span>
             Bộ lọc
           </h3>
-          <FilterBySort onChange={handleFiltersChange} />
+          <FilterBySort
+            onChange={handleFiltersChange}
+            currentSort={queryParams._sort ?? 'ASC'}
+          />
           <FilterByPrice onChange={handleFiltersChange} />
-          <FilterByStyle />
-          <FilterByMaterial />
+          <FilterByStyle
+            currentStyle={queryParams.style ?? null}
+            onChange={handleFiltersChange}
+          />
+          <FilterByMaterial
+            currentMaterial={queryParams.material ?? null}
+            onChange={handleFiltersChange}
+          />
         </div>
 
         <div className="mt-5">

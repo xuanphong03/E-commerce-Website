@@ -6,8 +6,8 @@ const SORT = {
   DESC: 'DESC',
 };
 
-function FilterBySort({ onChange }) {
-  const [sort, setSort] = useState(SORT.ASC);
+function FilterBySort({ onChange, currentSort }) {
+  const [sort, setSort] = useState(currentSort);
 
   const handleSortChange = (e) => {
     const { value } = e.target;

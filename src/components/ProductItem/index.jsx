@@ -23,6 +23,8 @@ export default function ProductItem({ product }) {
       toast.info('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');
       return;
     }
+    console.log('>>> Navigate');
+
     navigate(`/products/detail/${product.id}`);
   };
   const handleToggleFavorite = async () => {

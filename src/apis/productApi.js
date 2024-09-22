@@ -9,6 +9,10 @@ const productApi = {
     const path = '/global/detail-product';
     return axiosClient.get(path, { params });
   },
+  getRelatedProduct(subCategory, params) {
+    const path = `/global/product-relate/${subCategory}`;
+    return axiosClient.get(path, { params });
+  },
 };
 
 export default productApi;

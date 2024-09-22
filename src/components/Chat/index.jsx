@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -23,6 +23,7 @@ import { over } from 'stompjs';
 import SockJS from 'sockjs-client';
 import StorageKeys from '~/constants/storage-key';
 import { EmojiStyle } from 'emoji-picker-react';
+import { formatPrice } from '~/utils/formatPrice';
 ChatBox.propTypes = {};
 
 const RECEIVER = {
@@ -570,28 +571,26 @@ function ChatBox(props) {
   }, [receiverId]);
 
   return (
-    <div className="fixed bottom-5 right-5">
+    <div className="chatBox fixed bottom-5 right-5">
       <div
         onClick={() => {
           setChatting(true);
           connect();
         }}
-        className={`${chatting ? 'invisible opacity-0' : 'visible opacity-100'} flex cursor-pointer items-center gap-2 rounded-full bg-cyan-600 px-4 py-2 text-white transition-all delay-300 duration-500 ease-in-out hover:bg-stone-600`}
+        className={`${chatting ? 'invisible opacity-0' : 'visible opacity-100'} chatBox flex cursor-pointer items-center gap-2 rounded-full bg-cyan-600 px-4 py-2 text-white transition-all delay-300 duration-300 ease-in-out hover:bg-stone-600`}
       >
         <IoChatbubbleEllipsesOutline className="text-xl" /> Nhắn tin
       </div>
       <div
-        className={`${chatting ? 'h-[550px] w-[1200px]' : 'h-0 w-0'} chatBox absolute bottom-0 right-0 overflow-hidden rounded bg-white text-black`}
+        className={`${chatting ? 'h-[550px] w-[900px]' : 'h-0 w-0'} absolute bottom-0 right-0 overflow-hidden rounded border border-solid border-gray-300 bg-white text-black`}
       >
-        <div className="border-gray flex h-12 items-center justify-between border-b border-solid px-5 py-2">
-          <h2 className="ml-1 text-lg font-semibold tracking-wide text-stone-600">
-            Nhắn tin
-          </h2>
+        <div className="border-gray flex h-12 items-center justify-between border-b border-solid bg-blue-500 px-5 py-2 text-white">
+          <h2 className="ml-1 text-lg font-semibold tracking-wide">Nhắn tin</h2>
           <div className="flex space-x-2">
             <button
               type="button"
               id="backhome"
-              className="flex size-8 items-center justify-center rounded border border-solid border-black text-base text-xs tracking-wide"
+              className="flex size-8 items-center justify-center rounded border border-solid border-white text-base tracking-wide"
               onClick={backhome}
               title="Back To Home"
             >
@@ -600,7 +599,7 @@ function ChatBox(props) {
             <button
               type="button"
               id="contactUs"
-              className="flex size-8 items-center justify-center rounded border border-solid border-black text-base text-xs tracking-wide"
+              className="flex size-8 items-center justify-center rounded border border-solid border-white text-base tracking-wide"
               onClick={contactUs}
               title="Contact Us"
             >
@@ -609,7 +608,7 @@ function ChatBox(props) {
             <button
               type="buttonhelp"
               id="guide"
-              className="flex size-8 items-center justify-center rounded border border-solid border-black text-base text-xs tracking-wide"
+              className="flex size-8 items-center justify-center rounded border border-solid border-white text-base tracking-wide"
               onClick={guide}
               title="Guide Chat Bot"
             >
@@ -618,7 +617,7 @@ function ChatBox(props) {
             <button
               type="buttonhelp"
               id="IoIosList"
-              className="flex size-8 items-center justify-center rounded border border-solid border-black text-base text-xs tracking-wide"
+              className="flex size-8 items-center justify-center rounded border border-solid border-white text-base tracking-wide"
               onClick={guide}
               title="IoIosList"
             >
@@ -629,7 +628,7 @@ function ChatBox(props) {
                 setChatting(false);
                 logout();
               }}
-              className="flex size-8 items-center justify-center rounded border border-solid border-black"
+              className="flex size-8 items-center justify-center rounded border border-solid border-white"
             >
               <IoIosArrowDown className="text-lg" />
             </button>
@@ -638,85 +637,65 @@ function ChatBox(props) {
 
         <div className="flex h-[calc(100%-48px)]">
           <div className="border-gray w-[320px] border-r border-solid">
-            {/* <div className="flex items-center flex cursor-pointer gap-2 px-12 py-0 text-[#2c2c2c] transition-all">
-                  <div className="flex size-10 items-center justify-center overflow-hidden rounded-full">
-                    <img
-                      src={
-                        userImgUrl ||
-                        'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
-                      }
-                      className="max-w-full object-cover"
-                      alt={name}
-                    />
-                  </div>
-                  <div className="flex flex-col justify-center">
-                    <h4 className="text-base">{name} </h4>
-                    <p className={'text-xs'}>
-                      {role === 'ADMIN' ? 'Manage' : 'Guest'}
-                    </p>
-                    <p
-                      className='text-emerald-500 text-xs'
-                    >online</p>
-                  </div>
-                </div>
-                <p className='text-xs px-14'>_________________</p> */}
             {receiversList.map((receiver) => {
               const uniqueKey = uuidv4();
               return (
-                <article
-                  key={uniqueKey}
-                  onClick={() => {
-                    setReceiverId(receiver.name);
-                    if (save_ReiverID === receiver.name) {
-                      fetchAndDisplayUserChat();
-                    }
-                    save_ReiverID = receiver.name;
-                    save_Img = receiver.img_url;
-                    save_Role = receiver.role;
-                    if (save_ReiverID === save_ReiverID_unreadMessages) {
-                      unreadMessages = 0;
-                      save_ReiverID_unreadMessages = '';
-                    }
-                  }}
-                  className={`${save_ReiverID === receiver.name ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'} flex cursor-pointer gap-1 px-5 py-1 text-[#2c2c2c] transition-all`}
-                >
-                  <div className="mb-2 flex items-center gap-2">
-                    <div className="flex size-10 items-center justify-center overflow-hidden rounded-full">
-                      <img
-                        src={
-                          receiver.img_url ||
-                          'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
-                        }
-                        className="max-w-full object-cover"
-                        alt={receiver.name}
-                      />
+                <div key={uniqueKey}>
+                  <article
+                    onClick={() => {
+                      setReceiverId(receiver.name);
+                      if (save_ReiverID === receiver.name) {
+                        fetchAndDisplayUserChat();
+                      }
+                      save_ReiverID = receiver.name;
+                      save_Img = receiver.img_url;
+                      save_Role = receiver.role;
+                      if (save_ReiverID === save_ReiverID_unreadMessages) {
+                        unreadMessages = 0;
+                        save_ReiverID_unreadMessages = '';
+                      }
+                    }}
+                    className={`${save_ReiverID === receiver.name ? 'bg-gray-200' : 'bg-white hover:bg-gray-100'} flex cursor-pointer gap-1 px-5 py-1 text-[#2c2c2c] transition-all`}
+                  >
+                    <div className="mb-2 flex items-center gap-2">
+                      <div className="flex size-10 items-center justify-center overflow-hidden rounded-full">
+                        <img
+                          src={
+                            receiver.img_url ||
+                            'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
+                          }
+                          className="max-w-full object-cover"
+                          alt={receiver.name}
+                        />
+                      </div>
+                      <div className="flex flex-col justify-center">
+                        <h4 className="text-sm">{receiver.name} </h4>
+                        <p className={'text-xs'}>
+                          {receiver.role === 'ADMIN' ? 'Manage' : 'Guest'}
+                        </p>
+                        <p
+                          className={`${receiver.status === 'ONLINE' ? 'text-emerald-500' : 'text-slate-600'} text-xs`}
+                        >
+                          {receiver.status.toLowerCase()}
+                        </p>
+                      </div>
+                      <div className="flex h-[18px] w-[18px] flex-col items-center justify-center">
+                        <p
+                          className={`${unreadMessages >= 1 && save_ReiverID_unreadMessages === receiver.name && save_ReiverID !== receiver.name ? 'bg-red-600 text-gray-200' : 'hidden text-blue-600'} flex h-4 w-4 flex-col items-center justify-center rounded-full text-xs`}
+                        >
+                          {unreadMessages}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex flex-col justify-center">
-                      <h4 className="text-base">{receiver.name} </h4>
-                      <p className={'text-xs'}>
-                        {receiver.role === 'ADMIN' ? 'Manage' : 'Guest'}
-                      </p>
-                      <p
-                        className={`${receiver.status === 'ONLINE' ? 'text-emerald-500' : 'text-slate-600'} text-xs`}
-                      >
-                        {receiver.status.toLowerCase()}
-                      </p>
-                    </div>
-                    <div className="flex h-[18px] w-[18px] flex-col items-center justify-center">
-                      <p
-                        className={`${unreadMessages >= 1 && save_ReiverID_unreadMessages === receiver.name && save_ReiverID !== receiver.name ? 'bg-red-600 text-gray-200' : 'hidden text-blue-600'} flex h-4 w-4 flex-col items-center justify-center rounded-full text-xs`}
-                      >
-                        {unreadMessages}
-                      </p>
-                    </div>
-                  </div>
-                </article>
+                  </article>
+                  <hr></hr>
+                </div>
               );
             })}
           </div>
 
           <div className="relative w-[calc(100%-200px)]">
-            <div className="display: flex; relative h-[calc(100%-40px)] overflow-x-hidden px-4 py-2">
+            <div className="relative h-[calc(100%-40px)] overflow-x-hidden bg-white px-4 py-2">
               <div
                 className={`${save_ReiverID === null ? 'hidden' : ''} flex flex-col items-center justify-center overflow-hidden`}
               >
@@ -732,39 +711,19 @@ function ChatBox(props) {
                 <h4 className="mt-2 text-center text-base font-bold italic">
                   {save_ReiverID} - Vai trò: {save_Role}
                 </h4>
-                <p className="text-center text-sm italic">
-                  Được mã hóa đầu cuối
-                </p>
-                <p className="text-center text-sm italic">
-                  Tin nhắn và cuộc gọi được bảo mật bằng tính năng mã hóa đầu
-                  cuối.{' '}
-                </p>
               </div>
               <ul className="flex flex-col space-y-1">
                 {messages.map((messageItem) => {
                   const uniqueKey = uuidv4();
                   return (
                     <li
-                      key={messageItem.id}
+                      key={uniqueKey}
                       className={`flex items-start ${
                         messageItem.senderId === name
                           ? 'ml-auto flex-row-reverse'
                           : 'mr-auto'
                       } max-w-[80%] rounded-lg text-sm`}
                     >
-                      {/* <div className="flex flex-col items-start"> */}
-                      <img
-                        src={
-                          messageItem.senderId === name
-                            ? userImgUrl ||
-                              'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
-                            : messageItem.senderImage ||
-                              'https://i.pinimg.com/564x/de/0a/47/de0a470a4617bb6272ad32dea7c497ce.jpg'
-                        }
-                        className="h-[60px] w-[60px] rounded-full"
-                        alt="Sender"
-                      />
-                      {/* </div> */}
                       {isImageUrl(messageItem.content) ? (
                         <img
                           src={messageItem.content}
@@ -829,8 +788,8 @@ function ChatBox(props) {
                             <p
                               className={`${
                                 messageItem.senderId === name
-                                  ? 'mt-15 mr-2 bg-stone-500 text-white'
-                                  : 'mt-15 ml-2 bg-gray-200'
+                                  ? 'ml-auto bg-stone-500 text-white'
+                                  : 'mr-auto bg-gray-200'
                               } mt-2 max-w-max rounded-lg px-2 py-2 text-base`}
                               onClick={() =>
                                 messageItem.senderId === name &&
@@ -851,57 +810,41 @@ function ChatBox(props) {
             </div>
             <form
               onSubmit={handleSendMessage}
-              className="border-gray absolute bottom-0 left-0 right-0 flex h-10 items-center border-t border-solid"
+              className="border-gray absolute bottom-0 left-0 right-0 flex items-center gap-2 border-t border-solid bg-white"
             >
               <input
                 value={message}
                 onChange={handleChangeMessage}
-                className="h-full w-full px-2 py-1 text-sm outline-none"
+                className="h-11 flex-1 px-2 py-1 text-sm outline-none"
                 placeholder="Nhập tin nhắn..."
               />
-              <button
-                type="button"
-                id="optional2"
-                className="w-30px size-15 mx-2 flex h-full items-center justify-center"
-                onClick={toggleOptionalList2}
-                title="Tìm kiêm thông tin về sản phẩm"
-              >
-                <IoIosShirt />
-              </button>
-              <button
-                type="button"
-                id="optional"
-                className="w-30px size-15 mx-2 flex h-full items-center justify-center"
-                onClick={toggleOptionalList}
-                title="Tìm từ khóa Chat Bot"
-              >
-                <IoMdSearch />
-              </button>
-              <button
-                type="button"
-                id="optional3"
-                className="w-30px size-15 mx-2 flex h-full items-center justify-center"
-                onClick={toggleOptionalList3}
-                title="Chọn nhãn dán"
-              >
-                <IoLogoPinterest />
-              </button>
-              <button
-                type="button"
-                id="emoji-btn"
-                className="w-30px size-15 mx-2 flex h-full items-center justify-center"
-                onClick={toggleShowEmojiList}
-                title="Chọn biểu tượng cảm xúc"
-              >
-                <IoMdHappy />
-              </button>
-              <button
-                type="submit"
-                className="flex size-12 h-full items-center justify-center rounded-full bg-blue-500 px-4 text-xl text-white transition-all hover:bg-blue-400"
-                title="Gửi Message"
-              >
-                <IoIosPaperPlane />
-              </button>
+              <div className="flex items-center px-2">
+                <button
+                  type="button"
+                  id="optional2"
+                  className="flex size-10 items-center justify-center"
+                  onClick={toggleOptionalList2}
+                  title="Tìm kiêm thông tin về sản phẩm"
+                >
+                  <IoIosShirt />
+                </button>
+                <button
+                  type="button"
+                  id="optional"
+                  className="flex size-10 items-center justify-center"
+                  onClick={toggleOptionalList}
+                  title="Tìm từ khóa Chat Bot"
+                >
+                  <IoMdSearch />
+                </button>
+                <button
+                  type="submit"
+                  className="flex size-8 items-center justify-center rounded-full bg-blue-500 text-white transition-all hover:bg-blue-400"
+                  title="Gửi Message"
+                >
+                  <IoIosPaperPlane />
+                </button>
+              </div>
             </form>
           </div>
           <div className="border-gray w-[450px] border-r border-solid">
@@ -911,14 +854,14 @@ function ChatBox(props) {
                 style={{
                   top: '100%',
                   left: '0',
-                  maxHeight: '502px', // Adjust height as needed
+                  maxHeight: '502px',
                 }}
               >
                 <input
                   type="text"
                   value={inputFilter}
                   onChange={handleInputChange}
-                  className="w-full border-b border-gray-300 px-2 py-1 text-sm"
+                  className="w-full border-b border-gray-300 px-2 py-1 text-sm outline-none"
                   placeholder="Tìm kiếm từ khóa Chat Bot..."
                 />
                 <ul>
@@ -939,7 +882,7 @@ function ChatBox(props) {
             )}
             {optionalListVisible2 && (
               <div
-                className="overflow-auto rounded border border-gray-300 bg-white shadow-lg"
+                className="overflow-auto border border-gray-300 bg-white shadow-lg"
                 style={{
                   top: '100%',
                   left: '0',
@@ -950,7 +893,7 @@ function ChatBox(props) {
                   type="text"
                   value={inputFilter2}
                   onChange={handleInputChange2}
-                  className="w-full border-b border-gray-300 px-2 py-1 text-sm"
+                  className="w-full border-b border-gray-300 px-2 py-1 text-sm outline-none"
                   placeholder="Tìm kiếm từ khóa sản phẩm..."
                 />
                 <ul>
@@ -962,7 +905,7 @@ function ChatBox(props) {
                         className="flex cursor-pointer items-center gap-4 px-4 py-2 hover:bg-gray-300"
                         onClick={() => handleOptionClick2(option)}
                       >
-                        <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full">
+                        <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full border border-solid border-gray-200">
                           <img
                             src={option.imageMain}
                             className="h-full w-full object-cover"
@@ -976,12 +919,23 @@ function ChatBox(props) {
                           <p className="font-family: ui-serif bold text-sm font-medium">
                             {option.name}
                           </p>
-                          <p className="text-xs line-through">
-                            OriginalPrice: {option.originalPrice} VND
-                          </p>
-                          <p className="text-xs text-red-700">
-                            Sale Price: {option.finalPrice} VND
-                          </p>
+                          {option.originalPrice !== option.finalPrice ? (
+                            <Fragment>
+                              <p className="text-xs line-through">
+                                Giá gốc:{' '}
+                                {formatPrice(option.originalPrice, 'VNĐ')}
+                              </p>
+                              <p className="text-xs text-red-700">
+                                Giá sale:{' '}
+                                {formatPrice(option.finalPrice, 'VNĐ')}
+                              </p>
+                            </Fragment>
+                          ) : (
+                            <p className="text-xs text-red-700">
+                              Giá:
+                              {formatPrice(option.finalPrice, 'VNĐ')}{' '}
+                            </p>
+                          )}
                         </div>
                       </li>
                     );
@@ -1002,7 +956,7 @@ function ChatBox(props) {
                 <ul className="grid grid-cols-3 gap-2 bg-gray-800 p-1">
                   {' '}
                   {/* Use grid layout with 4 columns */}
-                  {filteredOptions3.map((option, index) => {
+                  {filteredOptions3.map((option) => {
                     const uniqueKey = uuidv4();
                     return (
                       <li
