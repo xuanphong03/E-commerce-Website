@@ -17,7 +17,7 @@ export default function AccountDropdown() {
       name: 'Quản lý tài khoản',
     },
     {
-      to: '/my-orders/all',
+      to: '/my-orders/',
       pathIcon: OrderIcon,
       name: 'Đơn hàng',
     },

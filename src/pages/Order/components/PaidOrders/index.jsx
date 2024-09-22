@@ -2,38 +2,38 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import orderApi from '~/apis/orderApi';
 import { useSelector } from 'react-redux';
-import { v4 as uuidv4 } from 'uuid';
-import OrderedProduct from '~/components/OrderedProduct';
 import { formatPrice } from '~/utils/formatPrice';
+import OrderedProduct from '~/components/OrderedProduct';
+import { v4 as uuidv4 } from 'uuid';
 
-UnpaidOrder.propTypes = {};
+PaidOrders.propTypes = {};
 
-function UnpaidOrder(props) {
-  const [unpaidOrderList, setUnpaidOrderList] = useState([]);
+function PaidOrders(props) {
+  const [paidOrderList, setPaidOrderList] = useState([]);
   const user = useSelector((state) => state.user.current);
 
-  const getUnpaidOrderList = async () => {
+  const getPaidOrderList = async () => {
     try {
       const userId = user.id;
-      const paymentStatus = 0;
+      const paymentStatus = 1;
       const response = await orderApi.getOrderListByPaymentStatus(
         userId,
         paymentStatus,
       );
-      setUnpaidOrderList(response);
+      setPaidOrderList(response);
     } catch (error) {
       throw new Error('Failed to get unpaid order list');
     }
   };
 
   useEffect(() => {
-    getUnpaidOrderList();
+    getPaidOrderList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   return (
     <section className="flex flex-col gap-10">
-      {unpaidOrderList.length > 0 ? (
-        unpaidOrderList.map(
+      {paidOrderList.length > 0 ? (
+        paidOrderList.map(
           ({
             orderDetails,
             shippingStatus,
@@ -119,4 +119,4 @@ function UnpaidOrder(props) {
   );
 }
 
-export default UnpaidOrder;
+export default PaidOrders;

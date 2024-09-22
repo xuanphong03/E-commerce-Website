@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import orderApi from '~/apis/orderApi';
-import TemplateImage from '~/assets/images/product01.png';
 import OrderedProduct from '~/components/OrderedProduct';
 import { formatPrice } from '~/utils/formatPrice';
 
@@ -14,7 +13,6 @@ function AllOrders() {
     try {
       const response = await orderApi.getAll(id);
       setOrdersList(response);
-      console.log(response);
     } catch (error) {
       throw new Error('Failed to get all orders');
     }

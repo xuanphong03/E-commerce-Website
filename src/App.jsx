@@ -50,7 +50,7 @@ function App() {
             <Route element={<ProtectedCheckoutRoutes />}>
               <Route path="/checkout" element={<CheckOutPage />} />
             </Route>
-            <Route path="/my-orders/:orderStatus/*" element={<OrdersPage />} />
+            <Route path="/my-orders/*" element={<OrdersPage />} />
             <Route path="/account/*" element={<AccountManagement />} />
             <Route path="/wishlist" element={<WishListPage />} />
             <Route path="/my-reviews/*" element={<ReviewPage />} />
