@@ -10,6 +10,7 @@ PaidOrders.propTypes = {};
 
 function PaidOrders(props) {
   const [paidOrderList, setPaidOrderList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const user = useSelector((state) => state.user.current);
 
   const getPaidOrderList = async () => {
@@ -23,6 +24,8 @@ function PaidOrders(props) {
       setPaidOrderList(response);
     } catch (error) {
       throw new Error('Failed to get unpaid order list');
+    } finally {
+      setTimeout(() => setIsLoading(false), 1000);
     }
   };
 
@@ -30,13 +33,28 @@ function PaidOrders(props) {
     getPaidOrderList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-40 w-full items-center justify-center rounded bg-white">
+        Đang lấy dữ liệu...
+      </div>
+    );
+  }
+
+  const handleCancelOrder = (id, skuOrder, orderStatus) => {
+    if (orderStatus !== null) return;
+    console.log('Xóa');
+  };
+
   return (
     <section className="flex flex-col gap-10">
       {paidOrderList.length > 0 ? (
         paidOrderList.map(
           ({
+            id,
             orderDetails,
-            shippingStatus,
+            orderStatus,
             paymentMethods,
             shippingFee,
             totalAmountOrder,
@@ -93,7 +111,9 @@ function PaidOrders(props) {
                     <h4 className="border-gray w-4/5 border-r border-dotted px-4 py-2 text-end">
                       Tình trạng đơn hàng
                     </h4>
-                    <p className="w-1/5 px-4 py-2 text-end">{shippingStatus}</p>
+                    <p className="w-1/5 px-4 py-2 text-end">
+                      {orderStatus ?? 'Đang xử lý'}
+                    </p>
                   </div>
                   <div className="border-gray flex border border-dotted">
                     <h4 className="border-gray w-4/5 border-r border-dotted px-4 py-2 text-end">
@@ -106,13 +126,23 @@ function PaidOrders(props) {
                     </p>
                   </div>
                 </div>
+                <div
+                  onClick={() => handleCancelOrder(id, skuOrder, orderStatus)}
+                  className="mt-5 flex justify-end"
+                >
+                  <button
+                    className={`rounded px-5 py-2 text-sm text-white ${orderStatus ? 'cursor-not-allowed bg-gray-400' : 'cursor-pointer bg-red-500 hover:opacity-80'}`}
+                  >
+                    Hủy đơn hàng
+                  </button>
+                </div>
               </div>
             );
           },
         )
       ) : (
         <div className="flex h-40 w-full items-center justify-center rounded bg-white">
-          Chưa có đơn hàng nào
+          Không có đơn hàng nào
         </div>
       )}
     </section>

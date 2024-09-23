@@ -7,6 +7,7 @@ import cartApi from '~/apis/cartApi';
 import { formatPrice } from '~/utils/formatPrice';
 import { updateCart } from './cartSlice';
 import CartItem from './components/CartItem';
+import { defaultConstants } from '~/constants/default';
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -14,8 +15,7 @@ export default function CartPage() {
   const user = useSelector((state) => state.user.current);
   const { id } = user;
   const [cartItemsList, setCartItemsList] = useState([]);
-  // const [totalPayment, setTotalPayment] = useState(0);
-  // const [discountPrice, setDiscountPrice] = useState(0);
+
   const [paymentInfo, setPaymentInfo] = useState({
     total: 0,
     discountFee: 0,
@@ -29,7 +29,10 @@ export default function CartPage() {
       (async () => {
         const response = await cartApi.getAll({ user_id: id });
         const { cart_items, totalPayment } = response;
-        const shippingFee = totalPayment > 2000000 ? 0 : 100000;
+        const shippingFee =
+          totalPayment > defaultConstants.minTotalPayment
+            ? 0
+            : defaultConstants.shippingFee;
         setCartItemsList(cart_items);
         setPaymentInfo({
           total: totalPayment,
@@ -83,7 +86,10 @@ export default function CartPage() {
         },
         0,
       );
-      const newShippingFee = newTotalPayment > 2000000 ? 0 : 100000;
+      const newShippingFee =
+        newTotalPayment > defaultConstants.minTotalPayment
+          ? 0
+          : defaultConstants.shippingFee;
 
       setPaymentInfo((prev) => ({
         ...prev,

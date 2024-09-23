@@ -7,6 +7,7 @@ import { formatPrice } from '~/utils/formatPrice';
 
 function AllOrders() {
   const [ordersList, setOrdersList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { id } = useSelector((state) => state.user.current);
 
   const getAllOrders = async () => {
@@ -15,24 +16,42 @@ function AllOrders() {
       setOrdersList(response);
     } catch (error) {
       throw new Error('Failed to get all orders');
+    } finally {
+      setTimeout(() => setIsLoading(false), 1000);
     }
+  };
+
+  const handleCancelOrder = (orderId, orderSku, orderStatus) => {
+    if (!orderStatus) {
+      return;
+    }
+    console.log('Xóa');
   };
 
   useEffect(() => {
     getAllOrders();
   }, []);
 
+  if (isLoading) {
+    return (
+      <div className="flex h-40 w-full items-center justify-center rounded bg-white">
+        Đang lấy dữ liệu...
+      </div>
+    );
+  }
+
   return (
     <section className="flex flex-col gap-10">
       {ordersList.length > 0 ? (
         ordersList.map(
           ({
+            id,
             orderDetails,
-            shippingStatus,
             paymentMethods,
             shippingFee,
             totalAmountOrder,
             skuOrder,
+            orderStatus,
           }) => {
             const uniqueKey = uuidv4();
             return (
@@ -85,7 +104,9 @@ function AllOrders() {
                     <h4 className="border-gray w-4/5 border-r border-dotted px-4 py-2 text-end">
                       Tình trạng đơn hàng
                     </h4>
-                    <p className="w-1/5 px-4 py-2 text-end">{shippingStatus}</p>
+                    <p className="w-1/5 px-4 py-2 text-end">
+                      {orderStatus ?? 'Đang xử lý'}
+                    </p>
                   </div>
                   <div className="border-gray flex border border-dotted">
                     <h4 className="border-gray w-4/5 border-r border-dotted px-4 py-2 text-end">
@@ -98,13 +119,23 @@ function AllOrders() {
                     </p>
                   </div>
                 </div>
+                <div
+                  onClick={() => handleCancelOrder(id, skuOrder, orderStatus)}
+                  className="mt-5 flex justify-end"
+                >
+                  <button
+                    className={`rounded px-5 py-2 text-sm text-white ${orderStatus ? 'cursor-not-allowed bg-gray-400' : 'cursor-pointer bg-red-500 hover:opacity-80'}`}
+                  >
+                    Hủy đơn hàng
+                  </button>
+                </div>
               </div>
             );
           },
         )
       ) : (
         <div className="flex h-40 w-full items-center justify-center rounded bg-white">
-          Chưa có đơn hàng nào
+          Không có đơn hàng nào
         </div>
       )}
     </section>
