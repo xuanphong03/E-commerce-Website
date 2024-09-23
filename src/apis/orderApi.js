@@ -12,8 +12,15 @@ const orderApi = {
   },
 
   getOrderListByPaymentStatus(userId, paymentStatus) {
-    const url = `/orders/user/classify?userId=${userId}&orderStatus=${paymentStatus}`;
-    return axiosClient.get(url);
+    const url = `/orders/user/classify`;
+    const params = { userId, paymentStatus };
+    return axiosClient.get(url, { params });
+  },
+
+  getOrderListByOrderStatus(userId, orderStatus) {
+    const params = { userId, orderStatus };
+    const url = `orders/user/classify`;
+    return axiosClient.get(url, { params });
   },
 };
 

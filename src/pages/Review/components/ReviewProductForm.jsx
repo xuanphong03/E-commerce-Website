@@ -351,6 +351,7 @@ function ReviewProductForm({ onCancel, onSubmit, product }) {
         username: user.name,
       });
       console.log(updatedComment);
+      window.location.reload();
     } catch (error) {
       throw new Error('Failed to create comment');
     }

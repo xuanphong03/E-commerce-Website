@@ -6,6 +6,9 @@ import NavLinksList from './components/NavLinksList';
 import UnpaidOrder from './components/UnpaidOrders';
 import ErrorPage from '../Error';
 import PaidOrders from './components/PaidOrders';
+import DeliveringOrders from './components/DeliveringOrders';
+import ReceiptedOrders from './components/ReceiptedOrders';
+import CancelledOrders from './components/CancelledOrders';
 
 OrdersPage.propTypes = {};
 
@@ -49,6 +52,9 @@ function OrdersPage(props) {
             <Route path="/" element={<AllOrders />} />
             <Route path="/paid" element={<PaidOrders />} />
             <Route path="/unpaid" element={<UnpaidOrder />} />
+            <Route path="/delivering" element={<DeliveringOrders />} />
+            <Route path="/receipted" element={<ReceiptedOrders />} />
+            <Route path="/cancelled" element={<CancelledOrders />} />
             <Route path="/*" element={<ErrorPage />} />
           </Routes>
         </div>

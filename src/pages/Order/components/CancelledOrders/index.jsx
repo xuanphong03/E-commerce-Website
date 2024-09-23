@@ -1,43 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { formatPrice } from '~/utils/formatPrice';
+import OrderedProduct from '~/components/OrderedProduct';
+import { v4 as uuidv4 } from 'uuid';
 import orderApi from '~/apis/orderApi';
 import { useSelector } from 'react-redux';
-import { v4 as uuidv4 } from 'uuid';
-import OrderedProduct from '~/components/OrderedProduct';
-import { formatPrice } from '~/utils/formatPrice';
 
-UnpaidOrder.propTypes = {};
+CancelledOrders.propTypes = {};
 
-function UnpaidOrder() {
-  const [unpaidOrderList, setUnpaidOrderList] = useState([]);
+function CancelledOrders(props) {
+  const [orderList, setOrderList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const user = useSelector((state) => state.user.current);
+  const { id } = useSelector((state) => state.user.current);
 
-  const getUnpaidOrderList = async () => {
+  const getOrderList = async () => {
     try {
-      const userId = user.id;
-      const paymentStatus = 0;
-      const response = await orderApi.getOrderListByPaymentStatus(
-        userId,
-        paymentStatus,
-      );
-      setUnpaidOrderList(response);
+      const response = await orderApi.getOrderListByOrderStatus(id, 'Đã Hủy');
+      setOrderList(response);
     } catch (error) {
-      throw new Error('Failed to get unpaid order list');
+      throw new Error('Failed to get order list');
     } finally {
       setTimeout(() => setIsLoading(false), 1000);
     }
   };
 
   useEffect(() => {
-    getUnpaidOrderList();
+    getOrderList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleCancelOrder = (id, skuOrder, orderStatus) => {
-    if (orderStatus !== null) return;
-    console.log('Xóa');
-  };
 
   if (isLoading) {
     return (
@@ -49,16 +39,15 @@ function UnpaidOrder() {
 
   return (
     <section className="flex flex-col gap-10">
-      {unpaidOrderList.length > 0 ? (
-        unpaidOrderList.map(
+      {orderList.length > 0 ? (
+        orderList.map(
           ({
-            id,
             orderDetails,
-            orderStatus,
             paymentMethods,
             shippingFee,
             totalAmountOrder,
             skuOrder,
+            orderStatus,
           }) => {
             const uniqueKey = uuidv4();
             return (
@@ -111,9 +100,7 @@ function UnpaidOrder() {
                     <h4 className="border-gray w-4/5 border-r border-dotted px-4 py-2 text-end">
                       Tình trạng đơn hàng
                     </h4>
-                    <p className="w-1/5 px-4 py-2 text-end">
-                      {orderStatus ?? 'Đang xử lý'}
-                    </p>
+                    <p className="w-1/5 px-4 py-2 text-end">{orderStatus}</p>
                   </div>
                   <div className="border-gray flex border border-dotted">
                     <h4 className="border-gray w-4/5 border-r border-dotted px-4 py-2 text-end">
@@ -125,16 +112,6 @@ function UnpaidOrder() {
                         : `Thanh toán online ${paymentMethods}`}
                     </p>
                   </div>
-                </div>
-                <div
-                  onClick={() => handleCancelOrder(id, skuOrder, orderStatus)}
-                  className="mt-5 flex justify-end"
-                >
-                  <button
-                    className={`rounded px-5 py-2 text-sm text-white ${orderStatus ? 'cursor-not-allowed bg-gray-400' : 'cursor-pointer bg-red-500 hover:opacity-80'}`}
-                  >
-                    Hủy đơn hàng
-                  </button>
                 </div>
               </div>
             );
@@ -149,4 +126,4 @@ function UnpaidOrder() {
   );
 }
 
-export default UnpaidOrder;
+export default CancelledOrders;

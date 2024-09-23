@@ -8,6 +8,7 @@ import { FaRegCircleCheck } from 'react-icons/fa6';
 import { useDispatch, useSelector } from 'react-redux';
 import orderApi from '~/apis/orderApi';
 import { updateCart } from '../Cart/cartSlice';
+import { defaultConstants } from '~/constants/default';
 
 const RESULT = {
   success: 'SUCCESS',
@@ -26,30 +27,6 @@ function PaymentByVNPay() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // (async () => {
-    //   const { cart_items, totalPayment } = await cartApi.getAll({
-    //     user_id: id,
-    //   });
-    //   if (cart_items.length > 0) {
-    //     await orderApi.create({
-    //       user_id: id,
-    //       orderDetails: cart_items,
-    //       address: address,
-    //       phoneNumber: phoneNumber,
-    //       emailAddress: email,
-    //       paymentMethods: 'VNP',
-    //       shippingFee: totalPayment > 2000000 ? 0 : 100000,
-    //       paymentStatus: 1,
-    //       percentDiscount: 0,
-    //       orderStatus: 2,
-    //     });
-    //     await cartApi.delete(id, {
-    //       user_id: id,
-    //       cart_item: cart_items,
-    //     });
-    //     dispatch(updateCart({ quantity: 0 }));
-    //   }
-    // })();
     (async () => {
       if (isOrderCreated) return;
       try {
@@ -64,6 +41,10 @@ function PaymentByVNPay() {
           });
           if (cart_items.length > 0) {
             (async () => {
+              const shippingFee =
+                totalPayment > defaultConstants.minTotalPayment
+                  ? 0
+                  : defaultConstants.shippingFee;
               await orderApi.create({
                 user_id: id,
                 // name: name,
@@ -72,7 +53,7 @@ function PaymentByVNPay() {
                 phoneNumber: phoneNumber,
                 emailAddress: email,
                 paymentMethods: 'VNP',
-                shippingFee: totalPayment > 2000000 ? 0 : 500000,
+                shippingFee: shippingFee,
                 paymentStatus: 1,
                 percentDiscount: 0,
                 orderStatus: 2,

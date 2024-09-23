@@ -12,6 +12,7 @@ import paymentApi from '~/apis/paymentApi';
 import { formatPrice } from '~/utils/formatPrice';
 import { setPaymentInfo } from '../Auth/userSlice';
 import InputPayment from './customs/InputPayment';
+import { defaultConstants } from '~/constants/default';
 
 function CheckOutPage() {
   const schema = yup.object().shape({
@@ -69,11 +70,15 @@ function CheckOutPage() {
       (async () => {
         const response = await cartApi.getAll({ user_id: id });
         const { cart_items, totalPayment } = response;
+        const deliveryFee =
+          totalPayment > defaultConstants.minTotalPayment
+            ? 0
+            : defaultConstants.shippingFee;
         setCartData({
           cartItemsList: cart_items,
-          totalPayment: totalPayment,
+          totalPayment: totalPayment + deliveryFee,
           totalProductPrice: totalPayment,
-          deliveryFee: totalPayment > 2000000 ? 0 : 100000,
+          deliveryFee: deliveryFee,
         });
       })();
     } catch (error) {
@@ -116,10 +121,10 @@ function CheckOutPage() {
           phoneNumber: phoneNumber,
           emailAddress: email,
           paymentMethods: 'COD',
-          shippingFee: cartData.totalPayment > 2000000 ? 0 : 100000,
+          shippingFee: cartData.deliveryFee,
           paymentStatus: 0,
           percentDiscount: 0,
-          orderStatus: 2,
+          orderStatus: null,
         });
         navigate('/payment/cod');
       } catch (error) {
@@ -239,7 +244,7 @@ function CheckOutPage() {
               <span>
                 {cartData.deliveryFee !== 0
                   ? formatPrice(cartData.deliveryFee, 'VNĐ')
-                  : 'Free'}
+                  : 'Miễn phí'}
               </span>
             </p>
             <hr></hr>
