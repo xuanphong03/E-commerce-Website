@@ -267,37 +267,38 @@
 
 // export default ReviewProductForm;
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { useForm } from 'react-hook-form';
-import PropTypes from 'prop-types';
-import InputField from '~/components/form-controls/InputField/InputField';
 import { Button, LinearProgress } from '@mui/material';
-import RatingField from './RatingField';
-import StorageKeys from '~/constants/storage-key';
+import PropTypes from 'prop-types';
+import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
+import * as yup from 'yup';
 import reviewApi from '~/apis/reviewApi';
+import InputField from '~/components/form-controls/InputField/InputField';
+import RatingField from './RatingField';
+import { toast } from 'react-toastify';
 
 ReviewProductForm.propTypes = {
   onSubmit: PropTypes.func,
   onCancel: PropTypes.func,
-  product: PropTypes.object.isRequired, // Ensure product is passed as a prop
+  product: PropTypes.object.isRequired,
 };
 
-function ReviewProductForm({ onCancel, onSubmit, product }) {
+function ReviewProductForm({ onSubmit, onCancel, product }) {
   const schema = yup.object().shape({
     identification_pro: yup.string(),
-    // name: yup.string().required('Vui lòng nhập tên sản phẩm'),
     color: yup.string().required('Vui lòng nhập màu sắc sản phẩm'),
     size: yup.string().required('Vui lòng nhập kích thước sản phẩm'),
     rating: yup
       .number()
       .required('Vui lòng đánh giá sản phẩm')
       .min(1, 'Vui lòng đánh giá sản phẩm'),
-    content: yup.string().required('Vui lòng nhập nội dung đánh giá'),
+    content: yup
+      .string()
+      .min(5, 'Nội dung đánh giá phải có ít nhất 5 ký tự')
+      .max(256, 'Nội dung đánh giá không được vượt quá 256 ký tự')
+      .required('Vui lòng nhập nội dung đánh giá'),
   });
   const user = useSelector((state) => state.user.current);
-
-  const token = localStorage.getItem(StorageKeys.TOKEN) || ''; // Get token for authorization
 
   const {
     handleSubmit,
@@ -306,7 +307,7 @@ function ReviewProductForm({ onCancel, onSubmit, product }) {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      identification_pro: product.identification_pro || '', // Default value from product prop
+      identification_pro: product.identification_pro || '',
       color: product.color || '',
       size: product.size || '',
       rating: 0,
@@ -314,46 +315,9 @@ function ReviewProductForm({ onCancel, onSubmit, product }) {
     },
   });
 
-  // Function to handle updating a comment
-  // const updateComment = async (commentId, commentData) => {
-  //   try {
-  //     const response = await fetch(
-  //       `http://localhost:8080/api/v1/product/update-comments/${commentId}`,
-  //       {
-  //         method: 'PUT',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //         body: JSON.stringify(commentData),
-  //       },
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error('Failed to update the comment');
-  //     }
-
-  //     const data = await response.json();
-  //     console.log('Comment updated successfully:', data);
-  //     return data;
-  //   } catch (error) {
-  //     console.error('Error updating comment:', error);
-  //     throw error;
-  //   }
-  // };
-
   const formSubmit = async (data) => {
-    // console.log('>>> DATA: ', data);
-    try {
-      // Call updateComment with the product ID and form data
-      const updatedComment = await reviewApi.createReview(product.id, {
-        ...data,
-        username: user.name,
-      });
-      console.log(updatedComment);
-      window.location.reload();
-    } catch (error) {
-      throw new Error('Failed to create comment');
+    if (onSubmit) {
+      onSubmit(data);
     }
   };
 

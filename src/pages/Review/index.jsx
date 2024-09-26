@@ -1,10 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { NavLink, Route, Routes } from 'react-router-dom';
+import { NavLink, Outlet, Route, Routes } from 'react-router-dom';
 import ReviewsList from './pages/ReviewsList';
 import ReviewsProduct from './pages/ReviewsProduct';
-
-ReviewPage.propTypes = {};
 
 function ReviewPage() {
   return (
@@ -14,7 +10,8 @@ function ReviewPage() {
           className={({ isActive }) =>
             `${isActive ? 'border-red-500 text-red-500' : ''} border-b-2 border-solid border-transparent pb-5 text-lg transition-all`
           }
-          to="/my-reviews/reviews-list"
+          to="/my-reviews"
+          end
         >
           Danh sách đánh giá
         </NavLink>
@@ -30,9 +27,10 @@ function ReviewPage() {
       <hr></hr>
       <div className="py-5">
         <Routes>
-          <Route path="/reviews-list" element={<ReviewsList />} />
+          <Route index element={<ReviewsList />} />
           <Route path="/reviews-product" element={<ReviewsProduct />} />
         </Routes>
+        <Outlet />
       </div>
     </main>
   );

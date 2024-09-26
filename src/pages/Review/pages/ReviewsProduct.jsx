@@ -23,7 +23,7 @@ function ReviewsProduct() {
 
   return (
     <div>
-      <div className="flex pb-5">
+      <div className="flex items-center justify-between border border-solid border-gray-300 px-2 py-5">
         <h2 className="max-w-[10%] basis-[10%] font-medium">Ảnh</h2>
         <h2 className="max-w-[30%] basis-1/5 text-center font-medium">
           Tên sản phẩm

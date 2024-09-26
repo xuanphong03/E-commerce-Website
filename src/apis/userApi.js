@@ -31,9 +31,15 @@ const userApi = {
     const url = '/user/detail-profile';
     return axiosClient.get(url);
   },
+
   updateInfo(data) {
     const url = '/user/update-profile';
     return axiosClient.patch(url, data);
+  },
+
+  verifyEmail(data) {
+    const url = '/auth/email-validate';
+    return axiosClient.post(url, data);
   },
 };
 

@@ -20,7 +20,7 @@ function WishListSection() {
           setFavoriteProductsList(response);
           setTimeout(() => {
             setIsLoading(false);
-          }, 500);
+          }, 300);
         }
       } catch (error) {
         throw new Error('Error in Get All Favorite Product');

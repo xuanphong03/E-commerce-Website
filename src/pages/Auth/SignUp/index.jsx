@@ -9,6 +9,7 @@ import { Fragment, useState } from 'react';
 import SignUpByEmail from './SignUpByEmail';
 import { toast } from 'react-toastify';
 import Spinner from '~/components/Animations/Spinner';
+import userApi from '~/apis/userApi';
 
 export default function SignUpPage() {
   const dispatch = useDispatch();
@@ -18,8 +19,21 @@ export default function SignUpPage() {
 
   const verifyEmail = async (data) => {
     try {
-      setUserInfo((prev) => ({ ...prev, ...data }));
-      setCurrentStep(currentStep + 1);
+      const response = await userApi.verifyEmail(data);
+      if (response.status === 400) {
+        toast.error('Email đã được dùng để đăng ký');
+      } else {
+        setUserInfo((prev) => ({ ...prev, ...data }));
+        setCurrentStep(currentStep + 1);
+      }
+    } catch (error) {
+      throw new Error('Email đã được dùng để đăng ký');
+    }
+  };
+
+  const handleResendOTP = async () => {
+    try {
+      const response = await userApi.verifyEmail(userInfo);
     } catch (error) {
       throw new Error('Failed verify email when register');
     }
@@ -32,17 +46,12 @@ export default function SignUpPage() {
       if (registerData.name) {
         registerData.name = registerData.name.trim();
       }
-      console.log(registerData);
-
-      // const action = register(registerData);
-      // const resultAction = await dispatch(action);
-      // const user = unwrapResult(resultAction);
-      // console.log(user);
-
+      const action = register(registerData);
+      const resultAction = await dispatch(action);
+      const user = unwrapResult(resultAction);
       // do something here when register successfully
-      // toast.success('Đăng ký tài khoản thành công');
-      // Chuyển hướng về trang Home
-      // navigate('/');
+      toast.success('Đăng ký tài khoản thành công');
+      navigate('/');
     } catch (error) {
       toast.error('Đã có lỗi xảy ra. Vui lòng thử lại');
       throw new Error('Failed register email when register');
@@ -62,6 +71,7 @@ export default function SignUpPage() {
         <SignUpForm
           emailUser={userInfo.email ?? null}
           onSubmit={handleRegisterAccount}
+          onResendOTP={handleResendOTP}
         />
       ),
     },
@@ -74,7 +84,6 @@ export default function SignUpPage() {
       </div>
       <section className="col-span-5 flex items-center">
         {STEPS.find(({ step }) => step === currentStep).page}
-        {/* <SignUpForm onSubmit={handleSubmitSignUpForm} /> */}
       </section>
     </main>
   );

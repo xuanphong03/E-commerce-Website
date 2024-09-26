@@ -11,7 +11,7 @@ function SearchBox() {
   const [searchResult, setSearchResult] = useState([]);
   const [showRecommendedSearch, setShowRecommendedSearch] = useState(false);
   const [loading, setLoading] = useState(true);
-  const debounced = useDebounce(searchTerm, 1000);
+  const debounceSearchTerm = useDebounce(searchTerm, 300);
 
   const recommendSearchBoxRef = useRef(null);
   useEffect(() => {
@@ -27,14 +27,15 @@ function SearchBox() {
   }, []);
   useEffect(() => {
     (async () => {
-      if (!searchTerm.trim()) return;
+      const searchKey = debounceSearchTerm.trim();
+      if (!searchKey) return;
       try {
         setLoading(true);
         const params = {
           _limit: 5,
           _page: 1,
           _sort: 'ASC',
-          productName: debounced,
+          productName: searchKey,
         };
         const { data } = await productApi.getAll(params);
         setSearchResult(data);
@@ -47,7 +48,7 @@ function SearchBox() {
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debounced]);
+  }, [debounceSearchTerm]);
 
   const handleSearch = () => {
     if (!searchTerm) return;

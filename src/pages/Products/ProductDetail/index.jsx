@@ -227,7 +227,7 @@ function ProductDetail() {
         <section className="flex gap-10">
           <div className="flex max-h-[500px] basis-3/5 gap-2">
             <div className="flex basis-1/4 flex-col items-center justify-between gap-4">
-              {productDetail?.images &&
+              {productDetail?.images?.length <= 0 &&
                 [...Array(4)].map((_, index) => {
                   return (
                     <div
@@ -242,20 +242,21 @@ function ProductDetail() {
                     </div>
                   );
                 })}
-              {productDetail.images?.map((image, index) => {
-                return (
-                  <div
-                    key={index}
-                    className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4"
-                  >
-                    <img
-                      alt="product image"
-                      className="max-h-full max-w-full object-cover"
-                      src={image || placeholder80x80}
-                    />
-                  </div>
-                );
-              })}
+              {productDetail?.images?.length > 0 &&
+                productDetail.images?.map((image, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4"
+                    >
+                      <img
+                        alt="product image"
+                        className="max-h-full max-w-full object-cover"
+                        src={image || placeholder80x80}
+                      />
+                    </div>
+                  );
+                })}
             </div>
             <div className="basis-3/4">
               <div className="flex h-full w-full items-center justify-center rounded-md bg-[#f5f5f5] p-10">
@@ -317,10 +318,6 @@ function ProductDetail() {
               <p className="mb-2 w-4/5 break-words text-sm">
                 Mô tả: {productDetail.description}
               </p>
-              <p className="mb-2 text-sm">
-                Chất liệu: {productDetail.material}
-              </p>
-              <p className="mb-6 text-sm">Phong cách: {productDetail.style}</p>
               <div className="mb-4 flex items-center gap-4 text-sm">
                 <h4 className="min-w-20 tracking-[0.6px]">Màu sắc:</h4>
                 <div className="flex items-center gap-4">

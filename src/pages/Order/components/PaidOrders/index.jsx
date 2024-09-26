@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import orderApi from '~/apis/orderApi';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { formatPrice } from '~/utils/formatPrice';
-import OrderedProduct from '~/components/OrderedProduct';
+import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
+import orderApi from '~/apis/orderApi';
+import OrderedProduct from '~/components/OrderedProduct';
+import PopUp from '~/components/PopUp';
+import { formatPrice } from '~/utils/formatPrice';
 
-PaidOrders.propTypes = {};
-
-function PaidOrders(props) {
+function PaidOrders() {
   const [paidOrderList, setPaidOrderList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const user = useSelector((state) => state.user.current);
+  const [showPopUp, setShowPopUp] = useState(false);
+  const [cancelledOrderId, setCancelledOrderId] = useState(null);
 
   const getPaidOrderList = async () => {
     try {
@@ -21,11 +22,13 @@ function PaidOrders(props) {
         userId,
         paymentStatus,
       );
-      setPaidOrderList(response);
+      setPaidOrderList(
+        response.filter(({ orderStatus }) => orderStatus !== 'Đã Hủy'),
+      );
     } catch (error) {
       throw new Error('Failed to get unpaid order list');
     } finally {
-      setTimeout(() => setIsLoading(false), 1000);
+      setTimeout(() => setIsLoading(false), 500);
     }
   };
 
@@ -33,6 +36,33 @@ function PaidOrders(props) {
     getPaidOrderList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const togglePopUp = () => {
+    if (showPopUp) {
+      setCancelledOrderId(null);
+    }
+    setShowPopUp(!showPopUp);
+  };
+  const handleCancelOrder = async () => {
+    if (!cancelledOrderId) {
+      return;
+    }
+    try {
+      const response = await orderApi.cancelOrder(cancelledOrderId);
+      if (response.status === 200) {
+        toast.success('Hủy đơn hàng thành công');
+        getPaidOrderList();
+      } else if (response.status === 400) {
+        throw new Error('Hủy đơn hàng thất bại');
+      }
+    } catch (error) {
+      toast.error(error.message);
+      throw new Error('Failed to cancel order');
+    } finally {
+      setShowPopUp(false);
+      setCancelledOrderId(null);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -42,13 +72,16 @@ function PaidOrders(props) {
     );
   }
 
-  const handleCancelOrder = (id, skuOrder, orderStatus) => {
-    if (orderStatus !== null) return;
-    console.log('Xóa');
-  };
-
   return (
     <section className="flex flex-col gap-10">
+      {showPopUp && (
+        <PopUp
+          message="Bạn chắc chắn muốn hủy đơn hàng này chứ?"
+          type="warning"
+          onCancel={togglePopUp}
+          onConfirm={handleCancelOrder}
+        />
+      )}
       {paidOrderList.length > 0 ? (
         paidOrderList.map(
           ({
@@ -127,7 +160,12 @@ function PaidOrders(props) {
                   </div>
                 </div>
                 <div
-                  onClick={() => handleCancelOrder(id, skuOrder, orderStatus)}
+                  onClick={() => {
+                    if (!orderStatus) {
+                      setCancelledOrderId(id);
+                      togglePopUp();
+                    }
+                  }}
                   className="mt-5 flex justify-end"
                 >
                   <button
