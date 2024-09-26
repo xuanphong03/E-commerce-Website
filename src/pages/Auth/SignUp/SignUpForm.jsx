@@ -1,20 +1,18 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import * as yup from 'yup';
 
-import InputField from '~/components/form-controls/InputField/InputField';
-import GoogleIcon from '~/assets/images/icon-google.png';
 import { FaSpinner } from 'react-icons/fa6';
+import InputField from '~/components/form-controls/InputField/InputField';
 import PasswordField from '~/components/form-controls/PasswordField/PasswordField';
-import { regex } from '~/constants/regex';
 
 SignUpForm.propTypes = {
   onSubmit: PropTypes.func,
 };
 
-export default function SignUpForm({ onSubmit }) {
+export default function SignUpForm({ onSubmit, onResendOTP }) {
   const schema = yup.object().shape({
     otpCode: yup
       .string()
@@ -22,7 +20,8 @@ export default function SignUpForm({ onSubmit }) {
     password: yup
       .string()
       .required('Vui lòng nhập mật khẩu.')
-      .min(6, 'Mật khẩu phải chứa ít nhất 6 ký tự.'),
+      .min(6, 'Mật khẩu phải chứa ít nhất 6 ký tự.')
+      .max(256, 'Mật khẩu không được chứa quá 256 ký tự'),
     retypePassword: yup
       .string()
       .required('Vui lòng nhập lại mật khẩu.')
@@ -44,7 +43,9 @@ export default function SignUpForm({ onSubmit }) {
   };
 
   const handleResendOTP = async () => {
-    // Gửi lại mã OTP
+    if (onResendOTP) {
+      onResendOTP();
+    }
   };
 
   return (

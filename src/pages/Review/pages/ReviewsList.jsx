@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import reviewApi from '~/apis/reviewApi';
 import PurchasedProduct from '../components/PurchasedProduct';
 import ReviewProductForm from '../components/ReviewProductForm';
+import { toast } from 'react-toastify';
+import { v4 as uuidv4 } from 'uuid';
 
 function ReviewsList() {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -17,6 +19,8 @@ function ReviewsList() {
   const fetchListReview = async () => {
     try {
       const response = await reviewApi.getAllReviewUnfinished(name);
+      console.log(response);
+
       setReviewList(response);
     } catch (error) {
       throw new Error('Failed to fetch unfinished all reviews');
@@ -33,8 +37,16 @@ function ReviewsList() {
 
   const handleSubmit = async (reviewData) => {
     try {
-      console.log('Submitted review data:', reviewData);
+      //   // Call updateComment with the product ID and form data
+      await reviewApi.createReview(selectedProduct.id, {
+        ...reviewData,
+        username: selectedProduct.name,
+      });
+      toast.success('Đánh giá sản phẩm thành công');
       setSelectedProduct(null);
+      setReviewList(
+        reviewList.filter((product) => product.id !== selectedProduct.id),
+      );
     } catch (error) {
       throw new Error('Failed to submit review');
     }
@@ -43,7 +55,7 @@ function ReviewsList() {
   return (
     <>
       <div>
-        <div className="flex justify-between pb-5">
+        <div className="flex items-center justify-between border border-solid border-gray-300 px-2 py-5">
           <h2 className="max-w-[10%] basis-1/5 font-medium">Ảnh</h2>
           <h2 className="max-w-[30%] basis-1/5 font-medium">Tên sản phẩm</h2>
           <h2 className="max-w-[10%] basis-[10%] text-center font-medium">
@@ -59,13 +71,12 @@ function ReviewsList() {
             Đánh giá
           </h2>
         </div>
-        <hr />
 
         <div>
           {reviewList.length > 0 ? (
-            reviewList.map((product, index) => (
+            reviewList.map((product) => (
               <PurchasedProduct
-                key={index}
+                key={uuidv4()}
                 product={product}
                 onReview={() => reviewProduct(product)}
               />

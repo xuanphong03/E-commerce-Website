@@ -8,6 +8,7 @@ import { formatPrice } from '~/utils/formatPrice';
 import { updateCart } from './cartSlice';
 import CartItem from './components/CartItem';
 import { defaultConstants } from '~/constants/default';
+import discountApi from '~/apis/discountApi';
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -29,10 +30,7 @@ export default function CartPage() {
       (async () => {
         const response = await cartApi.getAll({ user_id: id });
         const { cart_items, totalPayment } = response;
-        const shippingFee =
-          totalPayment > defaultConstants.minTotalPayment
-            ? 0
-            : defaultConstants.shippingFee;
+        const shippingFee = getShippingFee(totalPayment);
         setCartItemsList(cart_items);
         setPaymentInfo({
           total: totalPayment,
@@ -51,10 +49,19 @@ export default function CartPage() {
     setDiscountCouponCode(value);
   };
 
-  const handleGetDiscountCoupon = () => {
+  const handleGetDiscountCoupon = async () => {
+    if (paymentInfo.total <= 0) {
+      return;
+    }
     if (!discountCouponCode) {
       toast.warning('Vui lòng nhập mã giảm giá!');
       return;
+    }
+    try {
+      const response = await discountApi.confirm(discountCouponCode);
+      console.log('Confirm discount code: ', response);
+    } catch (error) {
+      throw new Error('Failed to check discount');
     }
   };
 
@@ -69,27 +76,26 @@ export default function CartPage() {
   };
 
   const handleUpdateCart = async () => {
+    if (cartItemsList.length <= 0) return;
     try {
       const response = await cartApi.update({
         user_id: id,
         cart_items: cartItemsList,
       });
       setCartItemsList(response.cart_items);
+
       const newTotalQuantity = cartItemsList.reduce((total, { quantity }) => {
         return total + quantity;
       }, 0);
 
-      // Tính toán lại tổng tiền
       const newTotalPayment = response.cart_items.reduce(
         (total, { totalPrice }) => {
-          return total + totalPrice; // Giả sử `price` là giá sản phẩm
+          return total + totalPrice;
         },
         0,
       );
-      const newShippingFee =
-        newTotalPayment > defaultConstants.minTotalPayment
-          ? 0
-          : defaultConstants.shippingFee;
+
+      const newShippingFee = getShippingFee(newTotalPayment);
 
       setPaymentInfo((prev) => ({
         ...prev,
@@ -107,6 +113,13 @@ export default function CartPage() {
         autoClose: 2000,
       });
     }
+  };
+
+  const getShippingFee = (totalPayment) => {
+    if (!totalPayment) return 0;
+    return totalPayment > defaultConstants.minTotalPayment
+      ? 0
+      : defaultConstants.shippingFee;
   };
 
   const handleBackStore = () => {
@@ -164,7 +177,7 @@ export default function CartPage() {
           </button>
           <button
             onClick={handleUpdateCart}
-            className="border-[#b3b3b3 flex items-center justify-center rounded border border-solid px-12 py-4 font-medium text-black transition-colors hover:bg-[#DB4444] hover:text-[#fafafa]"
+            className={`flex items-center justify-center rounded border border-solid px-12 py-4 font-medium text-black transition-colors ${cartItemsList.length <= 0 ? 'cursor-not-allowed border-[#EEEEEE] bg-[#EEEEEE] text-gray-300' : 'border-gray-300 hover:bg-[#DB4444] hover:text-[#fafafa]'}`}
           >
             Cập nhật giỏ hàng
           </button>
@@ -172,7 +185,7 @@ export default function CartPage() {
       </div>
       <div className="flex justify-between">
         <div className="flex gap-4">
-          <div className="h-14 w-[300px] rounded border border-solid border-black px-6 py-4">
+          <div className="h-14 w-[300px] rounded border border-solid border-gray-300 px-6 py-4">
             <input
               value={discountCouponCode}
               onChange={handleChangeDiscountCouponCode}
@@ -182,7 +195,7 @@ export default function CartPage() {
           </div>
           <button
             onClick={handleGetDiscountCoupon}
-            className="flex h-14 items-center justify-center rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-12 py-4 font-medium text-[#fafafa] transition-colors hover:bg-[#fafafa] hover:text-[#DB4444]"
+            className={`flex h-14 items-center justify-center rounded border-2 border-solid bg-[#DB4444] px-12 py-4 font-medium ${paymentInfo.total <= 0 ? 'cursor-not-allowed border-[#EEEEEE] bg-[#EEEEEE] text-gray-300' : 'cursor-pointer border-[#DB4444] text-[#fafafa] transition-colors hover:bg-[#fafafa] hover:text-[#DB4444]'}`}
           >
             Áp dụng mã giảm giá
           </button>
@@ -196,10 +209,10 @@ export default function CartPage() {
               <h3>Tổng tiền đơn hàng</h3>
               <span>{formatPrice(paymentInfo.total, 'VNĐ')}</span>
             </div>
-            {/* <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
+            <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
               <h3>Giảm giá</h3>
               <span>{formatPrice(paymentInfo.discountFee, 'VNĐ')}</span>
-            </div> */}
+            </div>
             <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
               <h3>Tiền vận chuyển</h3>
               <span>

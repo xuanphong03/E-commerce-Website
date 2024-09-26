@@ -1,1 +1,1 @@
-export const expirePromotionTime = 'September 30, 2024 00:00:00';
+export const expirePromotionTime = '10/31/2024 00:00:00';

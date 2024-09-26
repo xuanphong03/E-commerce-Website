@@ -22,6 +22,11 @@ const orderApi = {
     const url = `orders/user/classify`;
     return axiosClient.get(url, { params });
   },
+
+  cancelOrder(orderId) {
+    const url = `/orders/canceled-order/${orderId}`;
+    return axiosClient.put(url, {});
+  },
 };
 
 export default orderApi;

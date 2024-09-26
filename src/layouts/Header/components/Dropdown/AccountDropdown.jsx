@@ -22,7 +22,7 @@ export default function AccountDropdown() {
       name: 'Đơn hàng',
     },
     {
-      to: '/my-reviews/reviews-list',
+      to: '/my-reviews',
       pathIcon: StarIcon,
       name: 'Đánh giá',
     },

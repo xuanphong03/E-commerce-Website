@@ -33,6 +33,7 @@ function SignUpByEmail({ onSubmit }) {
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(schema),
@@ -41,6 +42,7 @@ function SignUpByEmail({ onSubmit }) {
   const formSubmit = async (data) => {
     if (onSubmit) {
       await onSubmit(data);
+      reset();
     }
   };
 

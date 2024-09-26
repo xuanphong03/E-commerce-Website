@@ -100,14 +100,6 @@ function ProductsList() {
             currentSort={queryParams._sort ?? 'ASC'}
           />
           <FilterByPrice onChange={handleFiltersChange} />
-          <FilterByStyle
-            currentStyle={queryParams.style ?? null}
-            onChange={handleFiltersChange}
-          />
-          <FilterByMaterial
-            currentMaterial={queryParams.material ?? null}
-            onChange={handleFiltersChange}
-          />
         </div>
 
         <div className="mt-5">

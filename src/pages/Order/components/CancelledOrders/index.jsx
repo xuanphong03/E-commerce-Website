@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { formatPrice } from '~/utils/formatPrice';
-import OrderedProduct from '~/components/OrderedProduct';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import orderApi from '~/apis/orderApi';
-import { useSelector } from 'react-redux';
+import OrderedProduct from '~/components/OrderedProduct';
+import { formatPrice } from '~/utils/formatPrice';
 
-CancelledOrders.propTypes = {};
-
-function CancelledOrders(props) {
+function CancelledOrders() {
   const [orderList, setOrderList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useSelector((state) => state.user.current);
@@ -20,7 +17,7 @@ function CancelledOrders(props) {
     } catch (error) {
       throw new Error('Failed to get order list');
     } finally {
-      setTimeout(() => setIsLoading(false), 1000);
+      setTimeout(() => setIsLoading(false), 500);
     }
   };
 

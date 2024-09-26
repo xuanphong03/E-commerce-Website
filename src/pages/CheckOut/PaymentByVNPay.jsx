@@ -27,6 +27,10 @@ function PaymentByVNPay() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+    });
     (async () => {
       if (isOrderCreated) return;
       try {

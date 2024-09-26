@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { formatPrice } from '~/utils/formatPrice';
-import { v4 as uuidv4 } from 'uuid';
-import OrderedProduct from '~/components/OrderedProduct';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
 import orderApi from '~/apis/orderApi';
+import OrderedProduct from '~/components/OrderedProduct';
+import { formatPrice } from '~/utils/formatPrice';
 
-DeliveringOrders.propTypes = {};
-
-function DeliveringOrders(props) {
+function DeliveringOrders() {
   const [orderList, setOrderList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useSelector((state) => state.user.current);
@@ -23,7 +20,7 @@ function DeliveringOrders(props) {
     } catch (error) {
       throw new Error('Failed to get order list');
     } finally {
-      setTimeout(() => setIsLoading(false), 1000);
+      setTimeout(() => setIsLoading(false), 500);
     }
   };
 
@@ -115,6 +112,13 @@ function DeliveringOrders(props) {
                         : `Thanh toán online ${paymentMethods}`}
                     </p>
                   </div>
+                </div>
+                <div className="mt-5 flex justify-end">
+                  <button
+                    className={`rounded px-5 py-2 text-sm text-white ${orderStatus ? 'cursor-not-allowed bg-gray-400' : 'cursor-pointer bg-red-500 hover:opacity-80'}`}
+                  >
+                    Hủy đơn hàng
+                  </button>
                 </div>
               </div>
             );

@@ -1,36 +1,64 @@
 import { useEffect, useState } from 'react';
+import { IoWarning } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 import orderApi from '~/apis/orderApi';
 import OrderedProduct from '~/components/OrderedProduct';
+import PopUp from '~/components/PopUp';
 import { formatPrice } from '~/utils/formatPrice';
 
 function AllOrders() {
   const [ordersList, setOrdersList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { id } = useSelector((state) => state.user.current);
+  const [showPopUp, setShowPopUp] = useState(false);
+  const [cancelledOrderId, setCancelledOrderId] = useState(null);
 
   const getAllOrders = async () => {
     try {
       const response = await orderApi.getAll(id);
-      setOrdersList(response);
+      setOrdersList(
+        response.filter(({ orderStatus }) => orderStatus !== 'Đã Hủy'),
+      );
     } catch (error) {
       throw new Error('Failed to get all orders');
     } finally {
-      setTimeout(() => setIsLoading(false), 1000);
+      setTimeout(() => setIsLoading(false), 500);
     }
   };
 
-  const handleCancelOrder = (orderId, orderSku, orderStatus) => {
-    if (!orderStatus) {
+  const handleCancelOrder = async () => {
+    if (!cancelledOrderId) {
       return;
     }
-    console.log('Xóa');
+    try {
+      const response = await orderApi.cancelOrder(cancelledOrderId);
+      if (response.status === 200) {
+        toast.success('Hủy đơn hàng thành công');
+        getAllOrders();
+      } else if (response.status === 400) {
+        throw new Error('Hủy đơn hàng thất bại');
+      }
+    } catch (error) {
+      toast.error(error.message);
+      throw new Error('Failed to cancel order');
+    } finally {
+      setShowPopUp(false);
+      setCancelledOrderId(null);
+    }
   };
 
   useEffect(() => {
     getAllOrders();
   }, []);
+
+  const togglePopUp = () => {
+    if (showPopUp) {
+      setCancelledOrderId(null);
+    }
+    setShowPopUp(!showPopUp);
+  };
 
   if (isLoading) {
     return (
@@ -42,6 +70,14 @@ function AllOrders() {
 
   return (
     <section className="flex flex-col gap-10">
+      {showPopUp && (
+        <PopUp
+          message="Bạn chắc chắn muốn hủy đơn hàng này chứ?"
+          type="warning"
+          onCancel={togglePopUp}
+          onConfirm={handleCancelOrder}
+        />
+      )}
       {ordersList.length > 0 ? (
         ordersList.map(
           ({
@@ -120,7 +156,12 @@ function AllOrders() {
                   </div>
                 </div>
                 <div
-                  onClick={() => handleCancelOrder(id, skuOrder, orderStatus)}
+                  onClick={() => {
+                    if (!orderStatus) {
+                      setCancelledOrderId(id);
+                      togglePopUp();
+                    }
+                  }}
                   className="mt-5 flex justify-end"
                 >
                   <button
