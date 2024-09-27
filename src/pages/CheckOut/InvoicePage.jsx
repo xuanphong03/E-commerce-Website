@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
@@ -13,8 +13,11 @@ import { formatPrice } from '~/utils/formatPrice';
 import { setPaymentInfo } from '../Auth/userSlice';
 import InputPayment from './customs/InputPayment';
 import { defaultConstants } from '~/constants/default';
+import discountApi from '~/apis/discountApi';
+import { toast } from 'react-toastify';
+import { CheckoutContext } from '.';
 
-function CheckOutPage() {
+function InvoicePage() {
   const schema = yup.object().shape({
     name: yup
       .string()
@@ -46,11 +49,16 @@ function CheckOutPage() {
     totalProductPrice: 0,
     totalPayment: 0,
     deliveryFee: 0,
+    discountFee: 0,
   });
+
+  const { discountCode, setDiscountCode } = useContext(CheckoutContext);
+
   const handleChangeMethodPayment = (e) => {
     let newMethodPayment = e.target.value;
     setMethodPayment(newMethodPayment);
   };
+
   const {
     handleSubmit,
     register,
@@ -74,7 +82,9 @@ function CheckOutPage() {
           totalPayment > defaultConstants.minTotalPayment
             ? 0
             : defaultConstants.shippingFee;
+
         setCartData({
+          discountFee: 0,
           cartItemsList: cart_items,
           totalPayment: totalPayment + deliveryFee,
           totalProductPrice: totalPayment,
@@ -114,7 +124,7 @@ function CheckOutPage() {
       }
     } else {
       try {
-        await orderApi.create({
+        const data = {
           user_id: id,
           orderDetails: cartData.cartItemsList,
           address: address,
@@ -125,7 +135,13 @@ function CheckOutPage() {
           paymentStatus: 0,
           percentDiscount: 0,
           orderStatus: null,
-        });
+        };
+        if (cartData.discountFee) {
+          data.skuDiscount = discountCode;
+          data.percentDiscount = 10;
+        }
+        await orderApi.create(data);
+
         navigate('/payment/cod');
       } catch (error) {
         throw new Error('Có lỗi ở thanh toán COD');
@@ -133,6 +149,35 @@ function CheckOutPage() {
     }
   };
 
+  const handleChangeDiscountCouponCode = (e) => {
+    setDiscountCode(e.target.value);
+  };
+
+  const handleGetDiscountCoupon = async () => {
+    if (!discountCode) {
+      return toast.warning('Vui lòng nhập mã giảm giá!');
+    }
+    try {
+      const response = await discountApi.confirm(discountCode);
+      if (response.status === 400) {
+        throw new Error('Mã giảm giá không hợp lệ');
+      }
+      const { percentDiscount } = response;
+      const discountFee =
+        (percentDiscount * cartData.totalProductPrice) / 100 || 0;
+      setCartData({
+        ...cartData,
+        totalPayment: cartData.totalPayment - discountFee,
+        discountFee,
+      });
+      toast.success('Áp dụng mã giảm giá thành công');
+    } catch (error) {
+      toast.error(error.message);
+      throw new Error('Discount code is invalid');
+    } finally {
+      setDiscountCode('');
+    }
+  };
   return (
     <main className="mx-auto max-w-[1300px] pb-20 pt-4">
       <h1 className="my-12 text-[36px] font-medium leading-[30px] tracking-[1.44px]">
@@ -240,6 +285,11 @@ function CheckOutPage() {
             </p>
             <hr></hr>
             <p className="flex justify-between">
+              Giảm giá
+              <span>{formatPrice(cartData.discountFee, 'VNĐ')}</span>
+            </p>
+            <hr></hr>
+            <p className="flex justify-between">
               Tiền vận chuyển{' '}
               <span>
                 {cartData.deliveryFee !== 0
@@ -285,7 +335,7 @@ function CheckOutPage() {
           <div>
             <button
               type="submit"
-              className={`${isSubmitting ? 'cursor-not-allowed opacity-70' : 'hover:bg-[#FAFAFA] hover:text-[#DB4444]'} flex h-10 w-full items-center justify-center gap-4 rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-8 py-2 font-medium text-[#FAFAFA] transition-all`}
+              className={`${isSubmitting ? 'cursor-not-allowed opacity-70' : 'hover:bg-[#FAFAFA] hover:text-[#DB4444]'} flex h-10 w-full items-center justify-center gap-4 rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] px-8 py-5 font-medium text-[#FAFAFA] transition-all`}
             >
               {isSubmitting ? (
                 <>
@@ -301,8 +351,24 @@ function CheckOutPage() {
           </div>
         </div>
       </form>
+      <div className="mt-5 flex gap-4">
+        <div className="h-10 w-[300px] rounded border border-solid border-gray-300 px-6 py-2">
+          <input
+            value={discountCode}
+            onChange={handleChangeDiscountCouponCode}
+            placeholder="Mã giảm giá"
+            className="w-full text-base text-black outline-none"
+          />
+        </div>
+        <button
+          onClick={handleGetDiscountCoupon}
+          className={`flex h-10 items-center justify-center rounded border-2 border-solid bg-[#DB4444] px-12 py-3 font-medium ${paymentInfo.total <= 0 ? 'cursor-not-allowed border-[#EEEEEE] bg-[#EEEEEE] text-gray-300' : 'cursor-pointer border-[#DB4444] text-[#fafafa] transition-colors hover:bg-[#fafafa] hover:text-[#DB4444]'}`}
+        >
+          Áp dụng
+        </button>
+      </div>
     </main>
   );
 }
 
-export default CheckOutPage;
+export default InvoicePage;

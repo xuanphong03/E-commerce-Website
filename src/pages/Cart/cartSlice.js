@@ -36,6 +36,7 @@ const cartSlice = createSlice({
     totalQuantity: 0,
     items: [],
     status: 'idle',
+    discountCode: '',
   },
   reducers: {
     addToCart: (state, action) => {

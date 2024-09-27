@@ -1,6 +1,10 @@
-Mission.propTypes = {};
+import AOS from 'aos';
+import { useEffect } from 'react';
 
 function Mission() {
+  useEffect(() => {
+    AOS.init();
+  }, []);
   return (
     <section>
       <div className="flex items-center gap-10">
@@ -8,7 +12,11 @@ function Mission() {
           src="https://theme.hstatic.net/1000306633/1001194548/14/slideshow_2.jpg?v=231"
           className="h-80 max-w-[50%] basis-1/2 rounded-md object-cover"
         />
-        <div className="max-w-[50%] basis-1/2 text-right">
+        <div
+          data-aos="fade-left"
+          data-aos-duration="500"
+          className="max-w-[50%] basis-1/2 text-right"
+        >
           <h2 className="mb-4 text-right text-2xl font-semibold">
             Sứ mệnh của chúng tôi
           </h2>

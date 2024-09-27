@@ -13,7 +13,7 @@ function PurchasedProduct({ onReview, product }) {
         <img
           alt="product image"
           src={product.image}
-          className="size-20 object-cover"
+          className="size-16 object-cover"
         />
       </div>
       <div className="max-w-[20%] basis-1/5">{product.identification_pro}</div>
