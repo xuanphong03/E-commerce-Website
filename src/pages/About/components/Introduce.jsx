@@ -1,7 +1,17 @@
+import Aos from 'aos';
+import { useEffect } from 'react';
+
 function Introduce() {
+  useEffect(() => {
+    Aos.init();
+  }, []);
   return (
     <section className="flex items-center gap-10">
-      <div className="max-w-[50%] basis-1/2">
+      <div
+        data-aos="fade-right"
+        data-aos-duration="500"
+        className="max-w-[50%] basis-1/2"
+      >
         <h2 className="mb-4 text-xl font-semibold uppercase">Giới thiệu</h2>
         <p className="text-left">
           Chào mừng bạn đến với <span className="font-bold">SOMEHOW</span>, nơi

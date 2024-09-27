@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import paymentApi from '~/apis/paymentApi';
 import cartApi from '~/apis/cartApi';
@@ -9,6 +9,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import orderApi from '~/apis/orderApi';
 import { updateCart } from '../Cart/cartSlice';
 import { defaultConstants } from '~/constants/default';
+import discountApi from '~/apis/discountApi';
+import { CheckoutContext } from '.';
 
 const RESULT = {
   success: 'SUCCESS',
@@ -25,6 +27,7 @@ function PaymentByVNPay() {
   );
   const [paymentResult, setPaymentResult] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { discountCode } = useContext(CheckoutContext);
 
   useEffect(() => {
     window.scrollTo({
@@ -35,10 +38,18 @@ function PaymentByVNPay() {
       if (isOrderCreated) return;
       try {
         setLoading(true);
+        let hasDiscount = false;
+        if (discountCode) {
+          const responseCheckDiscountCode =
+            await discountApi.confirm(discountCode);
+          if (responseCheckDiscountCode.status !== 400) {
+            hasDiscount = true;
+          }
+        }
+
         const queryParams = queryString.parse(location.search);
         // Gửi dữ liệu về API của bạn để xác nhận kết quả thanh toán
         const response = await paymentApi.verify(queryParams);
-
         if (response.message === 'Success') {
           const { cart_items, totalPayment } = await cartApi.getAll({
             user_id: id,
@@ -49,9 +60,8 @@ function PaymentByVNPay() {
                 totalPayment > defaultConstants.minTotalPayment
                   ? 0
                   : defaultConstants.shippingFee;
-              await orderApi.create({
+              const requestData = {
                 user_id: id,
-                // name: name,
                 orderDetails: cart_items,
                 address: address,
                 phoneNumber: phoneNumber,
@@ -61,7 +71,12 @@ function PaymentByVNPay() {
                 paymentStatus: 1,
                 percentDiscount: 0,
                 orderStatus: 2,
-              });
+              };
+              if (hasDiscount) {
+                requestData.skuDiscount = discountCode;
+                requestData.percentDiscount = 10;
+              }
+              await orderApi.create(requestData);
               await cartApi.delete(id, {
                 user_id: id,
                 cart_item: cart_items,

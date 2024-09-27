@@ -6,6 +6,8 @@ import productApi from '~/apis/productApi';
 import { useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
 import { expirePromotionTime } from '~/constants/time';
+import { v4 as uuidv4 } from 'uuid';
+import Aos from 'aos';
 
 export default function FlashSalesSection({ userId }) {
   const navigate = useNavigate();
@@ -31,6 +33,7 @@ export default function FlashSalesSection({ userId }) {
   const [loading, setLoading] = useState(null);
 
   useEffect(() => {
+    Aos.init();
     setLoading(true);
     (async () => {
       try {
@@ -137,16 +140,21 @@ export default function FlashSalesSection({ userId }) {
       </div>
       <div className="grid grid-cols-12 gap-16">
         {loading &&
-          [...Array(4)].map((_, index) => {
+          [...Array(4)].map(() => {
             return (
-              <div className="col-span-3" key={index}>
+              <div className="col-span-3" key={uuidv4()}>
                 <Skeleton />
               </div>
             );
           })}
         {!loading &&
-          productsList.map((product) => (
-            <div className="col-span-3" key={product.id}>
+          productsList.map((product, index) => (
+            <div
+              data-aos="fade-up"
+              data-aos-delay={`${100 * index}`}
+              className="col-span-3"
+              key={product.id}
+            >
               <ProductItem product={product} />
             </div>
           ))}

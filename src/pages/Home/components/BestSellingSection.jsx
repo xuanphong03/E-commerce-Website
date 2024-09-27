@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import Aos from 'aos';
 import queryString from 'query-string';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import productApi from '~/apis/productApi';
 import ProductItem from '~/components/ProductItem';
 import SectionTag from '~/components/SectionTag';
 import Skeleton from '~/components/Skeleton/Skeleton';
-import { expirePromotionTime } from '~/constants/time';
-BestSellingSection.propTypes = {};
 
 function BestSellingSection() {
   const queryParams = {
@@ -17,61 +17,9 @@ function BestSellingSection() {
   };
   const [bestSellingProductsList, setBestSellingProductsList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [timer, setTimer] = useState(() => {
-    const countdownDate = new Date(expirePromotionTime).getTime();
-    const now = new Date().getTime();
-    const distance = countdownDate - now;
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    const hours = Math.floor(
-      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-    );
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-    return {
-      days,
-      hours,
-      minutes,
-      seconds,
-    };
-  });
-
-  const interval = useRef();
-
-  const startTimer = () => {
-    const countdownDate = new Date(expirePromotionTime).getTime();
-
-    interval.current = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = countdownDate - now;
-
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-      );
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      if (distance < 0) {
-        clearInterval(interval.current);
-      } else {
-        setTimer({
-          days,
-          hours,
-          minutes,
-          seconds,
-        });
-      }
-    }, 1000);
-  };
 
   useEffect(() => {
-    startTimer();
-    return () => {
-      clearInterval(interval.current);
-    };
-  }, []);
-
-  useEffect(() => {
+    Aos.init();
     (async () => {
       try {
         setIsLoading(true);
@@ -96,7 +44,7 @@ function BestSellingSection() {
       </div>
       <div className="mb-[60px] flex justify-between">
         <h2 className="text-4xl font-semibold tracking-[1.44px]">
-          Best Selling
+          Sản phẩm bán chạy nhất
         </h2>
         <button className="rounded border-2 border-solid border-[#DB4444] bg-[#DB4444] font-medium text-[#FAFAFA] transition-colors hover:bg-[#FAFAFA] hover:text-[#DB4444]">
           <Link
@@ -119,7 +67,12 @@ function BestSellingSection() {
         {!isLoading &&
           bestSellingProductsList.map((product, index) => {
             return (
-              <div className="col-span-3" key={index}>
+              <div
+                data-aos="fade-up"
+                data-aos-delay={`${100 * index}`}
+                className="col-span-3"
+                key={uuidv4()}
+              >
                 <ProductItem product={product} />
               </div>
             );
@@ -143,32 +96,7 @@ function BestSellingSection() {
             Khám Phá Ngay Những Sản Phẩm Được Yêu Thích Và Bán Chạy Nhất Tại Cửa
             Hàng Chúng Tôi
           </h3>
-          <div className="mb-10 flex items-center gap-6">
-            <div className="flex h-14 w-14 flex-col items-center justify-center rounded-full bg-white">
-              <p className="font-semibold leading-tight text-black">
-                {timer.days < 10 ? '0' + timer.days : timer.days}
-              </p>
-              <p className="text-xs font-normal">Ngày</p>
-            </div>
-            <div className="flex h-14 w-14 flex-col items-center justify-center rounded-full bg-white">
-              <p className="font-semibold leading-tight text-black">
-                {timer.hours < 10 ? '0' + timer.hours : timer.hours}
-              </p>
-              <p className="text-xs font-normal">Giờ</p>
-            </div>
-            <div className="flex h-14 w-14 flex-col items-center justify-center rounded-full bg-white">
-              <p className="font-semibold leading-tight text-black">
-                {timer.minutes < 10 ? '0' + timer.minutes : timer.minutes}
-              </p>
-              <p className="text-xs font-normal">Phút</p>
-            </div>
-            <div className="flex h-14 w-14 flex-col items-center justify-center rounded-full bg-white">
-              <p className="font-semibold leading-tight text-black">
-                {timer.seconds < 10 ? '0' + timer.seconds : timer.seconds}
-              </p>
-              <p className="text-xs font-normal">Giây</p>
-            </div>
-          </div>
+
           <button className="flex h-14 items-center justify-center gap-[10px] rounded border-2 border-solid border-[#00FF66] bg-[#00FF66] px-12 py-4 font-medium capitalize text-[#FAFAFA] hover:bg-white hover:text-[#00FF66]">
             Mua ngay
           </button>

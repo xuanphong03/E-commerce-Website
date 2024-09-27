@@ -48,6 +48,7 @@ function ProductDetail() {
         _limit: 10,
         _page: 1,
       });
+
       setRelatedProductList(response.data.slice(0, 4));
     } catch (error) {
       throw new Error('Err');
@@ -67,6 +68,8 @@ function ProductDetail() {
           params._userId = id;
         }
         const response = await productApi.getDetail(params);
+        console.log(response);
+
         setProductDetail(response);
         await getAllReviewByProduct(response.name);
         await getAllRelatedProductList(response.subCategory);

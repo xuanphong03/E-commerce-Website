@@ -18,6 +18,7 @@ function PaymentByCOD() {
     (async () => {
       try {
         setLoading(true);
+
         const { cart_items } = await cartApi.getAll({
           user_id: id,
         });

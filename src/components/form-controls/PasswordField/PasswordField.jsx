@@ -47,7 +47,7 @@ function PasswordField({
         onClick={handleShowPassword}
         className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-lg"
       >
-        {!showPassword ? <FaEye /> : <FaEyeSlash />}
+        {showPassword ? <FaEye /> : <FaEyeSlash />}
       </span>
       {errorMessage && (
         <span className="absolute left-0 top-[calc(100%+4px)] px-1 text-sm text-red-500">

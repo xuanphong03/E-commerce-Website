@@ -19,11 +19,9 @@ export default function CartPage() {
 
   const [paymentInfo, setPaymentInfo] = useState({
     total: 0,
-    discountFee: 0,
     shippingFee: 0,
     subtotal: 0,
   });
-  const [discountCouponCode, setDiscountCouponCode] = useState('');
 
   useEffect(() => {
     try {
@@ -43,27 +41,6 @@ export default function CartPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleChangeDiscountCouponCode = (e) => {
-    const { value } = e.target;
-    setDiscountCouponCode(value);
-  };
-
-  const handleGetDiscountCoupon = async () => {
-    if (paymentInfo.total <= 0) {
-      return;
-    }
-    if (!discountCouponCode) {
-      toast.warning('Vui lòng nhập mã giảm giá!');
-      return;
-    }
-    try {
-      const response = await discountApi.confirm(discountCouponCode);
-      console.log('Confirm discount code: ', response);
-    } catch (error) {
-      throw new Error('Failed to check discount');
-    }
-  };
 
   const handleChangeQuantity = ({ itemDetail_id, quantity }) => {
     const newCartItemsList = cartItemsList.map((cartItem) => {
@@ -183,23 +160,7 @@ export default function CartPage() {
           </button>
         </div>
       </div>
-      <div className="flex justify-between">
-        <div className="flex gap-4">
-          <div className="h-14 w-[300px] rounded border border-solid border-gray-300 px-6 py-4">
-            <input
-              value={discountCouponCode}
-              onChange={handleChangeDiscountCouponCode}
-              placeholder="Mã giảm giá"
-              className="w-full text-base text-black outline-none"
-            />
-          </div>
-          <button
-            onClick={handleGetDiscountCoupon}
-            className={`flex h-14 items-center justify-center rounded border-2 border-solid bg-[#DB4444] px-12 py-4 font-medium ${paymentInfo.total <= 0 ? 'cursor-not-allowed border-[#EEEEEE] bg-[#EEEEEE] text-gray-300' : 'cursor-pointer border-[#DB4444] text-[#fafafa] transition-colors hover:bg-[#fafafa] hover:text-[#DB4444]'}`}
-          >
-            Áp dụng mã giảm giá
-          </button>
-        </div>
+      <div className="flex justify-end">
         <div className="w-[500px] rounded border border-solid border-black px-6 py-8">
           <h2 className="mb-6 text-xl font-medium capitalize leading-[140%] text-black">
             Hóa đơn giỏ hàng
@@ -209,10 +170,7 @@ export default function CartPage() {
               <h3>Tổng tiền đơn hàng</h3>
               <span>{formatPrice(paymentInfo.total, 'VNĐ')}</span>
             </div>
-            <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
-              <h3>Giảm giá</h3>
-              <span>{formatPrice(paymentInfo.discountFee, 'VNĐ')}</span>
-            </div>
+
             <div className="flex justify-between border-t border-solid border-[rgba(0,0,0,0.4)] py-4">
               <h3>Tiền vận chuyển</h3>
               <span>

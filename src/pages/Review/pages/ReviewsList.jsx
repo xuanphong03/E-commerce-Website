@@ -19,8 +19,6 @@ function ReviewsList() {
   const fetchListReview = async () => {
     try {
       const response = await reviewApi.getAllReviewUnfinished(name);
-      console.log(response);
-
       setReviewList(response);
     } catch (error) {
       throw new Error('Failed to fetch unfinished all reviews');
@@ -38,16 +36,20 @@ function ReviewsList() {
   const handleSubmit = async (reviewData) => {
     try {
       //   // Call updateComment with the product ID and form data
-      await reviewApi.createReview(selectedProduct.id, {
-        ...reviewData,
-        username: selectedProduct.name,
-      });
+      const response = await reviewApi.createReview(
+        selectedProduct.id,
+        reviewData,
+      );
+      if (response.status === 400) {
+        throw new Error('Đã có lỗi xảy ra. Vui lòng thử lại sau');
+      }
       toast.success('Đánh giá sản phẩm thành công');
       setSelectedProduct(null);
       setReviewList(
         reviewList.filter((product) => product.id !== selectedProduct.id),
       );
     } catch (error) {
+      toast.error(error.message);
       throw new Error('Failed to submit review');
     }
   };
@@ -56,7 +58,7 @@ function ReviewsList() {
     <>
       <div>
         <div className="flex items-center justify-between border border-solid border-gray-300 px-2 py-5">
-          <h2 className="max-w-[10%] basis-1/5 font-medium">Ảnh</h2>
+          <h2 className="max-w-[10%] basis-1/5 text-center font-medium">Ảnh</h2>
           <h2 className="max-w-[30%] basis-1/5 font-medium">Tên sản phẩm</h2>
           <h2 className="max-w-[10%] basis-[10%] text-center font-medium">
             Phân loại

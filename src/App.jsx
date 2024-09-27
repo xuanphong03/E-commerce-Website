@@ -11,9 +11,9 @@ import ErrorPage from './pages/Error';
 import WishListPage from './pages/WishList';
 import CartPage from './pages/Cart';
 import 'react-toastify/dist/ReactToastify.css';
+import 'aos/dist/aos.css';
 
 import OrdersPage from './pages/Order';
-import CheckOutPage from './pages/CheckOut/CheckOutPage';
 import Product from './pages/Products';
 import ChatBox from './components/Chat';
 import { useSelector } from 'react-redux';
@@ -25,6 +25,7 @@ import ForgotPasswordPage from './pages/Auth/ForgotPassword';
 import ProtectedRoutes from './routers/ProtectedRoutes';
 import TermAndPolicy from './layouts/Footer/components/term-policy';
 import ProtectedCheckoutRoutes from './routers/ProtectedCheckoutRoutes';
+import CheckOutPage from './pages/CheckOut';
 
 function App() {
   const infoUser = useSelector((state) => state.user.current);
@@ -48,7 +49,7 @@ function App() {
             <Route path="/payment/result" element={<PaymentByVNPay />} />
             <Route path="/payment/cod" element={<PaymentByCOD />} />
             <Route element={<ProtectedCheckoutRoutes />}>
-              <Route path="/checkout" element={<CheckOutPage />} />
+              <Route path="/checkout/*" element={<CheckOutPage />} />
             </Route>
             <Route path="/my-orders/*" element={<OrdersPage />} />
             <Route path="/account/*" element={<AccountManagement />} />

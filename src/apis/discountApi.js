@@ -7,7 +7,7 @@ const discountApi = {
   },
 
   confirm(discountCode) {
-    const url = `/global/check-discount-sku/?sku=${discountCode}`;
+    const url = `/global/check-discount-sku?sku=${discountCode}`;
     return axiosClient.post(url);
   },
 };

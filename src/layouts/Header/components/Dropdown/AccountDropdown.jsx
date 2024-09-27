@@ -39,9 +39,9 @@ export default function AccountDropdown() {
       {DropdownMenu.map((menuItem, index) => (
         <li
           key={index}
-          className="border-b border-solid border-transparent py-2 transition-colors hover:border-white lg:mb-2"
+          className="border-b border-solid border-transparent transition-colors hover:border-white lg:mb-2"
         >
-          <Link to={menuItem.to} className="flex items-center gap-6">
+          <Link to={menuItem.to} className="flex items-center gap-6 py-2">
             <div className="flex size-6 items-center justify-center">
               <img
                 className="max-h-full w-auto"

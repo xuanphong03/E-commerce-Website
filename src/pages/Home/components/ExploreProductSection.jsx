@@ -1,9 +1,11 @@
+import Aos from 'aos';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import productApi from '~/apis/productApi';
 import ProductItem from '~/components/ProductItem';
 import SectionTag from '~/components/SectionTag';
 import Skeleton from '~/components/Skeleton/Skeleton';
+import { v4 as uuidv4 } from 'uuid';
 
 ExploreProductSection.propTypes = {};
 
@@ -12,6 +14,7 @@ function ExploreProductSection({ userId }) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    Aos.init();
     (async () => {
       try {
         setIsLoading(true);
@@ -39,9 +42,9 @@ function ExploreProductSection({ userId }) {
       <div className="my-[60px]">
         <div className="grid grid-cols-12 gap-16">
           {isLoading &&
-            [...Array(8)].map((_, index) => {
+            [...Array(8)].map(() => {
               return (
-                <div className="col-span-3" key={index}>
+                <div className="col-span-3" key={uuidv4()}>
                   <Skeleton />
                 </div>
               );
@@ -49,7 +52,12 @@ function ExploreProductSection({ userId }) {
           {!isLoading &&
             productsList.map((product, index) => {
               return (
-                <div className="col-span-3" key={index}>
+                <div
+                  data-aos="fade-up"
+                  data-aos-delay={`${100 * (index % 4)}`}
+                  className="col-span-3"
+                  key={uuidv4()}
+                >
                   <ProductItem product={product} />
                 </div>
               );
