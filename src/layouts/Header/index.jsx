@@ -11,6 +11,7 @@ import SearchBox from './components/Search/SearchBox';
 import { useDispatch, useSelector } from 'react-redux';
 import { initializeCart } from '~/pages/Cart/cartSlice';
 import categoryApi from '~/apis/categoryApi';
+import { v4 as uuidv4 } from 'uuid';
 import Logo from '~/assets/logo/logo.webp';
 
 export default function Header() {
@@ -21,32 +22,21 @@ export default function Header() {
   const [showAccountDropdown, setShowAccountDropdown] = useState(false);
   const accountDropdownRef = useRef(null);
   const [openProductMenu, setOpenProductMenu] = useState(false);
-  const [categoriesList, setCategoriesList] = useState([]);
+  const [categories, setCategories] = useState([]);
 
-  useEffect(() => {
+  const getCategories = async () => {
     try {
       (async () => {
         const response = await categoryApi.getAll();
         const availableCategories = response.filter(({ status }) => status);
-        setCategoriesList(availableCategories);
+        setCategories(availableCategories);
       })();
     } catch (error) {
       throw new Error('Error get categories');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(initializeCart())
-        .unwrap()
-        .catch((error) => {
-          // toast.error(error.message);
-        });
-    }
-  }, [dispatch, isAuthenticated]);
-
-  useEffect(() => {
+  const handleToggleMenu = () => {
     let handler = (e) => {
       if (isAuthenticated && !accountDropdownRef.current?.contains(e.target)) {
         setShowAccountDropdown(false);
@@ -56,12 +46,23 @@ export default function Header() {
     return () => {
       document.removeEventListener('mousedown', handler);
     };
+  };
+
+  useEffect(() => {
+    getCategories();
+    handleToggleMenu();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleToggleProductMenu = (status) => {
-    setOpenProductMenu(status);
-  };
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(initializeCart())
+        .unwrap()
+        .catch((error) => {
+          throw new Error(error);
+        });
+    }
+  }, [dispatch, isAuthenticated]);
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50 border-b border-solid border-[#D9D9D9] bg-white">
@@ -91,7 +92,7 @@ export default function Header() {
             <img alt="SOMEHOW" className="max-w-full" src={Logo} />
           </Link>
         </div>
-        <Navigation onToggleMenu={handleToggleProductMenu} />
+        <Navigation onToggleMenu={(status) => setOpenProductMenu(status)} />
         <div className="flex w-full items-center justify-between gap-8 lg:w-auto lg:justify-normal">
           <SearchBox />
 
@@ -153,9 +154,9 @@ export default function Header() {
         className={`${openProductMenu ? 'h-20' : 'h-0'} absolute left-0 right-0 top-full z-20 flex items-center justify-center overflow-hidden bg-white transition-all`}
       >
         <ul className="mx-auto flex max-w-[1300px] justify-center gap-20 uppercase">
-          {categoriesList.map(({ id, name }) => (
+          {categories.map(({ name }) => (
             <li
-              key={id}
+              key={uuidv4()}
               className="cursor-pointer px-4 py-2 text-[#2c2c2c] transition-colors hover:text-[#DB4444]"
             >
               <Link to={`products/${name}`}>{name}</Link>

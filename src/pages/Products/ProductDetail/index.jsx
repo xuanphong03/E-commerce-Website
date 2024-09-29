@@ -14,7 +14,6 @@ import SizeGuidePanel from '~/components/SizeGuidePanel';
 import { placeholder500x500, placeholder80x80 } from '~/constants/placeholder';
 import { addToCart } from '~/pages/Cart/cartSlice';
 import { formatPrice } from '~/utils/formatPrice';
-import './CustomizedScrollbar.css';
 import FeedbackList from './components/FeedbackList';
 import RelatedProducts from './components/RelatedProducts';
 
@@ -51,7 +50,7 @@ function ProductDetail() {
     try {
       const response = await productApi.getRelatedProduct(subCategory, {
         _userId: id,
-        _limit: 5,
+        _limit: 4,
         _page: 1,
       });
       setRelatedProducts(response.data);

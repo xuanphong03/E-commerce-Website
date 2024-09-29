@@ -7,7 +7,7 @@ import { formatPrice } from '~/utils/formatPrice';
 export default function ProductItem({ product }) {
   return (
     <Link to={`/products/detail/${product.id}`}>
-      <article className="flex flex-col gap-4">
+      <article className="flex flex-col gap-1">
         <div className="relative flex items-center justify-center rounded bg-[#F5F5F5]">
           <img
             alt="product image"
@@ -25,7 +25,7 @@ export default function ProductItem({ product }) {
             )}
           </div>
         </div>
-        <div className="group">
+        <div className="group px-5">
           <h3 className="line-clamp-1 text-sm text-black group-hover:text-red-500">
             {product.name}
           </h3>
