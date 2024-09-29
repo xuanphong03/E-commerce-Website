@@ -11,10 +11,6 @@ function PaymentByCOD() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-    });
     (async () => {
       try {
         setLoading(true);

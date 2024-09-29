@@ -53,20 +53,13 @@ ReviewItem.propTypes = {
 function ReviewItem({ product }) {
   return (
     <div className="mt-2 flex border border-solid border-gray-300 px-2 py-5">
-      <div className="max-w-[10%] basis-[10%]">
-        <img
-          alt="product image"
-          src={product.image}
-          className="size-16 object-cover"
-        />
-      </div>
-      <div className="max-w-[20%] basis-1/5 break-words px-5">
+      <div className="max-w-1/5 basis-1/5 break-words px-5">
         {product.identification_pro}
       </div>
-      <div className="max-w-[10%] basis-[10%] px-2 text-center">
-        Màu {product.color}, size {product.size}
+      <div className="max-w-1/5 basis-1/5 px-2 text-center">
+        {product.color} / {product.size}
       </div>
-      <div className="max-w-[10%] basis-[10%] px-4">
+      <div className="max-w-1/5 basis-1/5 px-4 text-center">
         <Rating
           precision={0.5}
           size="small"
@@ -75,11 +68,9 @@ function ReviewItem({ product }) {
           readOnly
         />
       </div>
-      <div className="max-w-[40%] basis-2/5 px-5 text-center">
-        {product.content}
-      </div>
-      <div className="max-w-[10%] basis-[10%] text-center">
-        {moment(product.createDate).format('DD/MM/YYYY')}
+      <div className="max-w-1/5 basis-1/5 px-5">{product.content}</div>
+      <div className="max-w-1/5 basis-1/5 text-center">
+        {moment(product.createDate).format('DD-MM-YYYY HH:mm:ss')}
       </div>
     </div>
   );

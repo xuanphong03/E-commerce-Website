@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import reviewApi from '~/apis/reviewApi';
 import ReviewItem from '../components/ReviewItem';
@@ -22,22 +22,19 @@ function ReviewsProduct() {
   }, []);
 
   return (
-    <div>
-      <div className="flex items-center justify-between border border-solid border-gray-300 px-2 py-5">
-        <h2 className="max-w-[10%] basis-[10%] font-medium">Ảnh</h2>
-        <h2 className="max-w-[30%] basis-1/5 text-center font-medium">
-          Tên sản phẩm
-        </h2>
-        <h2 className="max-w-[10%] basis-[10%] text-center font-medium">
+    <Fragment>
+      <div className="flex items-center border border-solid border-gray-300 px-2 py-5">
+        <h2 className="max-w-1/5 basis-1/5 px-5 font-medium">Tên sản phẩm</h2>
+        <h2 className="max-w-1/5 basis-1/5 px-2 text-center font-medium">
           Phân loại
         </h2>
-        <h2 className="max-w-[10%] basis-[10%] text-center font-medium">
+        <h2 className="max-w-1/5 basis-1/5 text-center font-medium">
           Điểm đánh giá
         </h2>
-        <h2 className="max-w-[40%] basis-2/5 text-center font-medium">
+        <h2 className="max-w-1/5 basis-1/5 px-5 font-medium">
           Nội dung đánh giá
         </h2>
-        <h2 className="max-w-[10%] basis-[10%] text-center font-medium">
+        <h2 className="max-w-1/5 basis-1/5 text-center font-medium">
           Thời gian
         </h2>
       </div>
@@ -51,7 +48,7 @@ function ReviewsProduct() {
           <p className="py-5">Không có đánh giá nào.</p>
         )}
       </div>
-    </div>
+    </Fragment>
   );
 }
 

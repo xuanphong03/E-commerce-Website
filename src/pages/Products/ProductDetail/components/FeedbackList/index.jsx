@@ -1,74 +1,74 @@
 import { Rating } from '@mui/material';
-import PropTypes from 'prop-types';
-import { MdOutlineFeedback } from 'react-icons/md';
-import { v4 as uuidv4 } from 'uuid';
-import SectionTag from '~/components/SectionTag';
-
 import moment from 'moment';
 import 'moment/locale/vi';
+import PropTypes from 'prop-types';
+import { Fragment } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import SectionTag from '~/components/SectionTag';
 
 FeedbackList.propTypes = {
   feedbacksList: PropTypes.array,
 };
 
 function FeedbackList({ feedbacksList = [] }) {
-  const getFirstCharacterOfName = (fullName) => {
-    const words = fullName.trim().split(' ');
-    return words[words.length - 1][0];
-  };
   return (
-    <>
-      <div className="mb-10">
-        <SectionTag content="Feedback của khách hàng" />
+    <Fragment>
+      <div>
+        <SectionTag content={`Khách hàng đánh giá (${feedbacksList.length})`} />
       </div>
-      <ul className="customizedScrollbar flex h-56 gap-10 overflow-x-auto scroll-smooth rounded-lg bg-[#f5f5f5] px-4 py-5">
-        {feedbacksList.length > 0 ? (
-          feedbacksList.map(
-            ({ identification_user, content, rating, createDate }) => {
-              const firstCharacter =
-                getFirstCharacterOfName(identification_user);
-              const uniqueKey = uuidv4();
+      <hr className="my-5"></hr>
+      {!feedbacksList.length ? (
+        <p className="text-center text-sm">Sản phẩm chưa có đánh giá</p>
+      ) : (
+        <ul>
+          {feedbacksList.map(
+            ({
+              identification_user,
+              content,
+              rating,
+              createDate,
+              size,
+              color,
+            }) => {
               return (
-                <li key={uniqueKey}>
-                  <article className="">
-                    <div className="flex gap-4">
-                      <div className="flex size-14 items-center justify-center rounded-full bg-red-500 text-3xl font-semibold uppercase text-white">
-                        {firstCharacter}
-                      </div>
-                      <div>
-                        <h3 className="mb-2">{identification_user}</h3>
-                        <div className="flex items-center gap-1 text-sm">
-                          <Rating
-                            size="small"
-                            name="read-only"
-                            value={rating}
-                            precision={0.5}
-                            readOnly
-                          />
-                          ({rating} sao)
-                        </div>
-                        <p></p>
-                      </div>
+                <li
+                  key={uuidv4()}
+                  className="flex gap-2 border-b border-solid border-gray-200 py-5"
+                >
+                  <div className="w-60">
+                    <h4 className="font-bold uppercase">
+                      {identification_user}
+                    </h4>
+                    <div className="mt-1">
+                      <h5 className="text-sm text-gray-500">
+                        {moment(createDate).format('DD-MM-YYYY HH:mm:ss')}
+                      </h5>
+                      <p className="text-sm text-gray-500">
+                        {color} / {size}
+                      </p>
                     </div>
-                    <p className="mt-5 line-clamp-[5] w-[300px] overflow-hidden bg-white px-2 py-1 text-[#2c2c2c]">
-                      {content}
+                  </div>
+                  <div className="w-60">
+                    <div>
+                      <Rating
+                        size="small"
+                        name="read-only"
+                        value={rating}
+                        precision={0.5}
+                        readOnly
+                      />
+                    </div>
+                    <p className="text-sm">
+                      <b>Đánh giá: </b> {content}
                     </p>
-                    <span className="mt-2 flex justify-end text-sm">
-                      Đăng ngày: {moment(createDate).format('DD/MM/YYYY')}
-                    </span>
-                  </article>
+                  </div>
                 </li>
               );
             },
-          )
-        ) : (
-          <div className="flex w-full items-center justify-center gap-2 text-xl text-[#2c2c2c]">
-            <MdOutlineFeedback />
-            <p className="text-">Chưa có Feedback !!!</p>
-          </div>
-        )}
-      </ul>
-    </>
+          )}
+        </ul>
+      )}
+    </Fragment>
   );
 }
 
