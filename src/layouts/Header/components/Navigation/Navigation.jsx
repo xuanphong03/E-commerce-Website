@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import './Navigation.css';
+
 function Navigation({ onToggleMenu }) {
   return (
     <nav className="h-full">
@@ -38,20 +39,12 @@ function Navigation({ onToggleMenu }) {
         </li>
 
         <li
-          onMouseLeave={() => {
-            if (onToggleMenu) {
-              onToggleMenu(false);
-            }
-          }}
-          className="flex h-20 items-center"
+          onMouseLeave={() => onToggleMenu(false)}
+          onMouseEnter={() => onToggleMenu(true)}
+          className="relative flex h-20 items-center"
         >
           <NavLink
             to="/products/all_products"
-            onMouseEnter={() => {
-              if (onToggleMenu) {
-                onToggleMenu(true);
-              }
-            }}
             className={({ isActive }) =>
               `${isActive ? 'active' : ''} nav-link block py-1 text-center text-sm font-normal leading-normal transition-colors lg:text-base`
             }

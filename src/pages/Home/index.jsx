@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import BestSellingSection from './components/BestSellingSection';
 import ExploreProductSection from './components/ExploreProductSection';
@@ -7,12 +6,6 @@ import IntroduceSection from './components/IntroduceSection';
 
 export default function HomePage() {
   const { id } = useSelector((state) => state.user.current);
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-    });
-  }, []);
 
   return (
     <main className="bg-white">

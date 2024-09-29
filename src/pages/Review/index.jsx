@@ -8,16 +8,16 @@ function ReviewPage() {
       <div className="flex gap-10">
         <NavLink
           className={({ isActive }) =>
-            `${isActive ? 'border-red-500 text-red-500' : ''} border-b-2 border-solid border-transparent pb-5 text-lg transition-all`
+            `${isActive ? 'border-red-500 text-red-500' : 'border-transparent'} block border-b-4 border-solid pb-2 text-lg font-medium transition-all`
           }
           to="/my-reviews"
           end
         >
-          Danh sách đánh giá
+          Sản phẩm chưa đánh giá
         </NavLink>
         <NavLink
           className={({ isActive }) =>
-            `${isActive ? 'border-red-500 text-red-500' : ''} border-b-2 border-solid border-transparent pb-5 text-lg transition-all`
+            `${isActive ? 'border-red-500 text-red-500' : 'border-transparent'} block border-b-4 border-solid pb-2 text-lg font-medium transition-all`
           }
           to="/my-reviews/reviews-product"
         >

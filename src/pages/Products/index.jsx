@@ -1,10 +1,6 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { Route, Routes, useParams } from 'react-router-dom';
-import ProductsList from './ProductsList';
+import { Route, Routes } from 'react-router-dom';
 import ProductDetail from './ProductDetail';
-
-Product.propTypes = {};
+import ProductsList from './ProductsList';
 
 function Product() {
   return (

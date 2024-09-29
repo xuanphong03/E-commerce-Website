@@ -1,12 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoMdArrowDropdown, IoMdCheckmark } from 'react-icons/io';
 
-const SORT = {
-  ASC: 'ASC',
-  DESC: 'DESC',
-};
-
 function FilterBySort({ onChange, currentSort }) {
+  const SORT = {
+    ASC: 'ASC',
+    DESC: 'DESC',
+  };
   const [sort, setSort] = useState(currentSort);
 
   const handleSortChange = (e) => {
@@ -16,6 +15,10 @@ function FilterBySort({ onChange, currentSort }) {
       onChange({ _sort: value });
     }
   };
+
+  useEffect(() => {
+    setSort(currentSort);
+  }, [currentSort]);
 
   return (
     <div className="group relative w-[150px] cursor-pointer text-sm">

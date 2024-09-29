@@ -30,10 +30,6 @@ function PaymentByVNPay() {
   const { discountCode } = useContext(CheckoutContext);
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-    });
     (async () => {
       if (isOrderCreated) return;
       try {

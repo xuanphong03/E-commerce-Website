@@ -16,6 +16,7 @@ import { defaultConstants } from '~/constants/default';
 import discountApi from '~/apis/discountApi';
 import { toast } from 'react-toastify';
 import { CheckoutContext } from '.';
+import { regex } from '~/constants/regex';
 
 function InvoicePage() {
   const schema = yup.object().shape({
@@ -33,7 +34,16 @@ function InvoicePage() {
       .string()
       .required('Vui lòng nhập email.')
       .email('Vui lòng nhập email hợp lệ.'),
-    phoneNumber: yup.string().required('Vui lòng nhập số điện thoại'),
+    phoneNumber: yup
+      .string()
+      .required('Vui lòng nhập số điện thoại')
+      .test(
+        'valid phone number',
+        'Vui lòng nhập số điện thoại hợp lệ',
+        (phoneNumber) => {
+          return regex.phoneNumber.test(phoneNumber);
+        },
+      ),
     address: yup.string().required('Vui lòng nhập địa chỉ giao hàng'),
   });
   const navigate = useNavigate();

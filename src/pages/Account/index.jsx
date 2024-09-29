@@ -62,7 +62,7 @@ function AccountManagement() {
   }, [getUserInfo]);
 
   return (
-    <main className="grid h-[calc(100vh-128px)] grid-cols-10">
+    <main className="grid min-h-[calc(100vh-128px)] grid-cols-10">
       <aside className="col-span-2 flex flex-col gap-4 border-r border-solid border-[#d9d9d9] pt-5">
         <NavLink
           className={({ isActive }) =>

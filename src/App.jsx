@@ -26,6 +26,7 @@ import ProtectedRoutes from './routers/ProtectedRoutes';
 import TermAndPolicy from './layouts/Footer/components/term-policy';
 import ProtectedCheckoutRoutes from './routers/ProtectedCheckoutRoutes';
 import CheckOutPage from './pages/CheckOut';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   const infoUser = useSelector((state) => state.user.current);
@@ -33,6 +34,7 @@ function App() {
 
   return (
     <div className="relative font-roboto">
+      <ScrollToTop />
       <Header />
       <div className="mt-[130px]">
         <Routes>

@@ -1,6 +1,6 @@
 export const formatPrice = (
   amount,
-  unitCurrency = '$',
+  unitCurrency = '',
   decimalCount = 0,
   decimal = ',',
   thousands = '.',

@@ -1,29 +1,27 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { formatPrice } from '~/utils/formatPrice';
-import { FiMinus, FiPlus } from 'react-icons/fi';
-import { FaCartPlus, FaHeart, FaRegHeart } from 'react-icons/fa';
-import SectionTag from '~/components/SectionTag';
-import './CustomizedScrollbar.css';
-import FeedbackList from './components/FeedbackList';
-import productApi from '~/apis/productApi';
-import { placeholder80x80, placeholder500x500 } from '~/constants/placeholder';
-import { useDispatch, useSelector } from 'react-redux';
-import { toast } from 'react-toastify';
-import cartApi from '~/apis/cartApi';
-import { addToCart } from '~/pages/Cart/cartSlice';
 import { Rating } from '@mui/material';
-import favoriteApi from '~/apis/favoriteApi';
-import reviewApi from '~/apis/reviewApi';
+import { Fragment, useEffect, useState } from 'react';
+import { FaCartPlus, FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FiMinus, FiPlus } from 'react-icons/fi';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
-import ProductItem from '~/components/ProductItem';
+import cartApi from '~/apis/cartApi';
+import favoriteApi from '~/apis/favoriteApi';
+import productApi from '~/apis/productApi';
+import reviewApi from '~/apis/reviewApi';
+import SizeGuidePanel from '~/components/SizeGuidePanel';
+import { placeholder500x500, placeholder80x80 } from '~/constants/placeholder';
+import { addToCart } from '~/pages/Cart/cartSlice';
+import { formatPrice } from '~/utils/formatPrice';
+import FeedbackList from './components/FeedbackList';
+import RelatedProducts from './components/RelatedProducts';
 
 function ProductDetail() {
   const dispatch = useDispatch();
   const { id } = useSelector((state) => state.user.current);
   const isAuthenticated = !!id;
   let { productId } = useParams();
-  const [relatedProductList, setRelatedProductList] = useState([]);
   const [feedbacksList, setFeedbackList] = useState([]);
   const [checkedColor, setCheckedColor] = useState(null);
   const [checkedSize, setCheckedSize] = useState(null);
@@ -32,7 +30,13 @@ function ProductDetail() {
   const [quantityProduct, setQuantityProduct] = useState(1);
   const [outStockSizeList, setOutStockSizeList] = useState([]);
   const [rating, setRating] = useState(0);
+  const [category, setCategory] = useState(null);
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [activeImage, setActiveImage] = useState(null);
+  const [images, setImages] = useState([]);
+  const [relatedProducts, setRelatedProducts] = useState([]);
 
+  // Lấy danh sách đánh giá sản phẩm
   const getAllReviewByProduct = async (productName) => {
     try {
       const response = await reviewApi.getAllReviewsByProduct(productName);
@@ -41,54 +45,30 @@ function ProductDetail() {
       throw new Error('Err');
     }
   };
-  const getAllRelatedProductList = async (subCategory) => {
+  // Lấy danh sách sản phẩm liên quan
+  const getRelatedProducts = async (subCategory, productName) => {
     try {
       const response = await productApi.getRelatedProduct(subCategory, {
         _userId: id,
-        _limit: 10,
+        _limit: 4,
         _page: 1,
       });
-
-      setRelatedProductList(response.data.slice(0, 4));
+      setRelatedProducts(response.data);
     } catch (error) {
-      throw new Error('Err');
+      throw new Error('Failed to get related products');
     }
   };
-
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-    });
-
-    (async () => {
-      try {
-        const params = { id: productId };
-        if (isAuthenticated) {
-          params._userId = id;
-        }
-        const response = await productApi.getDetail(params);
-        console.log(response);
-
-        setProductDetail(response);
-        await getAllReviewByProduct(response.name);
-        await getAllRelatedProductList(response.subCategory);
-        setIsFavorite(response.isFavorite);
-        setRating(response.rating);
-      } catch (error) {
-        throw new Error(error);
-      }
-    })();
-  }, [productId, id]);
-
+  // Tăng số lượng sản phẩm muốn thêm vào giỏ hàng
   const increaseQuantityProduct = () => {
     if (quantityProduct >= 100) return;
     setQuantityProduct((prev) => prev + 1);
   };
+  // Giảm số lượng sản phẩm muốn thêm vào giỏ hàng
   const decreaseQuantityProduct = () => {
     if (quantityProduct <= 0) return;
     setQuantityProduct((prev) => prev - 1);
   };
+  // Thay đổi số lượng sản phẩm muốn thêm vào giỏ hàng
   const changeQuantityProduct = (e) => {
     let newQuantity = Number(e.target.value);
     if (newQuantity % 1 === 0 && newQuantity >= 0) {
@@ -99,6 +79,7 @@ function ProductDetail() {
       }
     }
   };
+  // Thêm sản phẩm vào giỏ hàng
   const handleAddProductToCart = () => {
     if (!isAuthenticated) {
       return toast.info('Vui lòng đăng nhập để thực hiện yêu cầu');
@@ -134,7 +115,6 @@ function ProductDetail() {
         totalPrice: productDetail.finalPrice * quantityProduct,
       },
     };
-
     try {
       (async () => {
         // Call API thêm sản phẩm vào giỏ hàng
@@ -148,6 +128,7 @@ function ProductDetail() {
       toast.error('Thêm sản phẩm vào giỏ hàng thất bại!');
     }
   };
+  // Kiểm tra số lượng sản phẩm trong kho
   const getOutStockSizeList = (color) => {
     const { quantityDetails } = productDetail;
     const _outStockSizeList = [];
@@ -160,6 +141,7 @@ function ProductDetail() {
     });
     return _outStockSizeList;
   };
+  // Thay đổi màu sản phẩm muốn thêm vào giỏ hàng
   const handleChangeColor = (color) => {
     const isOutOfStock = checkOutOfStock(color);
     if (isOutOfStock) {
@@ -174,13 +156,14 @@ function ProductDetail() {
       setCheckedSize(null);
     }
   };
+  // Thay đổi kích thước sản phẩm muốn thêm vào giỏ hàng
   const handleChangeSize = (size) => {
     if (outStockSizeList.includes(size)) {
       return;
     }
     setCheckedSize(size);
   };
-
+  // Kiểm tra hết hàng
   const checkOutOfStock = (color) => {
     const { quantityDetails } = productDetail;
     const newQuantityDetails = quantityDetails.map((colorItem) => {
@@ -195,7 +178,7 @@ function ProductDetail() {
     const _color = newQuantityDetails.find((prod) => prod.color === color);
     return _color.totalQuantity === 0;
   };
-
+  // Thay đổi trạng thái yêu thích sản phẩm
   const handleToggleFavoriteProduct = async () => {
     if (!isAuthenticated) {
       toast.info('Vui lòng đăng nhập để thêm sản phẩm vào danh sách yêu thích');
@@ -223,225 +206,270 @@ function ProductDetail() {
       throw new Error('Error toggle favorite product detail!');
     }
   };
+  // Thay đổi ảnh chính của sản phẩm
+  const handleChangeImage = (image) => {
+    setActiveImage(image);
+  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const params = { id: productId };
+        if (isAuthenticated) {
+          params._userId = id;
+        }
+        const response = await productApi.getDetail(params);
+        const subImages = response.images;
+        setProductDetail(response);
+        await getAllReviewByProduct(response.name);
+        await getRelatedProducts(response.subCategory, response.name);
+        setIsFavorite(response.isFavorite);
+        setRating(response.rating);
+        setCategory(response.category);
+        setActiveImage(response.imageMain);
+        setImages([response.imageMain, ...subImages]);
+      } catch (error) {
+        throw new Error(error);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productId, id]);
 
   return (
-    <main className="pb-36 pt-10">
-      <div className="mx-auto max-w-[1400px]">
-        <section className="flex gap-10">
-          <div className="flex max-h-[500px] basis-3/5 gap-2">
-            <div className="flex basis-1/4 flex-col items-center justify-between gap-4">
-              {productDetail?.images?.length <= 0 &&
-                [...Array(4)].map((_, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4"
-                    >
-                      <img
-                        alt="product image"
-                        className="max-h-full max-w-full object-cover"
-                        src={placeholder80x80}
-                      />
-                    </div>
-                  );
-                })}
-              {productDetail?.images?.length > 0 &&
-                productDetail.images?.map((image, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4"
-                    >
-                      <img
-                        alt="product image"
-                        className="max-h-full max-w-full object-cover"
-                        src={image || placeholder80x80}
-                      />
-                    </div>
-                  );
-                })}
-            </div>
-            <div className="basis-3/4">
-              <div className="flex h-full w-full items-center justify-center rounded-md bg-[#f5f5f5] p-10">
-                <img
-                  alt="product image"
-                  className="max-h-full max-w-full object-cover"
-                  src={productDetail.imageMain || placeholder500x500}
-                />
+    <Fragment>
+      {showSizeGuide && (
+        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black bg-opacity-20">
+          <SizeGuidePanel
+            onClose={() => setShowSizeGuide(false)}
+            type={category}
+          />
+        </div>
+      )}
+      <main className="pb-36 pt-10">
+        <div className="container mx-auto space-y-20">
+          <section className="flex gap-10">
+            <div className="flex shrink-0 basis-1/2 gap-10">
+              <ul className="flex h-[700px] w-[110px] flex-col items-center gap-5 overflow-y-auto">
+                {images.length <= 0 &&
+                  [...Array(4)].map((_, index) => {
+                    return (
+                      <li
+                        key={index}
+                        className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4"
+                      >
+                        <img
+                          alt="product image"
+                          className="max-w-full object-cover"
+                          src={placeholder80x80}
+                        />
+                      </li>
+                    );
+                  })}
+                {images.length > 0 &&
+                  images.map((image) => {
+                    return (
+                      <li
+                        onClick={() => handleChangeImage(image)}
+                        key={uuidv4()}
+                        className={`flex max-w-full cursor-pointer items-center justify-center overflow-hidden rounded-md border-2 border-solid ${image === activeImage ? 'border-black' : 'border-transparent'}`}
+                      >
+                        <img
+                          alt="product image"
+                          className="max-w-full object-cover"
+                          src={image || placeholder80x80}
+                        />
+                      </li>
+                    );
+                  })}
+              </ul>
+              <div className="w-[calc(100%-110px)]">
+                <div className="flex w-full items-center justify-center overflow-hidden rounded-md">
+                  <img
+                    alt="product image"
+                    className="max-w-full object-cover"
+                    src={activeImage || placeholder500x500}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <article className="flex basis-2/5 flex-col justify-between px-5">
-            <div>
-              <h1 className="mb-4 text-2xl font-semibold capitalize leading-none tracking-[0.72px]">
-                {productDetail.name}
-              </h1>
-              <div className="mb-4 flex items-center gap-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <Rating
-                    name="read-only"
-                    value={rating}
-                    precision={0.5}
-                    size="small"
-                    readOnly
-                  />
-                  <p className="text-[#808080]">
-                    ({productDetail.nrating} Đánh giá)
+            <article className="flex basis-1/2 flex-col gap-10 pl-20 pr-10">
+              <div>
+                <h1 className="mb-2 text-2xl font-semibold capitalize leading-none tracking-[0.72px]">
+                  {productDetail.name}
+                </h1>
+                <div className="mb-3 flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Rating
+                      name="read-only"
+                      value={rating}
+                      precision={0.5}
+                      size="small"
+                      readOnly
+                    />
+                    <p className="text-[#808080]">
+                      ({productDetail.nrating} Đánh giá)
+                    </p>
+                  </div>
+                  <div className="h-4 w-[1px] bg-[#808080]"></div>
+                  <p className="flex items-center gap-2">
+                    {productDetail.totalQuantity > 0 ? (
+                      <span className="text-[#0F6]">
+                        Còn hàng ({productDetail.totalQuantity})
+                      </span>
+                    ) : (
+                      <span className="text-red-500">Hết hàng</span>
+                    )}
                   </p>
+                  <div className="h-4 w-[1px] bg-[#808080]"></div>
+                  <p>Đã bán: {productDetail.quantitySold}</p>
                 </div>
-                <div className="h-4 w-[1px] bg-[#808080]"></div>
-                <p className="flex items-center gap-2">
-                  Tình trạng:{' '}
-                  {productDetail.totalQuantity > 0 ? (
-                    <span className="text-[#0F6]">
-                      Còn hàng ({productDetail.totalQuantity})
-                    </span>
-                  ) : (
-                    <span className="text-red-500">Hết hàng</span>
-                  )}
-                </p>
-                <div className="h-4 w-[1px] bg-[#808080]"></div>
-                <p>Đã bán: {productDetail.quantitySold}</p>
-              </div>
-              <div className="mb-4 flex items-end gap-5 text-3xl">
-                {productDetail.saleDiscountPercent > 0 && (
-                  <h4 className="text-2xl text-[#929292] line-through">
-                    {formatPrice(productDetail.originalPrice, 'VNĐ')}
-                  </h4>
-                )}
-                <h4 className="flex items-start gap-2">
-                  {formatPrice(productDetail.finalPrice, 'VNĐ')}
+                <div className="mb-4">
+                  <div className="flex items-end gap-2">
+                    <h4 className="flex items-start gap-2 text-3xl font-semibold">
+                      {formatPrice(productDetail.finalPrice, 'VNĐ')}
+                    </h4>
+                    {productDetail.saleDiscountPercent > 0 && (
+                      <h4 className="text-xl font-medium text-[#B5B5B5] line-through">
+                        {formatPrice(productDetail.originalPrice, 'VNĐ')}
+                      </h4>
+                    )}
+                  </div>
                   {productDetail.saleDiscountPercent > 0 && (
-                    <span className="flex items-center justify-center rounded bg-[#DB4444] px-1 text-xs text-[#fafafa]">
-                      Giảm {productDetail.saleDiscountPercent}%
-                    </span>
+                    <p className="mt-1 flex gap-2 text-sm text-red-500">
+                      Tiết kiệm{' '}
+                      {formatPrice(
+                        productDetail.originalPrice - productDetail.finalPrice,
+                        'VNĐ',
+                      )}
+                      <span className="flex h-5 w-10 items-end justify-center bg-yellow-400 text-black">
+                        -{productDetail.saleDiscountPercent}%
+                      </span>
+                    </p>
                   )}
-                </h4>
-              </div>
-              <p className="mb-2 w-4/5 break-words text-sm">
-                Mô tả: {productDetail.description}
-              </p>
-              <div className="mb-4 flex items-center gap-4 text-sm">
-                <h4 className="min-w-20 tracking-[0.6px]">Màu sắc:</h4>
-                <div className="flex items-center gap-4">
-                  {productDetail.colours?.map((color) => {
-                    const isOutOfStock = checkOutOfStock(color);
-                    return (
-                      <label
-                        key={color}
-                        className={`${isOutOfStock ? 'cursor-not-allowed bg-[#FAFAFA] text-[#C3D2EA]' : 'cursor-pointer text-[#333333]'} ${checkedColor === color ? 'border-[#DB4444]' : 'border-gray'} flex items-center justify-center rounded-md border-2 border-solid px-4 py-2 text-sm transition-all`}
-                      >
-                        <input
-                          onChange={() => handleChangeColor(color)}
-                          hidden
-                          name="colors"
-                          value="xs"
-                          type="checkbox"
-                        />
-                        {color}
-                      </label>
-                    );
-                  })}
                 </div>
-              </div>
+                <p className="mb-4 w-full break-words rounded text-sm">
+                  <b>Mô tả sản phẩm:</b> <br></br> {productDetail.description}
+                </p>
+                <div className="mb-4 flex flex-col gap-2 text-sm">
+                  <h4 className="min-w-20 font-bold tracking-[0.6px]">
+                    Màu sắc
+                  </h4>
+                  <div className="flex items-center gap-3">
+                    {productDetail.colours?.map((color) => {
+                      const isOutOfStock = checkOutOfStock(color);
+                      return (
+                        <label
+                          key={uuidv4()}
+                          className={`${isOutOfStock ? 'cursor-not-allowed bg-[#FAFAFA] text-[#C3D2EA]' : 'cursor-pointer text-[#333333]'} ${checkedColor === color ? 'border-[#DB4444]' : 'border-gray'} flex items-center justify-center rounded border-2 border-solid px-4 py-2 text-sm transition-all`}
+                        >
+                          <input
+                            onChange={() => handleChangeColor(color)}
+                            hidden
+                            name="colors"
+                            value="xs"
+                            type="checkbox"
+                          />
+                          {color}
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
 
-              <div className="mb-4 flex items-center gap-4 text-sm">
-                <h4 className="min-w-20 tracking-[0.6px]">Kích cỡ:</h4>
-                <div className="flex items-center gap-4">
-                  {productDetail.sizes?.map((size) => {
-                    const isOutOfStock = outStockSizeList.includes(size);
-                    return (
-                      <label
-                        key={size}
-                        className={`${isOutOfStock ? 'cursor-not-allowed bg-[#FAFAFA] text-[#C3D2EA]' : 'cursor-pointer text-[#333333]'} ${checkedSize === size ? 'border-[#DB4444]' : 'border-gray'} flex items-center justify-center rounded-md border-2 border-solid px-4 py-2 text-sm transition-all`}
-                      >
-                        <input
-                          onChange={() => handleChangeSize(size)}
-                          hidden
-                          name="sizes"
-                          value="xs"
-                          type="checkbox"
-                        />
-                        {size}
-                      </label>
-                    );
-                  })}
+                <div className="mb-4 flex flex-col gap-2 text-sm">
+                  <div className="flex justify-between">
+                    <h4 className="min-w-20 font-bold tracking-[0.6px]">
+                      Kích thước
+                    </h4>
+                    <button
+                      onClick={() => setShowSizeGuide(true)}
+                      className="text-xs font-medium uppercase underline"
+                    >
+                      Hướng dẫn lựa size
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {productDetail.sizes?.map((size) => {
+                      const isOutOfStock = outStockSizeList.includes(size);
+                      return (
+                        <label
+                          key={uuidv4()}
+                          className={`${isOutOfStock ? 'cursor-not-allowed bg-[#FAFAFA] text-[#C3D2EA]' : 'cursor-pointer text-[#333333]'} ${checkedSize === size ? 'border-[#DB4444]' : 'border-gray'} flex items-center justify-center rounded border-2 border-solid px-4 py-2 text-sm transition-all`}
+                        >
+                          <input
+                            onChange={() => handleChangeSize(size)}
+                            hidden
+                            name="sizes"
+                            value="xs"
+                            type="checkbox"
+                          />
+                          {size}
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="flex flex-col gap-5">
-              <div className="flex items-center justify-between">
-                <div className="flex w-40 overflow-hidden rounded border border-solid border-[rgba(0,0,0,0.5)]">
-                  <span
-                    onClick={decreaseQuantityProduct}
-                    className="flex size-10 shrink-0 cursor-pointer items-center justify-center text-2xl"
+              <div className="flex flex-col gap-5">
+                <div className="flex items-center justify-between">
+                  <div className="flex w-40 overflow-hidden rounded border border-solid border-[rgba(0,0,0,0.5)]">
+                    <span
+                      onClick={decreaseQuantityProduct}
+                      className="flex size-10 shrink-0 cursor-pointer items-center justify-center text-2xl"
+                    >
+                      <FiMinus />
+                    </span>
+                    <input
+                      value={quantityProduct}
+                      onChange={changeQuantityProduct}
+                      type="text"
+                      className="h-10 w-full border-x border-solid border-[rgba(0,0,0,0.5)] px-4 text-center text-xl font-medium leading-[140%] outline-none"
+                    />
+                    <span
+                      onClick={increaseQuantityProduct}
+                      className="flex size-10 shrink-0 cursor-pointer items-center justify-center bg-[#DB4444] text-2xl text-[#fafafa]"
+                    >
+                      <FiPlus />
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleAddProductToCart}
+                    className={`${!quantityProduct > 0 ? 'cursor-not-allowed opacity-50' : 'hover:bg-opacity-80'} flex min-w-64 items-center justify-center gap-2 rounded border border-solid border-[#DB4444] bg-[#FFEEE8] px-5 py-2 text-[#DB4444]`}
                   >
-                    <FiMinus />
-                  </span>
-                  <input
-                    value={quantityProduct}
-                    onChange={changeQuantityProduct}
-                    type="text"
-                    className="h-10 w-full border-x border-solid border-[rgba(0,0,0,0.5)] px-4 text-center text-xl font-medium leading-[140%] outline-none"
-                  />
-                  <span
-                    onClick={increaseQuantityProduct}
-                    className="flex size-10 shrink-0 cursor-pointer items-center justify-center bg-[#DB4444] text-2xl text-[#fafafa]"
+                    <FaCartPlus />
+                    Thêm giỏ hàng
+                  </button>
+                  <button
+                    onClick={handleToggleFavoriteProduct}
+                    className="flex size-10 items-center justify-center rounded border border-solid border-black text-xl"
                   >
-                    <FiPlus />
-                  </span>
+                    {isFavorite ? (
+                      <FaHeart className="text-[#DB4444]" />
+                    ) : (
+                      <FaRegHeart />
+                    )}
+                  </button>
                 </div>
-                <button
-                  onClick={handleAddProductToCart}
-                  className={`${!quantityProduct > 0 ? 'cursor-not-allowed opacity-50' : ''} flex min-w-64 items-center justify-center gap-2 rounded border border-solid border-[#DB4444] bg-[#FFEEE8] px-5 py-2 text-[#DB4444]`}
-                >
-                  <FaCartPlus />
-                  Thêm giỏ hàng
-                </button>
-                <button
-                  onClick={handleToggleFavoriteProduct}
-                  className="flex size-10 items-center justify-center rounded border border-solid border-black text-xl"
-                >
-                  {isFavorite ? (
-                    <FaHeart className="text-[#DB4444]" />
-                  ) : (
-                    <FaRegHeart />
-                  )}
-                </button>
-              </div>
-              <div className="flex items-center justify-between gap-5">
-                <div className="basis-1/2 rounded bg-[#F0F0EE] px-10 py-4 text-center font-medium leading-tight text-[#2c2c2c]">
-                  FREESHIP đơn hàng giá trị từ 2 triệu đồng
-                </div>
-                <div className="basis-1/2 rounded bg-[#F0F0EE] px-10 py-4 text-center font-medium leading-tight text-[#2c2c2c]">
-                  Miễn phí đổi trả phát sinh từ nhà sản xuất
+                <div className="flex items-center justify-between gap-5">
+                  <div className="basis-1/2 rounded bg-[#F0F0EE] px-10 py-4 text-center font-medium leading-tight text-[#2c2c2c]">
+                    FREESHIP đơn hàng giá trị từ 2 triệu đồng
+                  </div>
+                  <div className="basis-1/2 rounded bg-[#F0F0EE] px-10 py-4 text-center font-medium leading-tight text-[#2c2c2c]">
+                    Miễn phí đổi trả phát sinh từ nhà sản xuất
+                  </div>
                 </div>
               </div>
-            </div>
-          </article>
-        </section>
-        <section className="my-20">
-          <FeedbackList feedbacksList={feedbacksList} />
-        </section>
-        {relatedProductList.length > 0 && (
-          <section>
-            <div>
-              <SectionTag content="Sản phẩm liên quan" />
-              <div className="mt-10 grid grid-cols-12 gap-10">
-                {relatedProductList.map((relatedProduct) => {
-                  const uniqueKey = uuidv4();
-                  return (
-                    <div key={uniqueKey} className="col-span-3">
-                      <ProductItem product={relatedProduct} />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            </article>
           </section>
-        )}
-      </div>
-    </main>
+          <section>
+            <FeedbackList feedbacksList={feedbacksList} />
+          </section>
+          <section>
+            <RelatedProducts products={relatedProducts} />
+          </section>
+        </div>
+      </main>
+    </Fragment>
   );
 }
 
