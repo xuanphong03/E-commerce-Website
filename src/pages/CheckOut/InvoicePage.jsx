@@ -118,44 +118,58 @@ function InvoicePage() {
     }
 
     if (paymentMethod === 'vnpay') {
-      try {
-        const paymentInfo = {
-          amount: cartData.totalPayment,
-          bankCode: 'NCB',
-        };
-        const {
-          data: { code, paymentUrl },
-        } = await paymentApi.get(paymentInfo);
-        if (code === 'ok' && paymentUrl) {
-          window.location.href = paymentUrl;
-        }
-      } catch (error) {
-        throw new Error('Lỗi khi xử lý thanh toán với VNPay');
-      }
+      handlePaymentVNPay();
+    } else if (paymentMethod === 'vietqr') {
+      handlePaymentVietQR();
     } else {
-      try {
-        const data = {
-          user_id: id,
-          orderDetails: cartData.cartItemsList,
-          address: address,
-          phoneNumber: phoneNumber,
-          emailAddress: email,
-          paymentMethods: 'COD',
-          shippingFee: cartData.deliveryFee,
-          paymentStatus: 0,
-          percentDiscount: 0,
-          orderStatus: null,
-        };
-        if (cartData.discountFee) {
-          data.skuDiscount = discountCode;
-          data.percentDiscount = 10;
-        }
-        await orderApi.create(data);
+      handlePaymentCOD(email, phoneNumber, address);
+    }
+  };
 
-        navigate('/payment/cod');
-      } catch (error) {
-        throw new Error('Có lỗi ở thanh toán COD');
+  const handlePaymentVNPay = async () => {
+    try {
+      const paymentInfo = {
+        amount: cartData.totalPayment,
+        bankCode: 'NCB',
+      };
+      const {
+        data: { code, paymentUrl },
+      } = await paymentApi.get(paymentInfo);
+      if (code === 'ok' && paymentUrl) {
+        window.location.href = paymentUrl;
       }
+    } catch (error) {
+      throw new Error('Thanh toán VNPay không thành công');
+    }
+  };
+
+  const handlePaymentVietQR = () => {
+    navigate(`/checkout/vietqr`);
+  };
+
+  const handlePaymentCOD = async (email, phoneNumber, address) => {
+    try {
+      const data = {
+        user_id: id,
+        orderDetails: cartData.cartItemsList,
+        address: address,
+        phoneNumber: phoneNumber,
+        emailAddress: email,
+        paymentMethods: 'COD',
+        shippingFee: cartData.deliveryFee,
+        paymentStatus: 0,
+        percentDiscount: 0,
+        orderStatus: null,
+      };
+      if (cartData.discountFee) {
+        data.skuDiscount = discountCode;
+        data.percentDiscount = 10;
+      }
+      await orderApi.create(data);
+
+      navigate('/payment/cod');
+    } catch (error) {
+      throw new Error('Thanh toán COD không thành công');
     }
   };
 
@@ -270,15 +284,12 @@ function InvoicePage() {
                       <div className="size-12">
                         <img className="max-h-full" alt="product" src={image} />
                       </div>
-                      <div className="flex flex-1 items-center justify-between">
+                      <div className="flex flex-1 justify-between">
                         <div>
-                          <h3>
-                            {name}
-                            <span className="ml-2 text-sm">
-                              | Màu: {color} | Size: {size}
-                            </span>
-                          </h3>
-                          <p className="text-sm">Số lượng: {quantity}</p>
+                          <h3 className="text-sm font-medium">{name}</h3>
+                          <h4 className="mt-1 text-sm text-gray-500">
+                            {color} / {size} Số lượng: {quantity}
+                          </h4>
                         </div>
                         <p>{formatPrice(totalPrice, 'VNĐ')}</p>
                       </div>
@@ -330,6 +341,22 @@ function InvoicePage() {
                 />
               </label>
             </div>
+            {/* <div className="mb-2 max-w-[50%] basis-1/2">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  onChange={handleChangeMethodPayment}
+                  name="methods-payment"
+                  value="vietqr"
+                />
+                VietQR
+                <img
+                  alt="logo"
+                  className="h-5 rounded"
+                  src="https://i.gyazo.com/566d62fd25cf0867e0033fb1b9b47927.png"
+                />
+              </label>
+            </div> */}
             <div className="mb-2 max-w-[50%] basis-1/2">
               <label className="flex items-center gap-2">
                 <input

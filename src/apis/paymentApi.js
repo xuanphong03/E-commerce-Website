@@ -13,6 +13,10 @@ const paymentApi = {
       params,
     });
   },
+  generateVietQR(payload) {
+    const url = 'https://api.vietqr.io/v2/generate';
+    return axiosClient.post(url, payload);
+  },
 };
 
 export default paymentApi;
