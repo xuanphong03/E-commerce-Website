@@ -8,7 +8,6 @@ import { formatPrice } from '~/utils/formatPrice';
 import { updateCart } from './cartSlice';
 import CartItem from './components/CartItem';
 import { defaultConstants } from '~/constants/default';
-import discountApi from '~/apis/discountApi';
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -113,10 +112,11 @@ export default function CartPage() {
       <div className="mb-[80px]">
         <div className="mb-6">
           <div className="flex justify-between px-10 py-6 text-black shadow-table">
-            <h3 className={`max-w-[30%] basis-[30%]`}>Sản phẩm</h3>
-            <h3 className={`max-w-[15%] basis-[15%] text-center`}>Giá</h3>
+            <h3 className={`max-w-[20%] basis-[20%]`}>Sản phẩm</h3>
+            <h3 className={`max-w-[15%] basis-[15%] text-center`}>Đơn giá</h3>
             <h3 className={`max-w-[10%] basis-[10%] text-center`}>Kích cỡ</h3>
             <h3 className={`max-w-[10%] basis-[10%] text-center`}>Màu sắc</h3>
+            <h3 className={`max-w-[10%] basis-[10%] text-center`}>Kho</h3>
             <h3 className={`max-w-[20%] basis-[20%] text-center`}>Số lượng</h3>
             <h3 className={`max-w-[15%] basis-[15%] text-center`}>Tổng tiền</h3>
           </div>
