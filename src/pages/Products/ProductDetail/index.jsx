@@ -1,5 +1,5 @@
 import { Rating } from '@mui/material';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, memo, useCallback, useEffect, useState } from 'react';
 import { FaCartPlus, FaHeart, FaRegHeart } from 'react-icons/fa';
 import { FiMinus, FiPlus } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,6 +16,58 @@ import { addToCart } from '~/pages/Cart/cartSlice';
 import { formatPrice } from '~/utils/formatPrice';
 import FeedbackList from './components/FeedbackList';
 import RelatedProducts from './components/RelatedProducts';
+
+// Component hiển thị ảnh chính
+const MainImage = memo(({ activeImage }) => {
+  return (
+    <div className="flex w-full items-center justify-center overflow-hidden rounded-md">
+      <img
+        alt="product image"
+        className="max-w-full object-cover"
+        src={activeImage || placeholder500x500}
+      />
+    </div>
+  );
+});
+
+// Component hiển thị danh sách các ảnh nhỏ
+const ImageList = memo(({ images, handleChangeImage }) => {
+  return (
+    <ul className="flex h-[700px] w-[110px] flex-col items-center gap-5 overflow-y-auto">
+      {images.length <= 0 &&
+        [...Array(4)].map((_, index) => {
+          return (
+            <li
+              key={index}
+              className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4"
+            >
+              <img
+                alt="product image"
+                className="max-w-full object-cover"
+                src={placeholder80x80}
+              />
+            </li>
+          );
+        })}
+      {images.length > 0 &&
+        images.map((image) => {
+          return (
+            <li
+              onClick={() => handleChangeImage(image)}
+              key={uuidv4()}
+              className="flex max-w-full cursor-pointer items-center justify-center overflow-hidden rounded-md"
+            >
+              <img
+                alt="product image"
+                className="max-w-full object-cover"
+                src={image || placeholder80x80}
+              />
+            </li>
+          );
+        })}
+    </ul>
+  );
+});
 
 function ProductDetail() {
   const dispatch = useDispatch();
@@ -206,10 +258,9 @@ function ProductDetail() {
       throw new Error('Error toggle favorite product detail!');
     }
   };
-  // Thay đổi ảnh chính của sản phẩm
-  const handleChangeImage = (image) => {
+  const handleChangeImage = useCallback((image) => {
     setActiveImage(image);
-  };
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -249,47 +300,12 @@ function ProductDetail() {
         <div className="container mx-auto space-y-20">
           <section className="flex gap-10">
             <div className="flex shrink-0 basis-1/2 gap-10">
-              <ul className="flex h-[700px] w-[110px] flex-col items-center gap-5 overflow-y-auto">
-                {images.length <= 0 &&
-                  [...Array(4)].map((_, index) => {
-                    return (
-                      <li
-                        key={index}
-                        className="flex h-28 w-32 items-center justify-center rounded-md bg-[#f5f5f5] p-4"
-                      >
-                        <img
-                          alt="product image"
-                          className="max-w-full object-cover"
-                          src={placeholder80x80}
-                        />
-                      </li>
-                    );
-                  })}
-                {images.length > 0 &&
-                  images.map((image) => {
-                    return (
-                      <li
-                        onClick={() => handleChangeImage(image)}
-                        key={uuidv4()}
-                        className={`flex max-w-full cursor-pointer items-center justify-center overflow-hidden rounded-md border-2 border-solid ${image === activeImage ? 'border-black' : 'border-transparent'}`}
-                      >
-                        <img
-                          alt="product image"
-                          className="max-w-full object-cover"
-                          src={image || placeholder80x80}
-                        />
-                      </li>
-                    );
-                  })}
-              </ul>
+              <ImageList
+                images={images}
+                handleChangeImage={handleChangeImage}
+              />
               <div className="w-[calc(100%-110px)]">
-                <div className="flex w-full items-center justify-center overflow-hidden rounded-md">
-                  <img
-                    alt="product image"
-                    className="max-w-full object-cover"
-                    src={activeImage || placeholder500x500}
-                  />
-                </div>
+                <MainImage activeImage={activeImage} />
               </div>
             </div>
             <article className="flex basis-1/2 flex-col gap-10 pl-20 pr-10">
