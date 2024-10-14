@@ -1,4 +1,3 @@
-import { Rating } from '@mui/material';
 import { BsTrash3 } from 'react-icons/bs';
 import { FiEye } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
